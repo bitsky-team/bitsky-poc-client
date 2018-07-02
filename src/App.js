@@ -12,7 +12,6 @@ class App extends Component {
 
       img.css('top',(container.height()-img.height())/2 + 'px');
       img.css('left',(container.width()-img.width())/2 + 'px');
-
     }, 300);
   }
 

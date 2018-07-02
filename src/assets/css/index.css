@@ -31,7 +31,7 @@ body {
 
 .single-form-subcontainer
 {
-  flex: 1;
+  flex: 0 0 50%;
   height: 100%;
 }
 
