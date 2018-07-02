@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import logo from './assets/img/logo.png';
+import logo_small from './assets/img/logo-small.png';
 import $ from 'jquery';
 
 class App extends Component {
@@ -20,7 +21,7 @@ class App extends Component {
       <div className="App">
         <div className="single-form-container">
           <div className="single-form-subcontainer left">
-           <img src={logo} alt="logo"/>
+           <img src={logo_small} alt="logo"/>
 
            <div className="slogan">
             <h2><strong>Vos</strong> amis,</h2>
@@ -31,7 +32,7 @@ class App extends Component {
 
            <form method="post">
             <label>Adresse email<input type="email" placeholder="john.doe@bitsky.be"/></label>
-            <label>Mot de passe<input type="password" placeholder="********"/></label>
+            <label>Mot de passe<input type="password" placeholder="••••••••"/></label>
             <label className="checkbox-container">
               <input type="checkbox"/><span className="checkmark"></span>
               <span className="text">Se souvenir de moi</span>
@@ -39,12 +40,12 @@ class App extends Component {
             <a href="#">Mot de passe oublié ?</a>
 
             <div className="button-group">
-              <button className="primary">Connexion</button>
+              <button className="primary"><span>Connexion</span></button>
               <button className="secondary">Inscription</button>
             </div>
             
            </form>
-           <p>En vous inscrivant, vous acceptez nos condiditions d'utilisation &amp; notre politique de confidentialité.</p>
+           <p>En vous inscrivant, vous acceptez <a href="#">nos conditions d'utilisation</a> &amp; <a href="#">notre politique de confidentialité</a>.</p>
           </div>
           <div className="single-form-subcontainer right">
             <div className="overlay"></div>
