@@ -21,12 +21,30 @@ class App extends Component {
         <div className="single-form-container">
           <div className="single-form-subcontainer left">
            <img src={logo} alt="logo"/>
+
            <div className="slogan">
             <h2><strong>Vos</strong> amis,</h2>
             <h2><strong>Vos</strong> souvenirs,</h2>
             <h2><strong>Vos</strong> données,</h2>
             <h2><strong>Chez vous.</strong></h2>
            </div>
+
+           <form method="post">
+            <label>Adresse email<input type="email" placeholder="john.doe@bitsky.be"/></label>
+            <label>Mot de passe<input type="password" placeholder="********"/></label>
+            <label className="checkbox-container">
+              <input type="checkbox"/><span className="checkmark"></span>
+              <span className="text">Se souvenir de moi</span>
+            </label>
+            <a href="#">Mot de passe oublié ?</a>
+
+            <div className="button-group">
+              <button className="primary">Connexion</button>
+              <button className="secondary">Inscription</button>
+            </div>
+            
+           </form>
+           <p>En vous inscrivant, vous acceptez nos condiditions d'utilisation &amp; notre politique de confidentialité.</p>
           </div>
           <div className="single-form-subcontainer right">
             <div className="overlay"></div>

@@ -41,6 +41,10 @@ body {
   position: relative;
   padding: 60px;
   box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 /*TODO: Enlever le texte, réduire la bordure */
@@ -56,6 +60,7 @@ body {
 .single-form-subcontainer.left .slogan
 {
   text-align: center;
+  width: 100%;
 }
 
 .single-form-subcontainer.left .slogan h2
@@ -68,6 +73,146 @@ body {
 .single-form-subcontainer.left .slogan h2 strong
 {
   font-weight: 400;
+}
+
+.single-form-subcontainer.left form
+{
+  margin-top: 40px;
+  width: 100%;
+}
+
+.single-form-subcontainer.left form label, .single-form-subcontainer.left form input
+{
+  color: #919191;
+  display: block;
+}
+
+.single-form-subcontainer.left form label
+{
+  font-size: 13px;
+}
+
+.single-form-subcontainer.left form input
+{
+  font-size: 23px;
+  border: none;
+  border-bottom: 1px solid #919191 !important;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.single-form-subcontainer.left form input:first-child
+{
+  margin-bottom: 10px;
+}
+
+.single-form-subcontainer.left form .checkbox-container
+{
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  display: inline-block;
+}
+
+.single-form-subcontainer.left form .checkbox-container input
+{
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.single-form-subcontainer.left form .checkbox-container .checkmark
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 15px;
+  width: 15px;
+  border-radius: 3px;
+  border: 1px solid #666363;
+  transition: 0.2s;
+}
+
+.single-form-subcontainer.left form .checkbox-container:hover input ~ .checkmark
+{
+  background-color: #CCC;
+}
+
+.single-form-subcontainer.left form .checkbox-container input:checked ~ .checkmark
+{
+  background: -moz-linear-gradient(135deg, #05B2AB 0, #9833DC 100%);/* FF3.6+ */
+  background: -webkit-gradient(linear, 135deg, color-stop(0, 05B2AB), color-stop(100%, 9833DC));/* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(135deg, #05B2AB 0, #9833DC 100%);/* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(135deg, #05B2AB 0, #9833DC 100%);/* Opera 11.10+ */
+  background: -ms-linear-gradient(135deg, #05B2AB 0, #9833DC 100%);/* IE10+ */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1301FE', endColorstr='#F4F60C', GradientType='1'); /* for IE */
+  border-color: rgba(0,0,0,0);
+}
+
+.single-form-subcontainer.left form .checkbox-container .checkmark:after
+{
+  content: " ";
+  position: absolute;
+  display: none;
+}
+
+.single-form-subcontainer.left form .checkbox-container input:checked ~ .checkmark:after
+{
+  display: block;
+}
+
+.single-form-subcontainer.left form .checkbox-container .text
+{
+  margin-left: 20px;
+  color: #3c3939;
+}
+
+.single-form-subcontainer.left form a
+{
+  text-decoration: none;
+  color: #3c3939;
+  font-size: 13px;
+  margin-left: 100px;
+}
+
+.single-form-subcontainer.left form .button-group
+{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.single-form-subcontainer.left form button
+{
+  height: 40px;
+  -webkit-appearance: none; 
+  background: none;
+  border: none;
+  font-size: 16px;
+  border-radius: 5px;
+  flex: 0 0 50%;
+  margin: 0 5px 0 5px;
+  flex-basis: calc(50% - 10px);
+  font-weight: 100;
+}
+
+.single-form-subcontainer.left form button.primary
+{
+  background: -moz-linear-gradient(135deg, #297CCD 0, #d952e8 100%);/* FF3.6+ */
+  background: -webkit-gradient(linear, 135deg, color-stop(0, 297CCD), color-stop(100%, d952e8));/* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(135deg, #297CCD 0, #d952e8 100%);/* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(135deg, #297CCD 0, #d952e8 100%);/* Opera 11.10+ */
+  background: -ms-linear-gradient(135deg, #297CCD 0, #d952e8 100%);/* IE10+ */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1301FE', endColorstr='#F4F60C', GradientType='1'); /* for IE */
+  background: linear-gradient(135deg, #297CCD 0, #d952e8 100%);/* W3C */
+  color: white;
+}
+
+.single-form-subcontainer.left form button.secondary
+{
+  border: 1px solid #8a8a8a;
+  color: #8a8a8a;
 }
 
 
