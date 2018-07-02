@@ -1,0 +1,143 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background: url(../img/background.jpg) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  font-family: 'Roboto', sans-serif;
+}
+
+.App
+{
+  background-color: rgba(255,255,255,0.6);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.single-form-container
+{
+  height: 80vh;
+  width: 70vw;
+  background-color: white;
+  box-shadow: 0 5px 80px 1px rgba(0,0,0,0.15);/* FF3.5+, Opera 9+, Saf1+, Chrome, IE10 */
+  display: flex;
+
+}
+
+.single-form-subcontainer
+{
+  flex: 1;
+  height: 100%;
+}
+
+.single-form-subcontainer.left
+{
+  background-color: white;
+  position: relative;
+  padding: 60px;
+  box-sizing: border-box;
+}
+
+/*TODO: Enlever le texte, réduire la bordure */
+
+.single-form-subcontainer.left img
+{
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: 128px;
+}
+
+.single-form-subcontainer.left .slogan
+{
+  text-align: center;
+}
+
+.single-form-subcontainer.left .slogan h2
+{
+  margin: 0;
+  font-weight: 200;
+  font-size: 25px;
+}
+
+.single-form-subcontainer.left .slogan h2 strong
+{
+  font-weight: 400;
+}
+
+
+
+.single-form-subcontainer.right
+{
+  background: url(../img/background.jpg) no-repeat center bottom fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  position: relative;
+}
+
+.single-form-subcontainer.right .overlay
+{
+  height: 100%;
+  width: 100%;
+  background: -moz-linear-gradient(135deg, #05B2AB 0, #9833DC 100%);/* FF3.6+ */
+  background: -webkit-gradient(linear, 135deg, color-stop(0, 05B2AB), color-stop(100%, 9833DC));/* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(135deg, #05B2AB 0, #9833DC 100%);/* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(135deg, #05B2AB 0, #9833DC 100%);/* Opera 11.10+ */
+  background: -ms-linear-gradient(135deg, #05B2AB 0, #9833DC 100%);/* IE10+ */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1301FE', endColorstr='#F4F60C', GradientType='1'); /* for IE */
+  position: absolute;
+  opacity: 0.4;
+  z-index: 3;
+}
+
+.single-form-subcontainer.right .container
+{
+  z-index: 5;
+  position: fixed;
+}
+
+.single-form-subcontainer.right .container nav ul
+{
+  list-style-type: none;
+  padding: 15px;
+  width: 100%;
+  margin: 0;
+  text-align: center;
+}
+
+.single-form-subcontainer.right .container nav ul li
+{
+  display: inline-block;
+  padding-right: 20px;
+  font-weight: 400;
+}
+
+.single-form-subcontainer.right .container nav ul li a
+{
+  color: white;
+  text-decoration: none;
+  transition: 0.2s;
+  display: inline-block;
+}
+
+.single-form-subcontainer.right .container nav ul li a:hover
+{
+  transform: translateY(5px);
+}
+
+/*TODO: Resizer l'image, mettre le texte en blanc*/
+
+.single-form-subcontainer.right .container img
+{
+  width: 30vw;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
