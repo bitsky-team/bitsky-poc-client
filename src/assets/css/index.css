@@ -1,0 +1,357 @@
+*:hover, *:focus
+{
+  outline: 0 !important;
+}
+
+body 
+{
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background: url(../img/background.jpg) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  font-family: 'Roboto', sans-serif;
+}
+
+.App
+{
+  background-color: rgba(255,255,255,0.6);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.single-form-container
+{
+  height: 80vh;
+  width: 70vw;
+  background-color: white;
+  box-shadow: 0 5px 80px 1px rgba(0,0,0,0.15);/* FF3.5+, Opera 9+, Saf1+, Chrome, IE10 */
+  display: flex;
+
+}
+
+.single-form-subcontainer
+{
+  flex: 0 0 50%;
+  height: 100%;
+}
+
+.single-form-subcontainer.left
+{
+  background-color: white;
+  position: relative;
+  padding: 60px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.single-form-subcontainer.left img
+{
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 64px;
+}
+
+.single-form-subcontainer.left .slogan
+{
+  text-align: center;
+  width: 100%;
+}
+
+.single-form-subcontainer.left .slogan h2
+{
+  margin: 0;
+  font-weight: 200;
+  font-size: 25px;
+}
+
+.single-form-subcontainer.left .slogan h2 strong
+{
+  font-weight: 400;
+}
+
+.single-form-subcontainer.left form
+{
+  margin-top: 40px;
+  width: 100%;
+}
+
+.single-form-subcontainer.left form label, .single-form-subcontainer.left form input
+{
+  color: #919191;
+  display: block;
+}
+
+.single-form-subcontainer.left form input:focus::-webkit-input-placeholder { color:transparent; }
+
+.single-form-subcontainer.left form label
+{
+  font-size: 13px;
+}
+
+.single-form-subcontainer.left form input
+{
+  font-size: 23px;
+  border: none;
+  border-bottom: 1px solid #919191 !important;
+  margin-top: 10px;
+  width: 100%;
+  font-weight: lighter;
+}
+
+.single-form-subcontainer.left form input:first-child
+{
+  margin-bottom: 10px;
+}
+
+.single-form-subcontainer.left form .checkbox-container
+{
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  display: inline-block;
+}
+
+.single-form-subcontainer.left form .checkbox-container input
+{
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.single-form-subcontainer.left form .checkbox-container .checkmark
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 15px;
+  width: 15px;
+  border-radius: 3px;
+  border: 1px solid #666363;
+  transition: 0.2s;
+}
+
+.single-form-subcontainer.left form .checkbox-container:hover input ~ .checkmark
+{
+  background-color: #CCC;
+}
+
+.single-form-subcontainer.left form .checkbox-container input:checked ~ .checkmark
+{
+  background: -moz-linear-gradient(135deg, #05B2AB 0, #9833DC 100%);/* FF3.6+ */
+  background: -webkit-gradient(linear, 135deg, color-stop(0, 05B2AB), color-stop(100%, 9833DC));/* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(135deg, #05B2AB 0, #9833DC 100%);/* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(135deg, #05B2AB 0, #9833DC 100%);/* Opera 11.10+ */
+  background: -ms-linear-gradient(135deg, #05B2AB 0, #9833DC 100%);/* IE10+ */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1301FE', endColorstr='#F4F60C', GradientType='1'); /* for IE */
+  border-color: rgba(0,0,0,0);
+  opacity: 0.5;
+}
+
+.single-form-subcontainer.left form .checkbox-container .checkmark:after
+{
+  content: " ";
+  position: absolute;
+  display: none;
+}
+
+.single-form-subcontainer.left form .checkbox-container input:checked ~ .checkmark:after
+{
+  display: block;
+}
+
+.single-form-subcontainer.left form .checkbox-container .text
+{
+  margin-left: 20px;
+  color: #3c3939;
+}
+
+.single-form-subcontainer.left form a
+{
+  text-decoration: none;
+  color: #3c3939;
+  font-size: 13px;
+  margin-left: 60px;
+}
+
+.single-form-subcontainer.left form a:hover
+{
+  text-decoration: underline;
+}
+
+.single-form-subcontainer.left form .button-group
+{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.single-form-subcontainer.left form .button-group button:first-child
+{
+  margin: 0 5px 0 0;
+  flex-basis: calc(50% - 5px);
+}
+
+.single-form-subcontainer.left form .button-group button:last-child
+{
+  margin: 0 0 0 5px;
+  flex-basis: calc(50% - 5px);
+}
+
+.single-form-subcontainer.left form button
+{
+  height: 40px;
+  -webkit-appearance: none; 
+  background: none;
+  border: none;
+  font-size: 16px;
+  border-radius: 5px;
+  flex: 0 0 50%;
+  font-weight: 100;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.single-form-subcontainer.left form button:hover
+{
+  transform: scale(1.05);
+}
+
+.single-form-subcontainer.left form button.primary
+{
+  color: white;
+  position: relative;
+}
+
+.single-form-subcontainer.left form button.primary span
+{
+  z-index: 5;
+  position: absolute;
+  top: 25%;
+  left: 22%;
+  letter-spacing: 1px;
+}
+
+.single-form-subcontainer.left form button.primary:before
+{
+  content: " ";
+  opacity: 0.5;
+  background: -moz-linear-gradient(135deg, #297CCD 0, #d952e8 100%);/* FF3.6+ */
+  background: -webkit-gradient(linear, 135deg, color-stop(0, 297CCD), color-stop(100%, d952e8));/* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(135deg, #297CCD 0, #d952e8 100%);/* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(135deg, #297CCD 0, #d952e8 100%);/* Opera 11.10+ */
+  background: -ms-linear-gradient(135deg, #297CCD 0, #d952e8 100%);/* IE10+ */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1301FE', endColorstr='#F4F60C', GradientType='1'); /* for IE */
+  background: linear-gradient(135deg, #297CCD 0, #d952e8 100%);/* W3C */
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 5px;
+  z-index: 3;
+}
+
+.single-form-subcontainer.left form button.secondary
+{
+  border: 1px solid #8a8a8a;
+  color: #8a8a8a;
+}
+
+.single-form-subcontainer.left p 
+{
+  font-size: 15px;
+  font-weight: 200;
+  color: #919191;
+  margin-top: 40px;
+}
+
+.single-form-subcontainer.left p a
+{
+  text-decoration: none;
+  color: #3c3939;
+}
+
+.single-form-subcontainer.left p a:hover
+{
+  text-decoration: underline;
+}
+
+.single-form-subcontainer.right
+{
+  background: url(../img/background.jpg) no-repeat center bottom fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  position: relative;
+}
+
+.single-form-subcontainer.right .overlay
+{
+  height: 100%;
+  width: 100%;
+  background: -moz-linear-gradient(135deg, #05B2AB 0, #9833DC 100%);/* FF3.6+ */
+  background: -webkit-gradient(linear, 135deg, color-stop(0, 05B2AB), color-stop(100%, 9833DC));/* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(135deg, #05B2AB 0, #9833DC 100%);/* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(135deg, #05B2AB 0, #9833DC 100%);/* Opera 11.10+ */
+  background: -ms-linear-gradient(135deg, #05B2AB 0, #9833DC 100%);/* IE10+ */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1301FE', endColorstr='#F4F60C', GradientType='1'); /* for IE */
+  position: absolute;
+  opacity: 0.4;
+  z-index: 3;
+}
+
+.single-form-subcontainer.right .container
+{
+  z-index: 5;
+  position: fixed;
+}
+
+.single-form-subcontainer.right .container nav ul
+{
+  list-style-type: none;
+  padding: 15px;
+  width: 100%;
+  margin: 0;
+  text-align: center;
+}
+
+.single-form-subcontainer.right .container nav ul li
+{
+  display: inline-block;
+  padding-right: 20px;
+  font-weight: 400;
+}
+
+.single-form-subcontainer.right .container nav ul li a
+{
+  color: white;
+  text-decoration: none;
+  transition: 0.2s;
+  display: inline-block;
+}
+
+.single-form-subcontainer.right .container nav ul li a:hover
+{
+  transform: translateY(5px);
+}
+
+.single-form-subcontainer.right .container img
+{
+  width: 30vw;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
