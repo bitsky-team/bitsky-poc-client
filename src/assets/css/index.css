@@ -202,15 +202,10 @@ body
   flex-basis: calc(50% - 5px);
 }
 
-.single-form-subcontainer.left form .button-group a
+.single-form-subcontainer.left form .button-group button:last-child
 {
   margin: 0 0 0 5px;
   flex-basis: calc(50% - 5px);
-}
-
-.single-form-subcontainer.left form .button-group a button
-{
-  width: 100%;
 }
 
 .single-form-subcontainer.left form button

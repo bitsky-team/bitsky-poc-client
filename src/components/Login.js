@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import logo from '../assets/img/logo.png';
 import logo_small from '../assets/img/logo-small.png';
 import $ from 'jquery';
-import { Link } from 'react-router-dom'
 
 class Login extends Component {
 
@@ -46,7 +45,7 @@ class Login extends Component {
 
             <div className="button-group">
               <button className="primary"><span>Connexion</span></button>
-              <Link to="/register"><button className="secondary">Inscription</button></Link>
+              <button className="secondary" onClick={ () => this.props.history.push('/register') }>Inscription</button>
             </div>
            </form>
           </div>
