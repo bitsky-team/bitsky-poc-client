@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import Login from './components/Login';
+import Register from './components/Register';
 
 class App extends Component {
 
@@ -9,6 +10,7 @@ class App extends Component {
         <div>
             <Route exact path='/' component={Login}/>
             <Route exact path='/login' component={Login}/>
+            <Route exact path='/register' component={Register}/>
         </div>
     )
   }

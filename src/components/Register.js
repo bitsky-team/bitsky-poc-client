@@ -4,7 +4,7 @@ import logo_small from '../assets/img/logo-small.png';
 import $ from 'jquery';
 import { Link } from 'react-router-dom'
 
-class Login extends Component {
+class Register extends Component {
 
   componentDidMount() {
     setInterval(() => {
@@ -29,10 +29,7 @@ class Login extends Component {
            <img src={logo_small} alt="logo"/>
 
            <div className="slogan">
-            <h2><strong>Vos</strong> amis,</h2>
-            <h2><strong>Vos</strong> souvenirs,</h2>
-            <h2><strong>Vos</strong> données,</h2>
-            <h2><strong>Chez vous.</strong></h2>
+            <h2>Inscription</h2>
            </div>
 
            <form method="post">
@@ -45,10 +42,12 @@ class Login extends Component {
             <a href="" className="password-lost">Mot de passe oublié ?</a>
 
             <div className="button-group">
-              <button className="primary"><span>Connexion</span></button>
-              <Link to="/register"><button className="secondary">Inscription</button></Link>
+              <button className="primary"><span>Inscription</span></button>
+              <Link to="/login"><button className="secondary">Déjà inscrit ?</button></Link>
             </div>
+            
            </form>
+           <p>En vous inscrivant, vous acceptez <a href="">nos conditions d'utilisation</a> &amp; <a href="">notre politique de confidentialité</a>.</p>
           </div>
           <div className="single-form-subcontainer right">
             <div className="overlay"></div>
@@ -71,4 +70,4 @@ class Login extends Component {
   
 }
 
-export default Login;
+export default Register;
