@@ -210,7 +210,7 @@ body
   flex-basis: calc(50% - 5px);
 }
 
-.single-form-subcontainer.left form button
+.single-form-subcontainer.left form button, .login-error-modal .modal-footer .secondary
 {
   height: 40px;
   -webkit-appearance: none; 
@@ -224,7 +224,7 @@ body
   transition: 0.2s;
 }
 
-.single-form-subcontainer.left form button:hover
+.single-form-subcontainer.left form button:hover, .login-error-modal .modal-footer .secondary
 {
   transform: scale(1.05);
 }
@@ -265,7 +265,7 @@ body
   z-index: 3;
 }
 
-.single-form-subcontainer.left form button.secondary
+.single-form-subcontainer.left form button.secondary, .login-error-modal .modal-footer .secondary
 {
   border: 1px solid #8a8a8a;
   color: #8a8a8a;
@@ -358,6 +358,16 @@ body
   top: 0;
   left: 0;
   display: none;
+}
+
+.login-error-modal .modal-content
+{
+  border-radius: 0 !important;
+}
+
+.login-error-modal .modal-footer .secondary
+{
+  flex: 0 0 35%;
 }
 
 .single-form-subcontainer.left .slogan.register-title h2
