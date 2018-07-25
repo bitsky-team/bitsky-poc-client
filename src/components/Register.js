@@ -27,26 +27,23 @@ class Register extends Component {
           <div className="single-form-subcontainer left">
            <img src={logo_small} alt="logo"/>
 
-           <div className="slogan">
+           <div className="slogan register-title">
             <h2>Inscription</h2>
            </div>
 
            <form method="post">
             <label>Adresse email<input type="email" placeholder="john.doe@bitsky.be"/></label>
             <label>Mot de passe<input type="password" placeholder="••••••••"/></label>
-            <label className="checkbox-container">
-              <input type="checkbox"/><span className="checkmark"></span>
-              <span className="text">Se souvenir de moi</span>
-            </label>
-            <a href="" className="password-lost">Mot de passe oublié ?</a>
-
+            <label>Répétez le mot de passe<input type="password" placeholder="••••••••"/></label>
+            <label>Nom<input type="text" placeholder="Doe"/></label>
+            <label>Prénom<input type="text" placeholder="John"/></label>
+           
             <div className="button-group">
               <button className="primary"><span>Inscription</span></button>
               <button className="secondary" onClick={ () => this.props.history.push('/login') }>Déjà inscrit ?</button>
             </div>
             
            </form>
-           <p>En vous inscrivant, vous acceptez <a href="">nos conditions d'utilisation</a> &amp; <a href="">notre politique de confidentialité</a>.</p>
           </div>
           <div className="single-form-subcontainer right">
             <div className="overlay"></div>
