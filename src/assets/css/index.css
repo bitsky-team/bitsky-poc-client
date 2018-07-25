@@ -3,6 +3,17 @@
   outline: 0 !important;
 }
 
+.no-margin-left
+{
+  margin-left: 0 !important;
+}
+
+
+.no-margin-right
+{
+  margin-right: 0 !important;
+}
+
 body 
 {
   margin: 0;
@@ -371,6 +382,7 @@ body
   background-color: rgb(218,218,233);
   width: 100vw;
   height: 100vh;
+  max-width: none;
 }
 
 .search-container
@@ -390,5 +402,8 @@ body
 
 .search-bar
 {
-  
+  height: 25px;
+  width: 300px;
+  background-color: hsl(0, 0%, 91%);
+  border-radius: 5px;
 }

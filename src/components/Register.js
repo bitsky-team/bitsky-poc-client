@@ -25,10 +25,10 @@ class Register extends Component {
       <div className="App">
         <div className="single-form-container">
           <div className="single-form-subcontainer left">
-           <img src={logo_small} alt="logo"/>
 
            <div className="slogan register-title">
-            <h2>Inscription</h2>
+                     <img src={logo_small} alt="logo"/>
+  <h2>Inscription</h2>
            </div>
 
            <form method="post">
