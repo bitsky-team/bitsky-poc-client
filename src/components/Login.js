@@ -39,7 +39,7 @@ class Login extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    $.post(`${config.API_ROOT}/login`, { username: $('#username').val(), password: $('#password').val() })
+    $.post(`${config.API_ROOT}/login`, { email: $('#email').val(), password: $('#password').val() })
     .done(function( data ) {
       let response = JSON.parse(data);
 
@@ -76,7 +76,7 @@ class Login extends Component {
            </div>
 
            <form method="post">
-            <label>Adresse email<input id="username" type="email" placeholder="john.doe@bitsky.be"/></label>
+            <label>Adresse email<input id="email" type="email" placeholder="john.doe@bitsky.be"/></label>
             <label>Mot de passe<input id="password" type="password" placeholder="••••••••"/></label>
             <label className="checkbox-container">
               <input type="checkbox"/><span className="checkmark"></span>

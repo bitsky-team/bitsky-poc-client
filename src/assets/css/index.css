@@ -280,6 +280,8 @@ body
 {
   border: 1px solid #8a8a8a;
   color: #8a8a8a;
+  box-sizing: border-box;
+  padding-top: 5px;
 }
 
 .single-form-subcontainer.left p 
@@ -369,6 +371,11 @@ body
   top: 0;
   left: 0;
   display: none;
+}
+
+.login-error-modal
+{
+  max-width: 520px;
 }
 
 .login-error-modal .modal-content
