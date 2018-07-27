@@ -86,7 +86,7 @@ class Login extends Component {
 
             <div className="button-group">
               <button className="primary" onClick={this.handleSubmit}><span>Connexion</span></button>
-              <button className="secondary" onClick={ () => this.props.history.push('/register') }>Inscription</button>
+              <button className="secondary" type="button" onClick={ () => this.props.history.push('/register') }>Inscription</button>
             </div>
            </form>
           </div>
