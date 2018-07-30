@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import AuthService from '../services/AuthService';
 import { Container, Row, Col, Collapse,
     Navbar,
     NavbarToggler,
@@ -19,7 +18,6 @@ class ActivityFeed extends Component {
         this.toggle = this.toggle.bind(this);
         this.state = {
             isOpen: false,
-            user: AuthService.get()
         };
     }
 
@@ -45,7 +43,7 @@ class ActivityFeed extends Component {
                     </NavItem>
                     <UncontrolledDropdown nav inNavbar>
                         <DropdownToggle nav caret>
-                            {this.state.user.firstname + ' ' + this.state.user.lastname}
+                            Menu
                         </DropdownToggle>
                         <DropdownMenu right>
                         <DropdownItem>
