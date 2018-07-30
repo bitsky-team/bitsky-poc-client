@@ -35,6 +35,11 @@ class App extends Component {
         if(!AuthService.verify()) {
           this.props.history.push('/');
         }
+      }else
+      {
+        if(AuthService.verify()) {
+          this.props.history.push('/dashboard');
+        }
       }
     }, 1000);
   }

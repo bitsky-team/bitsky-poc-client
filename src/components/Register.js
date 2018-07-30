@@ -78,7 +78,7 @@ class Register extends Component {
     }else {
       this.toggleError();
 
-      if(!emailCheck && !passwordCheckLength && !repeatPasswordCheckLength && !lastnameCheck && !firstnameCheck) {
+      if(!email || !password || !repeatPassword || !lastname || !firstname) {
         setTimeout(function(){$('#errorMessage').html('<p>Veuillez remplir tous les champs !</p>');}, 1);
       }else {
         setTimeout(function(){

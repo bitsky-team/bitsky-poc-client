@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import logo from '../assets/img/logo.png';
-import logo_small from '../assets/img/logo-small.png';
+import AuthService from '../services/AuthService';
 import { Container, Row, Col, Collapse,
     Navbar,
     NavbarToggler,
@@ -19,7 +18,8 @@ class ActivityFeed extends Component {
 
         this.toggle = this.toggle.bind(this);
         this.state = {
-            isOpen: false
+            isOpen: false,
+            user: AuthService.get()
         };
     }
 
@@ -33,7 +33,7 @@ class ActivityFeed extends Component {
     return (
         <div>
             <Navbar color="light" light expand="md">
-                <NavbarBrand href="/">reactstrap</NavbarBrand>
+                <NavbarBrand href="/">Bitsky</NavbarBrand>
                 <NavbarToggler onClick={this.toggle} />
                 <Collapse isOpen={this.state.isOpen} navbar>
                     <Nav className="ml-auto" navbar>
@@ -45,7 +45,7 @@ class ActivityFeed extends Component {
                     </NavItem>
                     <UncontrolledDropdown nav inNavbar>
                         <DropdownToggle nav caret>
-                        Options
+                            {this.state.user.firstname + ' ' + this.state.user.lastname}
                         </DropdownToggle>
                         <DropdownMenu right>
                         <DropdownItem>
