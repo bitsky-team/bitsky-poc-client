@@ -39,17 +39,41 @@ class Login extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    $.post(`${config.API_ROOT}/login`, { email: $('#email').val(), password: $('#password').val() })
-    .done(function( data ) {
-      let response = JSON.parse(data);
 
-      if(response.success) {
-        alert('ok');
+    let email = $('#email').val();
+    let password =  $('#password').val();
+    let emailReg = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    let emailCheck = emailReg.test(email);
+    let passwordCheckLength = password.length >= 8;
+
+    if(emailCheck && passwordCheckLength) {
+      $.post(`${config.API_ROOT}/login`, { email: $('#email').val(), password: $('#password').val() })
+      .done(function( data ) {
+        console.log(data);
+        let response = JSON.parse(data);
+  
+        if(response.success) {
+          localStorage.setItem('id', response.uniq_id);
+          localStorage.setItem('token', response.message);
+          this.props.history.push('/dashboard');
+        }else {
+          this.toggleError();
+          $('#errorMessage').text(response.message);
+        }
+      }.bind(this));
+    }else {
+      this.toggleError();
+
+      if(!email || !password) {
+        setTimeout(function(){$('#errorMessage').html('<p>Veuillez remplir tous les champs !</p>');}, 1);
       }else {
-        this.toggleError();
-        $('#errorMessage').text(response.message);
+        setTimeout(function(){
+          $('#errorMessage').html('<p>Veuillez vérifier les points suivants:</p><ul id=\'errorsList\'></ul>');
+          if(!emailCheck) $('#errorsList').append('<li>Votre adresse email est incorrecte</li>');
+          if(!passwordCheckLength) $('#errorsList').append('<li>Le mot de passe doit comporter au moins 8 caractères</li>');
+        }, 1);
       }
-    }.bind(this));
+    }
   }
 
   render() {

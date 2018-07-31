@@ -41,7 +41,7 @@ class App extends Component {
           this.props.history.push('/dashboard');
         }
       }
-    }, 1000);
+    }, 400);
   }
 
   render() {

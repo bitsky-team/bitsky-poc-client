@@ -68,6 +68,7 @@ class Register extends Component {
         let response = JSON.parse(data);
 
         if(response.success) {
+          localStorage.setItem('id', response.uniq_id);
           localStorage.setItem('token', response.message);
           this.props.history.push('/dashboard');
         }else {
