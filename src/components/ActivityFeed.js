@@ -33,7 +33,7 @@ class ActivityFeed extends Component {
     return (
         <div>
             <Navbar color="light" light expand="md">
-                <NavbarBrand href="/"><img src={logo_small} height="40"/></NavbarBrand>
+                <NavbarBrand href="/"><img src={logo_small} height="40" alt="Logo"/></NavbarBrand>
                 <NavbarToggler onClick={this.toggle} />
                 <Collapse isOpen={this.state.isOpen} navbar>
                     <Nav className="ml-auto" navbar>
@@ -67,7 +67,7 @@ class ActivityFeed extends Component {
             <Row>
                 <Col md="3" className="no-margin-left no-margin-right">
                     <div className="user-container">
-                        <img src={logo_small}/>
+                        <img src={logo_small} alt="Logo" />
                         <h5>Jason Van Malder</h5>
                         <p>Administrateur</p>
                         <hr/>

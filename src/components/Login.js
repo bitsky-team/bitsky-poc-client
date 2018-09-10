@@ -42,6 +42,7 @@ class Login extends Component {
 
     let email = $('#email').val();
     let password =  $('#password').val();
+    // eslint-disable-next-line
     let emailReg = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     let emailCheck = emailReg.test(email);
     let passwordCheckLength = password.length >= 8;
