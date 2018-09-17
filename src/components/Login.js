@@ -50,7 +50,6 @@ class Login extends Component {
     if(emailCheck && passwordCheckLength) {
       $.post(`${config.API_ROOT}/login`, { email: $('#email').val(), password: $('#password').val() })
       .done(function( data ) {
-        console.log(data);
         let response = JSON.parse(data);
   
         if(response.success) {
