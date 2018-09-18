@@ -3,6 +3,7 @@ import logo_small from '../assets/img/logo-small.png';
 import avatar from '../assets/img/avatar.png';
 import TextareaAutosize from 'react-autosize-textarea';
 import $ from 'jquery';
+import jwtDecode from 'jwt-decode';
 import { Container, Row, Col, Collapse,
     Navbar,
     NavbarToggler,
@@ -22,6 +23,12 @@ class ActivityFeed extends Component {
         this.state = {
             isOpen: false,
         };
+
+        if(localStorage.getItem('token')){
+            this.state = {
+                session: jwtDecode(localStorage.getItem('token'))
+            }
+        }
     }
 
     toggle() {
@@ -32,6 +39,7 @@ class ActivityFeed extends Component {
 
     componentDidMount() {
         $('#post-content').parent().height($('#post-content').outerHeight());
+        console.log(this.state);
     }
 
     render() {
@@ -44,7 +52,7 @@ class ActivityFeed extends Component {
                     <Nav className="ml-auto" navbar>
                         <UncontrolledDropdown nav inNavbar>
                             <DropdownToggle nav>
-                                Jason Van Malder <FontAwesomeIcon icon={faCaretDown} />
+                                { this.state.session.firstname + ' ' + this.state.session.lastname } <FontAwesomeIcon icon={faCaretDown} />
                             </DropdownToggle>
                             <DropdownMenu right>
                             <DropdownItem>
@@ -68,7 +76,7 @@ class ActivityFeed extends Component {
                     <div className="user-container">
                         <img src={avatar} alt="Logo" />
                         <h5>Jason Van Malder</h5>
-                        <p class="rank">Administrateur</p>
+                        <p className="rank">Administrateur</p>
                         <hr/>
                         <p className="text-left">Activité</p>
                         <div className="badge pink text-left">
