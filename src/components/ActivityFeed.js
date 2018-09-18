@@ -95,10 +95,21 @@ class ActivityFeed extends Component {
                     </div>
                 </Col>
                 <Col md="4" className="no-margin-left no-margin-right">
-                    <div className="user-container">
+                    <div className="user-container right-container">
                         <h5>Sujets du moment</h5>
                         <hr/>
-
+                        <p>Famille</p>
+                        <div>
+                            Lorem LoremLoremLoremLorem Loremvv LoremLorem Lorem...
+                            <small>Par Sylvain Urbain</small>
+                        </div>
+                        <button className="primary"><span>Voir plus</span></button>
+                        <p>Anniversaire de Rara</p>
+                        <div>
+                            Lorem LoremLoremLoremLorem Loremvv LoremLorem Lorem...
+                            <small>Par Jason Van Malder</small>
+                        </div>
+                        <button className="primary"><span>Voir plus</span></button>
                     </div>
                 </Col>
             </Row>

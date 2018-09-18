@@ -504,3 +504,26 @@ body
   background-color: hsl(0, 0%, 91%);
   border-radius: 5px;
 }
+
+.user-container.right-container 
+{
+  text-align: left;
+}
+
+.user-container.right-container h5
+{
+  color: #CAC8C8;
+}
+
+.user-container.right-container p
+{
+  color: #9E9E9E;
+  font-weight: 500;
+}
+
+.user-container.right-container div
+{
+  background-color: #F5F7F8;
+  border-radius: 5px;
+  padding: 5px;
+}
