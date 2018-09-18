@@ -14,7 +14,7 @@ import { Container, Row, Col, Collapse,
     DropdownMenu,
     DropdownItem } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { faCaretDown, faClipboardList, faCamera, faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 
 class ActivityFeed extends Component {
     constructor(props) {
@@ -91,7 +91,12 @@ class ActivityFeed extends Component {
                 </Col>
                 <Col md="5" className="no-margin-left no-margin-right">
                     <div className="publish-container">
-                        <TextareaAutosize id="post-content" placeholder="Poster une publication"></TextareaAutosize>
+                        <TextareaAutosize id="post-content" placeholder="Poster une publication" disabled></TextareaAutosize>
+                        <div className="icons">
+                            <span><FontAwesomeIcon icon={faClipboardList} /></span>
+                            <span><FontAwesomeIcon icon={faCamera} /></span>
+                            <span><FontAwesomeIcon icon={faPencilAlt} /></span>
+                        </div>
                     </div>
                 </Col>
                 <Col md="4" className="no-margin-left no-margin-right">
