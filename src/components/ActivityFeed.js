@@ -88,7 +88,9 @@ class ActivityFeed extends Component {
                 </Col>
                 <Col md="4" className="no-margin-left no-margin-right">
                     <div className="user-container">
-                        <p>Test</p>
+                        <h5>Sujets du moment</h5>
+                        <hr/>
+
                     </div>
                 </Col>
             </Row>
