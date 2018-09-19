@@ -12,7 +12,8 @@ import { Container, Row, Col, Collapse,
     UncontrolledDropdown,
     DropdownToggle,
     DropdownMenu,
-    DropdownItem } from 'reactstrap';
+    DropdownItem, 
+    Button } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faClipboardList, faCamera, faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 
@@ -105,16 +106,16 @@ class ActivityFeed extends Component {
                         <hr/>
                         <p>Famille</p>
                         <div>
-                            Lorem LoremLoremLoremLorem Loremvv LoremLorem Lorem...
-                            <small>Par Sylvain Urbain</small>
+                            <p>Lorem LoremLoremLoremLorem Loremvv LoremLorem Lorem...</p>
+                            <small>Par <a href={null}>Sylvain Urbain</a></small>
                         </div>
-                        <button className="primary"><span>Voir plus</span></button>
+                        <Button color="info" className="see-more-button">Voir plus</Button>{' '}
                         <p>Anniversaire de Rara</p>
                         <div>
-                            Lorem LoremLoremLoremLorem Loremvv LoremLorem Lorem...
-                            <small>Par Jason Van Malder</small>
+                            <p>Lorem LoremLoremLoremLorem Loremvv LoremLorem Lorem...</p>
+                            <small>Par <a href={null}>Sylvain Urbain</a></small>
                         </div>
-                        <button className="primary"><span>Voir plus</span></button>
+                        <Button color="info" className="see-more-button">Voir plus</Button>{' '}
                     </div>
                 </Col>
             </Row>

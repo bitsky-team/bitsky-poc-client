@@ -555,4 +555,43 @@ body
   background-color: #F5F7F8;
   border-radius: 5px;
   padding: 5px;
+  font-size: 15px;
+  color: #CAC8C8;
 }
+
+.user-container.right-container div p
+{
+  font-weight: 300;
+}
+
+.user-container.right-container a
+{
+  color: rgb(207, 148, 202);
+  transition: 0.2s;
+}
+
+.user-container.right-container a:hover, .user-container.right-container a:focus
+{
+  text-decoration: none;
+  color: rgba(146, 74, 141, 1);
+  cursor: pointer;
+}
+
+.user-container.right-container .see-more-button
+{
+  background-color: rgb(131, 178, 224);
+  border-color: rgb(131, 178, 224);
+  padding: 3px 12px 3px 12px;
+  font-size: 14px;
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
+.user-container.right-container .see-more-button:hover, .user-container.right-container .see-more-button:focus
+{
+  color: rgb(131, 178, 224);
+  background-color: #FFF;
+}
+
+
+
