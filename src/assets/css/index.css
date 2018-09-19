@@ -1,6 +1,7 @@
 *:hover, *:focus
 {
   outline: 0 !important;
+  user-select: none;
 }
 
 .no-margin-left
@@ -20,8 +21,6 @@ body
   font-family: sans-serif;
   font-family: 'Roboto', sans-serif;
 }
-
-/*TODO: Changer couleur background */
 
 .App
 {
@@ -472,10 +471,13 @@ body
   border-radius: 5px;
   background-color: #ffffff;
   position: relative;
+  display: flex;
+  min-height: 44px;
 }
 
 .publish-container textarea
 {
+  background-color: #FFF;
   border: none;
   border-radius: 5px;
   padding: 10px 30px 10px 30px;
@@ -483,22 +485,24 @@ body
   min-width: 100%;
   resize: none;
   box-sizing: border-box;
+  min-height: 44px;
 }
 
-.main-container .publish-container .icons
+.main-container .publish-container .remove-box
+{
+  display: none;
+}
+
+.main-container .publish-container .icons, .main-container .publish-container .remove-box
 {
   position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
+  right: 0;
+  height: 100%;  
   padding: 10px;
 }
 
-.main-container .publish-container .icons span
+.main-container .publish-container .icons span, .main-container .publish-container .remove-box span
 {
   padding: 7px;
   font-size: 18px;
@@ -506,32 +510,86 @@ body
   transition: 0.2s;
 }
 
-.main-container .publish-container .icons span:hover
+.main-container .publish-container .icons span:hover, .main-container .publish-container .remove-box span:hover
 {
   cursor: pointer;
   color: rgb(206, 207, 207);
   transform: scale(1.1);
 }
 
-.main-container .search-container img
+.posts-container
 {
+  margin-top: 30px;
+}
+
+.posts-container .post
+{
+  background-color: #FFF;
+  padding: 15px;
+  border-radius: 5px;
+  position: relative;
+}
+
+.posts-container .post:not(:first-child)
+{
+  margin-top: 25px;
+}
+
+.posts-container .post img
+{
+  height: 80px;
+  border-radius: 50%;
+  border: 5px solid #F5F7F8;
   position: absolute;
-  top: 10px;
+  top: -15px;
   left: 10px;
-  width: 64px;
+}
+
+.posts-container .post .title
+{
+  margin-left: 90px;
+  color: rgb(97, 97, 97);
+}
+
+.posts-container .post .title h4
+{
+  margin-bottom: 0;
+  font-size: 1.1rem;
+}
+
+.posts-container .post .title small
+{
+  margin-top: -2px;
+  display: block;
+}
+
+.posts-container .post p
+{
+  margin-top: 25px;
+  background-color: #F5F7F8;
+  color: #b7b7b7;
+  text-align: justify;
+  font-size: 14px;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: 200;
+  line-height: 16px;
+}
+
+.posts-container .post * span
+{
+  color: #b7b7b7;
+  font-weight: 200;
+}
+
+.posts-container .post .fav-counter:hover
+{
+  cursor: pointer;
 }
 
 .navbar-light .navbar-nav .nav-link 
 {
   color: rgb(171, 171, 171);
-}
-
-.search-bar
-{
-  height: 25px;
-  width: 300px;
-  background-color: hsl(0, 0%, 91%);
-  border-radius: 5px;
 }
 
 .user-container.right-container 
