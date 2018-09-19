@@ -651,5 +651,27 @@ body
   background-color: #FFF;
 }
 
+.infos-container
+{
+  background-color: #FFF;
+  border-radius: 5px;
+  padding: 20px 30px 20px 30px;
+}
 
+.infos-container h4
+{
+  text-align: center;
+  color: #9E9E9E;
+}
 
+.headerLogo
+{
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.register-title img
+{
+  border-radius: 50%;
+}

@@ -6,6 +6,7 @@ import { Route, Redirect, withRouter } from 'react-router-dom';
 import Login from './components/Login';
 import Register from './components/Register';
 import ActivityFeed from './components/ActivityFeed';
+import RegisterConfirmation from './components/RegisterConfirmation';
 
 // Services
 import AuthService from './services/AuthService';
@@ -37,6 +38,7 @@ class App extends Component {
         }
       }else
       {
+        // TODO: redirect register confirmation
         if(AuthService.verify()) {
           this.props.history.push('/activity_feed');
         }
@@ -51,6 +53,7 @@ class App extends Component {
             <Route exact path='/login' component={Login} />
             <Route exact path='/register' component={Register} />
             <PrivateRoute exact authed={AuthService.verify()} path='/activity_feed' component={ActivityFeed} />
+            <PrivateRoute exact authed={AuthService.verify()} path='/register_confirmation' component={RegisterConfirmation} />
         </div>
     )
   }
