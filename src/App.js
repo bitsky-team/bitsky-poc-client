@@ -38,7 +38,7 @@ class App extends Component {
       }else
       {
         if(AuthService.verify()) {
-          this.props.history.push('/dashboard');
+          this.props.history.push('/activity_feed');
         }
       }
     }, 400);
@@ -50,7 +50,7 @@ class App extends Component {
             <Route exact path='/' component={Login} />
             <Route exact path='/login' component={Login} />
             <Route exact path='/register' component={Register} />
-            <PrivateRoute exact authed={AuthService.verify()} path='/dashboard' component={ActivityFeed} />
+            <PrivateRoute exact authed={AuthService.verify()} path='/activity_feed' component={ActivityFeed} />
         </div>
     )
   }

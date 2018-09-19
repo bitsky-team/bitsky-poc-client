@@ -55,7 +55,7 @@ class Login extends Component {
         if(response.success) {
           localStorage.setItem('id', response.uniq_id);
           localStorage.setItem('token', response.message);
-          this.props.history.push('/dashboard');
+          this.props.history.push('/activity_feed');
         }else {
           this.toggleError();
           $('#errorMessage').text(response.message);
