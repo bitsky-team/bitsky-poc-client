@@ -23,7 +23,8 @@ import {
         faTimes,
         faTag,
         faStar as faFullStar,
-        faClock
+        faClock,
+        faPaperPlane
     } from '@fortawesome/free-solid-svg-icons';
 
 import { faStar as faEmptyStar, faComments } from '@fortawesome/free-regular-svg-icons';
@@ -65,11 +66,16 @@ class ActivityFeed extends Component {
         });
     }
 
-    adjustPublishContainerHeight() {
+    adjustPublishContainer() {
+        // Height
         let postContentContent = $('#post-content').val();
         
         if(!postContentContent) {
             $('#post-content').height('24px');
+            $('.publish-button').hide();
+        }else
+        {
+            $('.publish-button').show();
         }
 
         $('.publish-container').height($('#post-content').height());
@@ -137,7 +143,7 @@ class ActivityFeed extends Component {
                 <Col md="5" className="no-margin-left no-margin-right">
                     <div className="publish-container">
                         <input type="file" id="file" ref="fileUploader" style={{display: "none"}}/>
-                        <TextareaAutosize id="post-content" placeholder="Poster une publication" onKeyUp={this.adjustPublishContainerHeight} disabled></TextareaAutosize>
+                        <TextareaAutosize id="post-content" placeholder="Poster une publication" onKeyUp={this.adjustPublishContainer} disabled></TextareaAutosize>
                         <div className="icons">
                             <span><FontAwesomeIcon icon={faClipboardList} /></span>
                             <span><FontAwesomeIcon icon={faCamera} onClick={this.handlePictureButtonClick} /></span>
@@ -146,6 +152,7 @@ class ActivityFeed extends Component {
                         <div className="remove-box">
                             <span><FontAwesomeIcon icon={ faTimes } onClick={this.closeTextArea} /></span>
                         </div>
+                        <span className="publish-button"><FontAwesomeIcon icon={faPaperPlane} /></span>
                     </div>
                     <div className="posts-container">
                     <div id="post-1" className="post">

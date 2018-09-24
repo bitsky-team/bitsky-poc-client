@@ -1,7 +1,8 @@
-*:hover, *:focus
+*:hover, *:focus, *:active, *:active:focus
 {
   outline: 0 !important;
   user-select: none;
+  box-shadow: none !important;
 }
 
 .no-margin-left
@@ -22,7 +23,7 @@ body
   font-family: 'Roboto', sans-serif;
 }
 
-.App
+.App, .cloudsBackground
 {
   background: url(../img/background.jpg) no-repeat center center fixed; 
   -webkit-background-size: cover;
@@ -34,6 +35,11 @@ body
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.cloudsBackground
+{
+  padding: 20px;
 }
 
 .single-form-container
@@ -675,7 +681,7 @@ body
 
 .infos-container
 {
-  background-color: #FFF;
+  background-color: rgba(255, 255, 255, 0.8);
   border-radius: 5px;
   padding: 20px 30px 20px 30px;
 }
@@ -683,7 +689,13 @@ body
 .infos-container h4
 {
   text-align: center;
-  color: #9E9E9E;
+  color: #6f6f6f;
+}
+
+.infos-container hr
+{
+  width: 50vw;
+  border-color: #e8e8e8;
 }
 
 .headerLogo
@@ -693,7 +705,58 @@ body
   margin-bottom: 20px;
 }
 
-.register-title img
+.register-title 
+{
+  text-align: center;
+  color: #6f6f6f;
+}
+
+.register-confirmation-image
+{
+  display: inline-block;
+  position: relative;
+}
+
+.register-title .register-confirmation-image img
 {
   border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.register-title .register-confirmation-image span
+{
+  position: absolute;
+  bottom: 3px;
+  background-color: #BBBBBF;
+  left: 20px;
+  color: #FFF;
+  width: 88px;
+  border-bottom-left-radius: 100%;
+  border-bottom-right-radius: 100%;
+}
+
+.register-title img:hover, .register-title .register-confirmation-image span
+{
+  cursor: pointer;
+}
+
+.register-title textarea
+{
+  width: 35vw;
+  border-color: #c5c5c5;
+  border-radius: 5px;
+  resize: none;
+  margin: 0 auto;
+}
+
+.confirmRegisterButton
+{
+  background-image: linear-gradient(to right, #fbc2eb 0%, #a6c1ee 100%);
+  border: none;
+  transition: 0.2s;
+}
+
+.confirmRegisterButton:hover
+{
+  transform: scale(1.01);
 }
