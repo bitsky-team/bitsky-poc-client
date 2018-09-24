@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Container, Row, Col, FormGroup, Label, Input, Button, FormFeedback } from 'reactstrap';
 import jwtDecode from 'jwt-decode';
 import $ from 'jquery';
+import { config } from '../config';
 import logo from '../assets/img/logo-small.png';
 import avatarDefault from '../assets/img/avatar-default.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,6 +16,7 @@ class RegisterConfirmation extends Component {
         this.state = {
           session: jwtDecode(localStorage.getItem('token'))
         }
+        this.checkForm = this.checkForm.bind(this);
     }
 
     checkForm() {
@@ -35,7 +37,19 @@ class RegisterConfirmation extends Component {
           isLivingplaceFilled = livingplace.val().length >= 3;
       
       if(isBiographyFilled && isSexChoosen && isJobFilled && isBirthdateCorrect && isBirthplaceFilled && isRelationshipstatusCorrect && isLivingplaceFilled) {
-        console.log('ok');
+        $.post(`${config.API_ROOT}/register_confirmation`, { uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), biography: biography.val(), sex: sex.val(), job: job.val(), birthdate: birthdate.val(), birthplace: birthplace.val(), relationshipstatus: relationshipstatus.val(), livingplace: livingplace.val()})
+        .done(function( data ) {
+          let response = JSON.parse(data);
+
+          if(response.success) {
+            this.props.history.push('/activity_feed');
+          }else {
+            // TODO: Afficher une erreur
+            console.log('nok');
+            //this.toggleError();
+            $('#errorMessage').html(response.message);
+          }
+        }.bind(this));
       }else {
         if(!isBiographyFilled) biography.addClass('is-invalid');
         if(!isSexChoosen) sex.addClass('is-invalid');

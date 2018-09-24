@@ -38,9 +38,8 @@ class App extends Component {
         }
       }else
       {
-        // TODO: redirect register confirmation
         if(AuthService.verify()) {
-          this.props.history.push('/register_confirmation');
+          this.props.history.push('/activity_feed');
         }
       }
     }, 400);

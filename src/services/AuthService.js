@@ -15,12 +15,12 @@ class AuthService {
                 dataType: 'json',
                 async: false,
                 success: function(data) {
-
                     if(data.success === true)
                     {
                         result = true;
                     }else
                     {
+                        console.log(data);
                         console.log('Local storage removed for illicit use');
                         localStorage.clear();
                         result = false;

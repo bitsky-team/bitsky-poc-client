@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import logo_small from '../assets/img/logo-small.png';
 import avatar from '../assets/img/avatar.png';
+import { config } from '../config';
 import TextareaAutosize from 'react-autosize-textarea';
 import $ from 'jquery';
 import jwtDecode from 'jwt-decode';
@@ -87,6 +88,18 @@ class ActivityFeed extends Component {
 
     handleFavoriteButtonClick(e) {
         this.setState({favoriteFilled: !this.state.favoriteFilled});
+    }
+
+    componentWillMount() {
+        $.post(`${config.API_ROOT}/get_firsttime`, { uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') })
+          .done(function( data ) {
+            let response = JSON.parse(data);
+            if(response.success) {
+              let firstTime = Boolean(parseInt(response.message, 10));
+              localStorage.setItem('firsttime', firstTime);
+              if(firstTime) this.props.history.push('/register_confirmation');
+            }
+          }.bind(this));
     }
 
     componentDidMount() {
