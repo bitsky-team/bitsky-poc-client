@@ -20,7 +20,6 @@ class AuthService {
                         result = true;
                     }else
                     {
-                        console.log(data);
                         console.log('Local storage removed for illicit use');
                         localStorage.clear();
                         result = false;

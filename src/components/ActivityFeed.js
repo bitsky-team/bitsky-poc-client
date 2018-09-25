@@ -37,6 +37,7 @@ class ActivityFeed extends Component {
         this.closeTextArea = this.closeTextArea.bind(this);
         this.handlePictureButtonClick = this.handlePictureButtonClick.bind(this);
         this.handleFavoriteButtonClick = this.handleFavoriteButtonClick.bind(this);
+        this.handlePublishButtonClick = this.handlePublishButtonClick.bind(this);
         this.state = {
             isOpen: false,
             session: jwtDecode(localStorage.getItem('token')),
@@ -88,6 +89,10 @@ class ActivityFeed extends Component {
 
     handleFavoriteButtonClick(e) {
         this.setState({favoriteFilled: !this.state.favoriteFilled});
+    }
+
+    handlePublishButtonClick(e) {
+        console.log('ok');
     }
 
     componentWillMount() {
@@ -159,13 +164,13 @@ class ActivityFeed extends Component {
                         <TextareaAutosize id="post-content" placeholder="Poster une publication" onKeyUp={this.adjustPublishContainer} disabled></TextareaAutosize>
                         <div className="icons">
                             <span><FontAwesomeIcon icon={faClipboardList} /></span>
-                            <span><FontAwesomeIcon icon={faCamera} onClick={this.handlePictureButtonClick} /></span>
-                            <span><FontAwesomeIcon icon={faPencilAlt} onClick={this.openTextArea} /></span>
+                            <span onClick={this.handlePictureButtonClick}><FontAwesomeIcon icon={faCamera} /></span>
+                            <span onClick={this.openTextArea}><FontAwesomeIcon icon={faPencilAlt} /></span>
                         </div>
                         <div className="remove-box">
-                            <span><FontAwesomeIcon icon={ faTimes } onClick={this.closeTextArea} /></span>
+                            <span onClick={this.closeTextArea}><FontAwesomeIcon icon={ faTimes }  /></span>
                         </div>
-                        <span className="publish-button"><FontAwesomeIcon icon={faPaperPlane} /></span>
+                        <span className="publish-button" onClick={this.handlePublishButtonClick}><FontAwesomeIcon icon={faPaperPlane} /></span>
                     </div>
                     <div className="posts-container">
                     <div id="post-1" className="post">

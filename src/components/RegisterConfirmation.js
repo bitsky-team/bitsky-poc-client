@@ -28,6 +28,14 @@ class RegisterConfirmation extends Component {
           relationshipstatus = $('#relationshipstatus'),
           livingplace = $('#livingplace');
 
+      biography.removeClass('is-invalid');
+      sex.removeClass('is-invalid');
+      job.removeClass('is-invalid');
+      birthdate.removeClass('is-invalid');
+      birthplace.removeClass('is-invalid');
+      relationshipstatus.removeClass('is-invalid');
+      livingplace.removeClass('is-invalid');
+
       let isBiographyFilled = biography.val().length >= 10,
           isSexChoosen = sex.val() === 'Homme' || sex.val() === 'Femme' || sex.val() === 'Autre',
           isJobFilled = job.val().length >= 3,
@@ -43,11 +51,6 @@ class RegisterConfirmation extends Component {
 
           if(response.success) {
             this.props.history.push('/activity_feed');
-          }else {
-            // TODO: Afficher une erreur
-            console.log('nok');
-            //this.toggleError();
-            $('#errorMessage').html(response.message);
           }
         }.bind(this));
       }else {
