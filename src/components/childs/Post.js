@@ -24,6 +24,7 @@ class Post extends Component {
     }
 
     isOwner() {
+        // TODO: vérifier
         if(true) {
             return <FontAwesomeIcon className="delete" icon={faTimes} onClick={this.handleDeleteButtonClick}/>
         }
