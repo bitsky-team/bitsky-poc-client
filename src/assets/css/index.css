@@ -573,6 +573,21 @@ body
   left: 10px;
 }
 
+.posts-container .post .delete
+{
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  color: #b7b7b7;
+  transition: 0.2s;
+}
+
+.posts-container .post .delete:hover
+{
+  cursor: pointer;
+  transform: scale(1.1);
+}
+
 .posts-container .post .title
 {
   margin-left: 90px;
@@ -759,4 +774,27 @@ body
 .confirmRegisterButton:hover
 {
   transform: scale(1.01);
+}
+
+.modal-choice
+{
+  flex: 1;
+  transition: 0.2s;
+}
+
+.modal-choice.btn-primary
+{
+  background-color: rgb(131, 178, 224);
+  border-color: rgb(131, 178, 224);
+}
+
+.modal-choice.btn-primary:active
+{
+  background-color: rgb(105, 143, 180) !important;
+  border-color: rgb(105, 143, 180) !important;
+}
+
+.modal-choice:hover
+{
+  transform: scale(1.05);
 }

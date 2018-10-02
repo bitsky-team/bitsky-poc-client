@@ -5,6 +5,9 @@ import { config } from '../config';
 import TextareaAutosize from 'react-autosize-textarea';
 import $ from 'jquery';
 import jwtDecode from 'jwt-decode';
+import Post from './childs/Post';
+import RankService from '../services/RankService';
+
 import { Container, Row, Col, Collapse,
     Navbar,
     NavbarToggler,
@@ -14,21 +17,24 @@ import { Container, Row, Col, Collapse,
     DropdownToggle,
     DropdownMenu,
     DropdownItem, 
-    Button } from 'reactstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-        faCaretDown, 
-        faClipboardList, 
-        faCamera, 
-        faPencilAlt, 
-        faTimes,
-        faTag,
-        faStar as faFullStar,
-        faClock,
-        faPaperPlane
-    } from '@fortawesome/free-solid-svg-icons';
+    Button,
+    Modal,
+    ModalBody,
+    ModalFooter,
+    Label,
+    Input } from 'reactstrap';
 
-import { faStar as faEmptyStar, faComments } from '@fortawesome/free-regular-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import { 
+    faCaretDown, 
+    faClipboardList, 
+    faCamera, 
+    faPencilAlt, 
+    faTimes,
+    faPaperPlane
+} from '@fortawesome/free-solid-svg-icons';
+
 
 class ActivityFeed extends Component {
     constructor(props) {
@@ -36,12 +42,13 @@ class ActivityFeed extends Component {
         this.toggleNavbar = this.toggleNavbar.bind(this);
         this.closeTextArea = this.closeTextArea.bind(this);
         this.handlePictureButtonClick = this.handlePictureButtonClick.bind(this);
-        this.handleFavoriteButtonClick = this.handleFavoriteButtonClick.bind(this);
         this.handlePublishButtonClick = this.handlePublishButtonClick.bind(this);
+        this.togglePostModal = this.togglePostModal.bind(this);
         this.state = {
             isOpen: false,
             session: jwtDecode(localStorage.getItem('token')),
-            favoriteFilled: false
+            postModal: false,
+            posts: []
         };
     }
 
@@ -87,15 +94,55 @@ class ActivityFeed extends Component {
         this.refs.fileUploader.click();
     }
 
-    handleFavoriteButtonClick(e) {
-        this.setState({favoriteFilled: !this.state.favoriteFilled});
+    handlePublishButtonClick(e) {
+        let content = $('#post-content');
+        let tag = $('#post-tag');
+
+        let isContentFilled = $.trim(content.val()).length > 0;
+        let isTagFilled = $.trim(tag.val()).length > 0;
+
+        if(isContentFilled && isTagFilled)
+        {
+            $.post(`${config.API_ROOT}/store_post`, { token: localStorage.getItem('token'), owner_uniq_id: localStorage.getItem('id'), content: content.val(),  tag: tag.val() })
+            .done(function(data) {
+                let response = JSON.parse(data);
+                if(response.success) {
+                    let posts = this.state.posts;
+                    let newPost = (
+                        <Post 
+                            id={response.postId} 
+                            key={"post-" + response.postId}
+                            ownerName={this.state.session.firstname + " " + this.state.session.lastname}
+                            ownerRank={RankService.translate(response.ownerRank)}
+                            content={content.val()}
+                            tag={tag.val()}
+                            filled={false}
+                            favorites={0}
+                            comments={0}
+                            date={new Date()}
+                        />
+                    );
+                    posts.unshift(newPost);
+                    this.setState({posts: posts});
+                    this.closeTextArea();
+                    this.adjustPublishContainer();
+                    this.togglePostModal();
+                }
+            }.bind(this));
+        }
     }
 
-    handlePublishButtonClick(e) {
-        console.log('ok');
+    togglePostModal(e) {
+        // Checking if textarea's content is not empty
+        if(this.state.postModal || /\S/.test($('#post-content').val())) {
+            this.setState({
+                postModal: !this.state.postModal
+            });
+        }
     }
 
     componentWillMount() {
+        // Checking firsttime
         $.post(`${config.API_ROOT}/get_firsttime`, { uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') })
           .done(function( data ) {
             let response = JSON.parse(data);
@@ -104,7 +151,34 @@ class ActivityFeed extends Component {
               localStorage.setItem('firsttime', firstTime);
               if(firstTime) this.props.history.push('/register_confirmation');
             }
-          }.bind(this));
+        }.bind(this));
+
+        // Retrieving posts
+        $.post(`${config.API_ROOT}/get_allposts`, { uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') })
+          .done(function( data ) {
+            let response = JSON.parse(data);
+            if(response.success) {
+              let posts = response.posts;
+              let statePosts = this.state.posts;
+              
+              posts.forEach((post) => {
+                statePosts.push(<Post 
+                    id={post.id} 
+                    key={"post-" + post.id}
+                    ownerName={post.owner.firstname + " " + post.owner.lastname}
+                    ownerRank={RankService.translate(post.owner.rank)}
+                    content={post.content}
+                    tag={post.tag}
+                    filled={false}
+                    favorites={post.favorites}
+                    comments={post.comments}
+                    date={post.created_at}
+                />);
+              });
+
+              this.setState({posts: statePosts});
+            }
+        }.bind(this));
     }
 
     componentDidMount() {
@@ -114,6 +188,16 @@ class ActivityFeed extends Component {
     render() {
     return (
         <div>
+            <Modal isOpen={this.state.postModal} toggle={this.togglePostModal} className={this.props.className}>
+                <ModalBody>
+                    <Label for="post-tag">Veuillez indiquer le sujet de votre publication</Label>
+                    <Input type="text" name="post-tag" id="post-tag" placeholder="Sujet de la publication" />
+                </ModalBody>
+                <ModalFooter>
+                    <Button className="modal-choice" color="primary" onClick={this.handlePublishButtonClick}><FontAwesomeIcon icon={ faPaperPlane } /></Button>{' '}
+                    <Button className="modal-choice" color="secondary" onClick={this.togglePostModal}><FontAwesomeIcon icon={ faTimes }/></Button>
+                </ModalFooter>
+            </Modal>
             <Navbar light expand="md">
                 <NavbarBrand href="/"><img src={logo_small} height="40" alt="Logo"/></NavbarBrand>
                 <NavbarToggler onClick={this.toggleNavbar} />
@@ -144,8 +228,8 @@ class ActivityFeed extends Component {
                 <Col md="3" className="no-margin-left no-margin-right">
                     <div className="user-container">
                         <img src={avatar} alt="Avatar" />
-                        <h5>Jason Van Malder</h5>
-                        <p className="rank">Administrateur</p>
+                        <h5>{ this.state.session.firstname + ' ' + this.state.session.lastname }</h5>
+                        <p className="rank">{ RankService.translate(this.state.session.rank) }</p>
                         <hr/>
                         <p className="text-left">Activité</p>
                         <div className="badge pink text-left">
@@ -170,35 +254,10 @@ class ActivityFeed extends Component {
                         <div className="remove-box">
                             <span onClick={this.closeTextArea}><FontAwesomeIcon icon={ faTimes }  /></span>
                         </div>
-                        <span className="publish-button" onClick={this.handlePublishButtonClick}><FontAwesomeIcon icon={faPaperPlane} /></span>
+                        <span className="publish-button" onClick={this.togglePostModal}><FontAwesomeIcon icon={faPaperPlane} /></span>
                     </div>
                     <div className="posts-container">
-                    <div id="post-1" className="post">
-                            <img src={avatar} alt="Avatar" />
-                            <div className="title">
-                                <h4>Sylvain Urbain</h4>
-                                <small>Administrateur</small>
-                            </div>
-                            <p className="post-content">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur varius enim lorem, nec posuere dui fermentum eget. Sed semper dignissim nibh, et rhoncus enim volutpat non. Proin condimentum orci id libero facilisis, nec porta nisl fringilla.
-                            </p>
-                            <Container className="post-details">
-                                <Row>
-                                    <Col md="3">
-                                        <span className="tag"><FontAwesomeIcon icon={faTag} /> Famille</span>
-                                    </Col>
-                                    <Col md="3">
-                                        <span className="fav-counter"><i><FontAwesomeIcon icon={this.state.favoriteFilled ? faFullStar : faEmptyStar} onClick={this.handleFavoriteButtonClick} /></i> 41</span>
-                                    </Col>
-                                    <Col md="3">
-                                        <span className="comment-counter"><FontAwesomeIcon icon={faComments} /> 7</span>    
-                                    </Col>
-                                    <Col md="3">
-                                        <span className="date"><FontAwesomeIcon icon={faClock} /> 14 min.</span>
-                                    </Col>
-                                </Row>
-                            </Container>                    
-                        </div>
+                        { this.state.posts }
                     </div>
                 </Col>
                 <Col md="4" className="no-margin-left no-margin-right">
