@@ -150,31 +150,33 @@ class ActivityFeed extends Component {
         }.bind(this));
 
         // Retrieving posts
-        $.post(`${config.API_ROOT}/get_allposts`, { uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') })
-          .done(function( data ) {
-            let response = JSON.parse(data);
-            if(response.success) {
-              let posts = response.posts;
-              let statePosts = this.state.posts;
-              
-              posts.forEach((post) => {
-                statePosts.push(<Post 
-                    id={post.id} 
-                    key={"post-" + post.id}
-                    ownerName={post.owner.firstname + " " + post.owner.lastname}
-                    ownerRank={RankService.translate(post.owner.rank)}
-                    content={post.content}
-                    tag={post.tag}
-                    filled={false}
-                    favorites={post.favorites}
-                    comments={post.comments}
-                    date={post.created_at}
-                />);
-              });
+        setTimeout(function(){
+            $.post(`${config.API_ROOT}/get_allposts`, { uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') })
+            .done(function( data ) {
+                let response = JSON.parse(data);
+                if(response.success) {
+                let posts = response.posts;
+                let statePosts = this.state.posts;
+                
+                posts.forEach((post) => {
+                    statePosts.push(<Post 
+                        id={post.id} 
+                        key={"post-" + post.id}
+                        ownerName={post.owner.firstname + " " + post.owner.lastname}
+                        ownerRank={RankService.translate(post.owner.rank)}
+                        content={post.content}
+                        tag={post.tag}
+                        filled={false}
+                        favorites={post.favorites}
+                        comments={post.comments}
+                        date={post.created_at}
+                    />);
+                });
 
-              this.setState({posts: statePosts});
-            }
-        }.bind(this));
+                this.setState({posts: statePosts});
+                }
+            }.bind(this));
+        }.bind(this), 1);
     }
 
     componentDidMount() {
