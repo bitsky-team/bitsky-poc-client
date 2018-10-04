@@ -12,9 +12,6 @@ class Register extends Component {
       errorModal: false,
       confirmModal: false
     };
-    this.toggleError = this.toggleError.bind(this);
-    this.toggleConfirm = this.toggleConfirm.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount() {
@@ -32,13 +29,13 @@ class Register extends Component {
     }, 300);
   }
 
-  toggleError() {
+  toggleError = (e) => {
     this.setState({
       errorModal: !this.state.errorModal
     });
   }
 
-  toggleConfirm(e) {
+  toggleConfirm = (e) => {
     e.preventDefault();
 
     this.setState({
@@ -46,7 +43,7 @@ class Register extends Component {
     });
   }
 
-  handleSubmit(e) {
+  handleSubmit = (e) => {
     this.toggleConfirm(e);
     let email = $('#email').val();
     let password =  $('#password').val();

@@ -12,8 +12,6 @@ class Login extends Component {
     this.state = {
       modal: false
     };
-    this.toggleError = this.toggleError.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount() {
@@ -31,14 +29,14 @@ class Login extends Component {
     }, 300);
   }
 
-  toggleError() {
+  toggleError = (e) => {
     this.setState({
       modal: !this.state.modal
     });
   }
 
-  handleSubmit(event) {
-    event.preventDefault();
+  handleSubmit = (e) => {
+    e.preventDefault();
 
     let email = $('#email').val();
     let password =  $('#password').val();

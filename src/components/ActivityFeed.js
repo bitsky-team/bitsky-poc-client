@@ -39,11 +39,7 @@ import {
 class ActivityFeed extends Component {
     constructor(props) {
         super(props);
-        this.toggleNavbar = this.toggleNavbar.bind(this);
-        this.closeTextArea = this.closeTextArea.bind(this);
-        this.handlePictureButtonClick = this.handlePictureButtonClick.bind(this);
-        this.handlePublishButtonClick = this.handlePublishButtonClick.bind(this);
-        this.togglePostModal = this.togglePostModal.bind(this);
+
         this.state = {
             isOpen: false,
             session: jwtDecode(localStorage.getItem('token')),
@@ -52,7 +48,7 @@ class ActivityFeed extends Component {
         };
     }
 
-    toggleNavbar() {
+    toggleNavbar = (e) => {
         this.setState({
             isOpen: !this.state.isOpen
         });
@@ -66,7 +62,7 @@ class ActivityFeed extends Component {
         $('#post-content').focus();
     }
 
-    closeTextArea() {
+    closeTextArea = (e) => {
         $('#post-content').val('');
         $('#post-content').css('height', '');
         $('#post-content').prop("disabled", true);
@@ -90,11 +86,11 @@ class ActivityFeed extends Component {
         $('.publish-container').height($('#post-content').height());
     }
 
-    handlePictureButtonClick(e) {
+    handlePictureButtonClick = (e) => {
         this.refs.fileUploader.click();
     }
 
-    handlePublishButtonClick(e) {
+    handlePublishButtonClick = (e) => {
         let content = $('#post-content');
         let tag = $('#post-tag');
 
@@ -132,7 +128,7 @@ class ActivityFeed extends Component {
         }
     }
 
-    togglePostModal(e) {
+    togglePostModal = (e) => {
         // Checking if textarea's content is not empty
         if(this.state.postModal || /\S/.test($('#post-content').val())) {
             this.setState({
@@ -186,102 +182,102 @@ class ActivityFeed extends Component {
     }
 
     render() {
-    return (
-        <div>
-            <Modal isOpen={this.state.postModal} toggle={this.togglePostModal} className={this.props.className}>
-                <ModalBody>
-                    <Label for="post-tag">Veuillez indiquer le sujet de votre publication</Label>
-                    <Input type="text" name="post-tag" id="post-tag" placeholder="Sujet de la publication" />
-                </ModalBody>
-                <ModalFooter>
-                    <Button className="modal-choice" color="primary" onClick={this.handlePublishButtonClick}><FontAwesomeIcon icon={ faPaperPlane } /></Button>{' '}
-                    <Button className="modal-choice" color="secondary" onClick={this.togglePostModal}><FontAwesomeIcon icon={ faTimes }/></Button>
-                </ModalFooter>
-            </Modal>
-            <Navbar light expand="md">
-                <NavbarBrand href="/"><img src={logo_small} height="40" alt="Logo"/></NavbarBrand>
-                <NavbarToggler onClick={this.toggleNavbar} />
-                <Collapse isOpen={this.state.isOpen} navbar>
-                    <Nav className="ml-auto" navbar>
-                        <UncontrolledDropdown nav inNavbar>
-                            <DropdownToggle nav>
-                                { this.state.session.firstname + ' ' + this.state.session.lastname } <FontAwesomeIcon icon={faCaretDown} />
-                            </DropdownToggle>
-                            <DropdownMenu right>
-                            <DropdownItem>
-                                Option 1
-                            </DropdownItem>
-                            <DropdownItem>
-                                Option 2
-                            </DropdownItem>
-                            <DropdownItem divider />
-                            <DropdownItem onClick={(e) => {localStorage.removeItem('id'); localStorage.removeItem('token'); this.props.history.push('/login');}}>
-                                Déconnexion
-                            </DropdownItem>
-                            </DropdownMenu>
-                        </UncontrolledDropdown>
-                    </Nav>
-                </Collapse>
-            </Navbar>
-            <Container className="main-container">
-            <Row>
-                <Col md="3" className="no-margin-left no-margin-right">
-                    <div className="user-container">
-                        <img src={avatar} alt="Avatar" />
-                        <h5>{ this.state.session.firstname + ' ' + this.state.session.lastname }</h5>
-                        <p className="rank">{ RankService.translate(this.state.session.rank) }</p>
-                        <hr/>
-                        <p className="text-left">Activité</p>
-                        <div className="badge pink text-left">
-                            <span><strong>174</strong></span>
-                            <span>Publications postées</span>
+        return (
+            <div>
+                <Modal isOpen={this.state.postModal} toggle={this.togglePostModal} className={this.props.className}>
+                    <ModalBody>
+                        <Label for="post-tag">Veuillez indiquer le sujet de votre publication</Label>
+                        <Input type="text" name="post-tag" id="post-tag" placeholder="Sujet de la publication" />
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button className="modal-choice" color="primary" onClick={this.handlePublishButtonClick}><FontAwesomeIcon icon={ faPaperPlane } /></Button>{' '}
+                        <Button className="modal-choice" color="secondary" onClick={this.togglePostModal}><FontAwesomeIcon icon={ faTimes }/></Button>
+                    </ModalFooter>
+                </Modal>
+                <Navbar light expand="md">
+                    <NavbarBrand href="/"><img src={logo_small} height="40" alt="Logo"/></NavbarBrand>
+                    <NavbarToggler onClick={this.toggleNavbar} />
+                    <Collapse isOpen={this.state.isOpen} navbar>
+                        <Nav className="ml-auto" navbar>
+                            <UncontrolledDropdown nav inNavbar>
+                                <DropdownToggle nav>
+                                    { this.state.session.firstname + ' ' + this.state.session.lastname } <FontAwesomeIcon icon={faCaretDown} />
+                                </DropdownToggle>
+                                <DropdownMenu right>
+                                <DropdownItem>
+                                    Option 1
+                                </DropdownItem>
+                                <DropdownItem>
+                                    Option 2
+                                </DropdownItem>
+                                <DropdownItem divider />
+                                <DropdownItem onClick={(e) => {localStorage.removeItem('id'); localStorage.removeItem('token'); this.props.history.push('/login');}}>
+                                    Déconnexion
+                                </DropdownItem>
+                                </DropdownMenu>
+                            </UncontrolledDropdown>
+                        </Nav>
+                    </Collapse>
+                </Navbar>
+                <Container className="main-container">
+                <Row>
+                    <Col md="3" className="no-margin-left no-margin-right">
+                        <div className="user-container">
+                            <img src={avatar} alt="Avatar" />
+                            <h5>{ this.state.session.firstname + ' ' + this.state.session.lastname }</h5>
+                            <p className="rank">{ RankService.translate(this.state.session.rank) }</p>
+                            <hr/>
+                            <p className="text-left">Activité</p>
+                            <div className="badge pink text-left">
+                                <span><strong>174</strong></span>
+                                <span>Publications postées</span>
+                            </div>
+                            <div className="badge blue text-left">
+                                <span><strong>225</strong></span>
+                                <span>Fichiers téléchargés</span>
+                            </div>
                         </div>
-                        <div className="badge blue text-left">
-                            <span><strong>225</strong></span>
-                            <span>Fichiers téléchargés</span>
+                    </Col>
+                    <Col md="5" className="no-margin-left no-margin-right">
+                        <div className="publish-container">
+                            <input type="file" id="file" ref="fileUploader" style={{display: "none"}}/>
+                            <TextareaAutosize id="post-content" placeholder="Poster une publication" onKeyUp={this.adjustPublishContainer} disabled></TextareaAutosize>
+                            <div className="icons">
+                                <span><FontAwesomeIcon icon={faClipboardList} /></span>
+                                <span onClick={this.handlePictureButtonClick}><FontAwesomeIcon icon={faCamera} /></span>
+                                <span onClick={this.openTextArea}><FontAwesomeIcon icon={faPencilAlt} /></span>
+                            </div>
+                            <div className="remove-box">
+                                <span onClick={this.closeTextArea}><FontAwesomeIcon icon={ faTimes }  /></span>
+                            </div>
+                            <span className="publish-button" onClick={this.togglePostModal}><FontAwesomeIcon icon={faPaperPlane} /></span>
                         </div>
-                    </div>
-                </Col>
-                <Col md="5" className="no-margin-left no-margin-right">
-                    <div className="publish-container">
-                        <input type="file" id="file" ref="fileUploader" style={{display: "none"}}/>
-                        <TextareaAutosize id="post-content" placeholder="Poster une publication" onKeyUp={this.adjustPublishContainer} disabled></TextareaAutosize>
-                        <div className="icons">
-                            <span><FontAwesomeIcon icon={faClipboardList} /></span>
-                            <span onClick={this.handlePictureButtonClick}><FontAwesomeIcon icon={faCamera} /></span>
-                            <span onClick={this.openTextArea}><FontAwesomeIcon icon={faPencilAlt} /></span>
+                        <div className="posts-container">
+                            { this.state.posts }
                         </div>
-                        <div className="remove-box">
-                            <span onClick={this.closeTextArea}><FontAwesomeIcon icon={ faTimes }  /></span>
+                    </Col>
+                    <Col md="4" className="no-margin-left no-margin-right">
+                        <div className="user-container right-container">
+                            <h5>Sujets du moment</h5>
+                            <hr/>
+                            <p>Famille</p>
+                            <div>
+                                <p>Lorem LoremLoremLoremLorem Loremvv LoremLorem Lorem...</p>
+                                <small>Par <a href={null}>Sylvain Urbain</a></small>
+                            </div>
+                            <Button color="info" className="see-more-button">Voir plus</Button>{' '}
+                            <p>Anniversaire de Rara</p>
+                            <div>
+                                <p>Lorem LoremLoremLoremLorem Loremvv LoremLorem Lorem...</p>
+                                <small>Par <a href={null}>Sylvain Urbain</a></small>
+                            </div>
+                            <Button color="info" className="see-more-button">Voir plus</Button>{' '}
                         </div>
-                        <span className="publish-button" onClick={this.togglePostModal}><FontAwesomeIcon icon={faPaperPlane} /></span>
-                    </div>
-                    <div className="posts-container">
-                        { this.state.posts }
-                    </div>
-                </Col>
-                <Col md="4" className="no-margin-left no-margin-right">
-                    <div className="user-container right-container">
-                        <h5>Sujets du moment</h5>
-                        <hr/>
-                        <p>Famille</p>
-                        <div>
-                            <p>Lorem LoremLoremLoremLorem Loremvv LoremLorem Lorem...</p>
-                            <small>Par <a href={null}>Sylvain Urbain</a></small>
-                        </div>
-                        <Button color="info" className="see-more-button">Voir plus</Button>{' '}
-                        <p>Anniversaire de Rara</p>
-                        <div>
-                            <p>Lorem LoremLoremLoremLorem Loremvv LoremLorem Lorem...</p>
-                            <small>Par <a href={null}>Sylvain Urbain</a></small>
-                        </div>
-                        <Button color="info" className="see-more-button">Voir plus</Button>{' '}
-                    </div>
-                </Col>
-            </Row>
-            </Container>
-        </div>
-    );
+                    </Col>
+                </Row>
+                </Container>
+            </div>
+        );
     }
   
 }

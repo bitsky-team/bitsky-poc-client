@@ -14,8 +14,7 @@ class Post extends Component {
 
     constructor(props) {
         super(props);
-        this.handleFavoriteButtonClick = this.handleFavoriteButtonClick.bind(this);
-        this.handleDeleteButtonClick = this.handleDeleteButtonClick.bind(this);
+
         this.state = {
             favoriteFilled: this.props.favoriteFilled,
             favorites: this.props.favorites,
@@ -29,13 +28,13 @@ class Post extends Component {
         }
     }
 
-    handleFavoriteButtonClick(e) {
+    handleFavoriteButtonClick = (e) => {
         this.setState({favoriteFilled: !this.state.favoriteFilled});
         if(this.state.favoriteFilled) this.setState({favorites: this.state.favorites - 1});
         else this.setState({favorites: this.state.favorites + 1});
     }
 
-    handleDeleteButtonClick(e) {
+    handleDeleteButtonClick = (e) => {
         $.post(`${config.API_ROOT}/remove_post`, { uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id:  this.props.id})
           .done(function( data ) {
             let response = JSON.parse(data);
