@@ -7,6 +7,8 @@ import jwtDecode from 'jwt-decode';
 import Post from '../common/post/Post';
 import RankService from '../../services/RankService';
 import Navbar from '../common/template/Navbar';
+import axios from 'axios';
+import qs from 'qs';
 
 import { 
     Container, 
@@ -144,11 +146,10 @@ export default class ActivityFeedPage extends Component {
         }.bind(this));
 
         // Retrieving posts
-        setTimeout(function(){
-            $.post(`${config.API_ROOT}/get_allposts`, { uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') })
-            .done(function( data ) {
-                let response = JSON.parse(data);
-                if(response.success) {
+        axios.post(`${config.API_ROOT}/get_allposts`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') }))
+        .then(function(response) {
+            response = response.data;
+            if(response.success) {
                 let posts = response.posts;
                 let statePosts = this.state.posts;
                 
@@ -166,11 +167,11 @@ export default class ActivityFeedPage extends Component {
                         date={post.created_at}
                     />);
                 });
-
                 this.setState({posts: statePosts});
-                }
-            }.bind(this));
-        }.bind(this), 1);
+            }else {
+                console.log("Failed loading posts: " + response.message);
+            }
+        }.bind(this));
     }
 
     componentDidMount() {
