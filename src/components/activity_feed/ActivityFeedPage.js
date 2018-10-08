@@ -95,9 +95,9 @@ export default class ActivityFeedPage extends Component {
 
         if(isContentFilled && isTagFilled)
         {
-            $.post(`${config.API_ROOT}/store_post`, { token: localStorage.getItem('token'), owner_uniq_id: localStorage.getItem('id'), content: content.val(),  tag: tag.val() })
-            .done(function(data) {
-                let response = JSON.parse(data);
+            axios.post(`${config.API_ROOT}/store_post`, qs.stringify({ token: localStorage.getItem('token'), owner_uniq_id: localStorage.getItem('id'), content: content.val(),  tag: tag.val() }))
+            .then(function(response) {
+                response = response.data;
                 if(response.success) {
                     let posts = this.state.posts;
                     let newPost = (
@@ -135,9 +135,9 @@ export default class ActivityFeedPage extends Component {
 
     componentWillMount() {
         // Checking firsttime
-        $.post(`${config.API_ROOT}/get_firsttime`, { uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') })
-          .done(function( data ) {
-            let response = JSON.parse(data);
+        axios.post(`${config.API_ROOT}/get_firsttime`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') }))
+          .then(function(response) {
+            response = response.data;
             if(response.success) {
               let firstTime = Boolean(parseInt(response.message, 10));
               localStorage.setItem('firsttime', firstTime);

@@ -4,6 +4,8 @@ import logo_small from '../../assets/img/logo-small.png';
 import $ from 'jquery';
 import { config } from '../../config';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import axios from 'axios';
+import qs from 'qs';
 
 export default class RegisterPage extends Component {
   constructor(props) {
@@ -61,9 +63,9 @@ export default class RegisterPage extends Component {
     let firstnameCheck = firstname.length >= 2;
 
     if(emailCheck && passwordCheckLength && repeatPasswordCheckLength && passwordCheckEquality && lastnameCheck && firstnameCheck) {
-      $.post(`${config.API_ROOT}/register`, { email: $('#email').val(), password: $('#password').val(), repeatPassword: $('#repeatPassword').val(), lastname: $('#lastname').val(), firstname: $('#firstname').val()})
-      .done(function( data ) {
-        let response = JSON.parse(data);
+      axios.post(`${config.API_ROOT}/register`, qs.stringify({ email: $('#email').val(), password: $('#password').val(), repeatPassword: $('#repeatPassword').val(), lastname: $('#lastname').val(), firstname: $('#firstname').val()}))
+      .then(function( response ) {
+        response = response.data;
 
         if(response.success) {
           localStorage.setItem('id', response.uniq_id);
