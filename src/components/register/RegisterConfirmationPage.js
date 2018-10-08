@@ -9,6 +9,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
         faUserCheck
     } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
+import qs from 'qs';
 
 export default class RegisterConfirmationPage extends Component {
     constructor(props) {
@@ -45,10 +47,9 @@ export default class RegisterConfirmationPage extends Component {
           isLivingplaceFilled = livingplace.val().length >= 3;
       
       if(isBiographyFilled && isSexChoosen && isJobFilled && isBirthdateCorrect && isBirthplaceFilled && isRelationshipstatusCorrect && isLivingplaceFilled) {
-        $.post(`${config.API_ROOT}/register_confirmation`, { uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), biography: biography.val(), sex: sex.val(), job: job.val(), birthdate: birthdate.val(), birthplace: birthplace.val(), relationshipstatus: relationshipstatus.val(), livingplace: livingplace.val()})
-        .done(function( data ) {
-          let response = JSON.parse(data);
-
+        axios.post(`${config.API_ROOT}/register_confirmation`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), biography: biography.val(), sex: sex.val(), job: job.val(), birthdate: birthdate.val(), birthplace: birthplace.val(), relationshipstatus: relationshipstatus.val(), livingplace: livingplace.val()}))
+        .then(function( response ) {
+          response = response.data;
           if(response.success) {
             this.props.history.push('/activity_feed');
           }

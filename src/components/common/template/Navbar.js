@@ -34,7 +34,7 @@ export default class Navbar extends Component {
                             Option 2
                         </DropdownItem>
                         <DropdownItem divider />
-                        <DropdownItem onClick={(e) => {localStorage.removeItem('id'); localStorage.removeItem('token'); this.props.history.push('/login');}}>
+                        <DropdownItem onClick={(e) => {localStorage.removeItem('id'); localStorage.removeItem('token');}}>
                             Déconnexion
                         </DropdownItem>
                         </DropdownMenu>

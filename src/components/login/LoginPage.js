@@ -4,6 +4,8 @@ import logo_small from '../../assets/img/logo-small.png';
 import $ from 'jquery';
 import { config } from '../../config';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import axios from 'axios';
+import qs from 'qs';
 
 export default class LoginPage extends Component {
 
@@ -46,10 +48,9 @@ export default class LoginPage extends Component {
     let passwordCheckLength = password.length >= 8;
 
     if(emailCheck && passwordCheckLength) {
-      $.post(`${config.API_ROOT}/login`, { email: $('#email').val(), password: $('#password').val() })
-      .done(function( data ) {
-        let response = JSON.parse(data);
-  
+      axios.post(`${config.API_ROOT}/login`, qs.stringify({ email: $('#email').val(), password: $('#password').val() }))
+      .then(function( response ) {
+        response = response.data;
         if(response.success) {
           localStorage.setItem('id', response.uniq_id);
           localStorage.setItem('token', response.message);
