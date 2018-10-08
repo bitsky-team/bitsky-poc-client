@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import logo from '../assets/img/logo.png';
-import logo_small from '../assets/img/logo-small.png';
+import logo from '../../assets/img/logo.png';
+import logo_small from '../../assets/img/logo-small.png';
 import $ from 'jquery';
-import { config } from '../config';
+import { config } from '../../config';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
-class Login extends Component {
+export default class LoginPage extends Component {
 
   constructor(props) {
     super(props);
@@ -130,7 +130,4 @@ class Login extends Component {
       </div>
     );
   }
-  
 }
-
-export default Login;

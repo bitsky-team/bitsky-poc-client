@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import { Container, Row, Col, FormGroup, Label, Input, Button, FormFeedback } from 'reactstrap';
 import jwtDecode from 'jwt-decode';
 import $ from 'jquery';
-import { config } from '../config';
-import logo from '../assets/img/logo-small.png';
-import avatarDefault from '../assets/img/avatar-default.png';
+import { config } from '../../config';
+import logo from '../../assets/img/logo-small.png';
+import avatarDefault from '../../assets/img/avatar-default.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
         faUserCheck
     } from '@fortawesome/free-solid-svg-icons';
 
-class RegisterConfirmation extends Component {
+export default class RegisterConfirmationPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -151,5 +151,3 @@ class RegisterConfirmation extends Component {
       );
     }
 }
-
-export default RegisterConfirmation;

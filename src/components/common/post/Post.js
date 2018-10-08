@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import avatar from '../../assets/img/avatar.png';
-import DateService from '../../services/DateService';
-import { config } from '../../config';
+import avatar from '../../../assets/img/avatar.png';
+import DateService from '../../../services/DateService';
+import { config } from '../../../config';
 import $ from 'jquery';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -75,7 +75,6 @@ class Post extends Component {
             </div>
         );
     }
-  
 }
 
 export default Post;

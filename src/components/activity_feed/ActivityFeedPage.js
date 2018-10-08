@@ -1,33 +1,28 @@
 import React, { Component } from 'react';
-import logo_small from '../assets/img/logo-small.png';
-import avatar from '../assets/img/avatar.png';
-import { config } from '../config';
+import avatar from '../../assets/img/avatar.png';
+import { config } from '../../config';
 import TextareaAutosize from 'react-autosize-textarea';
 import $ from 'jquery';
 import jwtDecode from 'jwt-decode';
-import Post from './childs/Post';
-import RankService from '../services/RankService';
+import Post from '../common/post/Post';
+import RankService from '../../services/RankService';
+import Navbar from '../common/template/Navbar';
 
-import { Container, Row, Col, Collapse,
-    Navbar,
-    NavbarToggler,
-    NavbarBrand,
-    Nav,
-    UncontrolledDropdown,
-    DropdownToggle,
-    DropdownMenu,
-    DropdownItem, 
+import { 
+    Container, 
+    Row, 
+    Col,
     Button,
     Modal,
     ModalBody,
     ModalFooter,
     Label,
-    Input } from 'reactstrap';
+    Input 
+} from 'reactstrap';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { 
-    faCaretDown, 
     faClipboardList, 
     faCamera, 
     faPencilAlt, 
@@ -35,8 +30,7 @@ import {
     faPaperPlane
 } from '@fortawesome/free-solid-svg-icons';
 
-
-class ActivityFeed extends Component {
+export default class ActivityFeedPage extends Component {
     constructor(props) {
         super(props);
 
@@ -196,31 +190,9 @@ class ActivityFeed extends Component {
                         <Button className="modal-choice" color="secondary" onClick={this.togglePostModal}><FontAwesomeIcon icon={ faTimes }/></Button>
                     </ModalFooter>
                 </Modal>
-                <Navbar light expand="md">
-                    <NavbarBrand href="/"><img src={logo_small} height="40" alt="Logo"/></NavbarBrand>
-                    <NavbarToggler onClick={this.toggleNavbar} />
-                    <Collapse isOpen={this.state.isOpen} navbar>
-                        <Nav className="ml-auto" navbar>
-                            <UncontrolledDropdown nav inNavbar>
-                                <DropdownToggle nav>
-                                    { this.state.session.firstname + ' ' + this.state.session.lastname } <FontAwesomeIcon icon={faCaretDown} />
-                                </DropdownToggle>
-                                <DropdownMenu right>
-                                <DropdownItem>
-                                    Option 1
-                                </DropdownItem>
-                                <DropdownItem>
-                                    Option 2
-                                </DropdownItem>
-                                <DropdownItem divider />
-                                <DropdownItem onClick={(e) => {localStorage.removeItem('id'); localStorage.removeItem('token'); this.props.history.push('/login');}}>
-                                    Déconnexion
-                                </DropdownItem>
-                                </DropdownMenu>
-                            </UncontrolledDropdown>
-                        </Nav>
-                    </Collapse>
-                </Navbar>
+
+                <Navbar isOpen={this.state.isOpen} user={{firstname: this.state.session.firstname, lastname: this.state.session.lastname}}/>
+
                 <Container className="main-container">
                 <Row>
                     <Col md="3" className="no-margin-left no-margin-right">
@@ -283,5 +255,3 @@ class ActivityFeed extends Component {
     }
   
 }
-
-export default ActivityFeed;

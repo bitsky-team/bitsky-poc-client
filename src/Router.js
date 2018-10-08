@@ -3,10 +3,10 @@ import React, { Component } from 'react';
 import { Route, Redirect, withRouter } from 'react-router-dom';
 
 // Components 
-import Login from './components/Login';
-import Register from './components/Register';
-import ActivityFeed from './components/ActivityFeed';
-import RegisterConfirmation from './components/RegisterConfirmation';
+import LoginPage from './components/login/LoginPage';
+import RegisterPage from './components/register/RegisterPage';
+import ActivityFeedPage from './components/activity_feed/ActivityFeedPage';
+import RegisterConfirmationPage from './components/register/RegisterConfirmationPage';
 
 // Services
 import AuthService from './services/AuthService';
@@ -22,7 +22,7 @@ function PrivateRoute ({component: Component, authed, ...rest}) {
   )
 }
 
-class App extends Component {
+class Router extends Component {
 
   componentDidMount() {
     let noAuthRoutes = [
@@ -48,15 +48,15 @@ class App extends Component {
   render() {
     return(
         <div>
-            <Route exact path='/' component={Login} />
-            <Route exact path='/login' component={Login} />
-            <Route exact path='/register' component={Register} />
-            <PrivateRoute exact authed={AuthService.verify()} path='/activity_feed' component={ActivityFeed} />
-            <PrivateRoute exact authed={AuthService.verify()} path='/register_confirmation' component={RegisterConfirmation} />
+            <Route exact path='/' component={LoginPage} />
+            <Route exact path='/login' component={LoginPage} />
+            <Route exact path='/register' component={RegisterPage} />
+            <PrivateRoute exact authed={AuthService.verify()} path='/activity_feed' component={ActivityFeedPage} />
+            <PrivateRoute exact authed={AuthService.verify()} path='/register_confirmation' component={RegisterConfirmationPage} />
         </div>
     )
   }
   
 }
 
-export default withRouter(App);
+export default withRouter(Router);
