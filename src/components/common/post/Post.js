@@ -3,6 +3,8 @@ import avatar from '../../../assets/img/avatar.png';
 import DateService from '../../../services/DateService';
 import { config } from '../../../config';
 import $ from 'jquery';
+import axios from 'axios';
+import qs from 'qs';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTag, faStar as faFullStar, faClock, faTimes } from '@fortawesome/free-solid-svg-icons';
@@ -23,8 +25,7 @@ class Post extends Component {
     }
 
     isOwner() {
-        // TODO: vérifier
-        if(true) {
+        if(this.props.isOwner) {
             return <FontAwesomeIcon className="delete" icon={faTimes} onClick={this.handleDeleteButtonClick}/>
         }
     }
@@ -36,9 +37,9 @@ class Post extends Component {
     }
 
     handleDeleteButtonClick = (e) => {
-        $.post(`${config.API_ROOT}/remove_post`, { uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id:  this.props.id})
-          .done(function( data ) {
-            let response = JSON.parse(data);
+        axios.post(`${config.API_ROOT}/remove_post`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id:  this.props.id}))
+          .then(function(response) {
+            response = response.data;
             if(response.success) {
                 $('#post-'+this.props.id).fadeOut(function(){ $(this).remove() });
             }

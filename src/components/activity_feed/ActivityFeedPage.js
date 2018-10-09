@@ -165,6 +165,7 @@ export default class ActivityFeedPage extends Component {
                         favorites={post.favorites}
                         comments={post.comments}
                         date={post.created_at}
+                        isOwner={(post.owner.firstname + " " + post.owner.lastname) === (this.state.session.firstname + " " + this.state.session.lastname)}
                     />);
                 });
                 this.setState({posts: statePosts});

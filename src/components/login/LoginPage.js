@@ -40,15 +40,15 @@ export default class LoginPage extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
 
-    let email = $('#email').val();
-    let password =  $('#password').val();
+    let email = this.loginInput.value;
+    let password =  this.passwordInput.value;
     // eslint-disable-next-line
     let emailReg = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     let emailCheck = emailReg.test(email);
     let passwordCheckLength = password.length >= 8;
 
     if(emailCheck && passwordCheckLength) {
-      axios.post(`${config.API_ROOT}/login`, qs.stringify({ email: $('#email').val(), password: $('#password').val() }))
+      axios.post(`${config.API_ROOT}/login`, qs.stringify({ email: this.loginInput.value, password: this.passwordInput.value }))
       .then(function( response ) {
         response = response.data;
         if(response.success) {
@@ -99,8 +99,8 @@ export default class LoginPage extends Component {
            </div>
 
            <form method="post">
-            <label>Adresse email<input id="email" type="email" placeholder="john.doe@bitsky.be"/></label>
-            <label>Mot de passe<input id="password" type="password" placeholder="••••••••"/></label>
+            <label>Adresse email<input id="email" type="email" placeholder="john.doe@bitsky.be" ref={(input) => this.loginInput = input }/></label>
+            <label>Mot de passe<input id="password" type="password" placeholder="••••••••" ref={(input) => this.passwordInput = input }/></label>
             <label className="checkbox-container">
               <input type="checkbox"/><span className="checkmark"></span>
               <span className="text">Se souvenir de moi</span>

@@ -12,7 +12,7 @@ import {
     DropdownItem
 } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { faCaretDown, faCog, faUser, faPowerOff } from '@fortawesome/free-solid-svg-icons';
 
 export default class Navbar extends Component {
   render() {
@@ -28,14 +28,14 @@ export default class Navbar extends Component {
                         </DropdownToggle>
                         <DropdownMenu right>
                         <DropdownItem>
-                            Option 1
+                        <FontAwesomeIcon icon={faUser} /> Profil
                         </DropdownItem>
                         <DropdownItem>
-                            Option 2
+                            <FontAwesomeIcon icon={faCog} /> Paramètres
                         </DropdownItem>
                         <DropdownItem divider />
                         <DropdownItem onClick={(e) => {localStorage.removeItem('id'); localStorage.removeItem('token');}}>
-                            Déconnexion
+                            <FontAwesomeIcon icon={faPowerOff} /> Déconnexion
                         </DropdownItem>
                         </DropdownMenu>
                     </UncontrolledDropdown>
