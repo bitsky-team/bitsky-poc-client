@@ -32,9 +32,14 @@ class Router extends Component {
       '/register'
     ];
 
+    let adminRoutes = [
+      '/administration'
+    ];
+
     setInterval(() => {
       if(!noAuthRoutes.includes(this.props.history.location.pathname)) {
-        if(!AuthService.verify()) {
+        if(!AuthService.verify() 
+           || ((adminRoutes.includes(this.props.history.location.pathname) && !AuthService.isAdmin()))) {
           this.props.history.push('/');
         }
       }else

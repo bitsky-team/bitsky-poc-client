@@ -38,17 +38,10 @@ export default class ActivityFeedPage extends Component {
         super(props);
 
         this.state = {
-            isOpen: false,
             session: jwtDecode(localStorage.getItem('token')),
             postModal: false,
             posts: []
         };
-    }
-
-    toggleNavbar = (e) => {
-        this.setState({
-            isOpen: !this.state.isOpen
-        });
     }
 
     openTextArea() {
@@ -194,7 +187,7 @@ export default class ActivityFeedPage extends Component {
                     </ModalFooter>
                 </Modal>
 
-                <Navbar isOpen={this.state.isOpen} user={{firstname: this.state.session.firstname, lastname: this.state.session.lastname}}/>
+                <Navbar/>
 
                 <Container className="main-container">
                 <Row>

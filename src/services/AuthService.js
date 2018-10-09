@@ -1,5 +1,6 @@
 import { config } from '../config';
 import $ from 'jquery';
+import jwtDecode from 'jwt-decode';
 
 class AuthService {
 
@@ -71,6 +72,15 @@ class AuthService {
         }
 
         return false;
+    }
+
+    static isAdmin() {
+        if(AuthService.verify()) {
+            const infos = jwtDecode(localStorage.getItem('token'));
+            return infos.rank === 2;
+        }else {
+            return false;
+        }
     }
 
 }
