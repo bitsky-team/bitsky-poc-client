@@ -6,9 +6,7 @@ import { config } from '../../config';
 import logo from '../../assets/img/logo-small.png';
 import avatarDefault from '../../assets/img/avatar-default.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-        faUserCheck
-    } from '@fortawesome/free-solid-svg-icons';
+import {  faUserCheck } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import qs from 'qs';
 

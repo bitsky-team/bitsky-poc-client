@@ -47,11 +47,11 @@ export default class RegisterPage extends Component {
 
   handleSubmit = (e) => {
     this.toggleConfirm(e);
-    let email = $('#email').val();
-    let password =  $('#password').val();
-    let repeatPassword = $('#repeatPassword').val();
-    let lastname = $('#lastname').val();
-    let firstname = $('#firstname').val();
+    let email = this.emailInput.value;
+    let password =  this.passwordInput.value;
+    let repeatPassword = this.repeatPasswordInput.value;
+    let lastname = this.lastnameInput.value;
+    let firstname = this.firstnameInput.value;
 
     // eslint-disable-next-line
     let emailReg = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -63,7 +63,7 @@ export default class RegisterPage extends Component {
     let firstnameCheck = firstname.length >= 2;
 
     if(emailCheck && passwordCheckLength && repeatPasswordCheckLength && passwordCheckEquality && lastnameCheck && firstnameCheck) {
-      axios.post(`${config.API_ROOT}/register`, qs.stringify({ email: $('#email').val(), password: $('#password').val(), repeatPassword: $('#repeatPassword').val(), lastname: $('#lastname').val(), firstname: $('#firstname').val()}))
+      axios.post(`${config.API_ROOT}/register`, qs.stringify({ email: this.emailInput.value, password: this.passwordInput.value, repeatPassword: this.repeatPasswordInput.value, lastname: this.lastnameInput.value, firstname: this.firstnameInput.value}))
       .then(function( response ) {
         response = response.data;
 
@@ -126,11 +126,11 @@ export default class RegisterPage extends Component {
           </div>
 
           <form method="post">
-            <label>Adresse email<input id="email" type="email" placeholder="john.doe@bitsky.be"/></label>
-            <label>Mot de passe<input id="password" type="password" placeholder="••••••••"/></label>
-            <label>Répétez le mot de passe<input id="repeatPassword" type="password" placeholder="••••••••"/></label>
-            <label>Nom<input id="lastname" type="text" placeholder="Doe"/></label>
-            <label>Prénom<input id="firstname" type="text" placeholder="John"/></label>
+            <label>Adresse email<input id="email" type="email" placeholder="john.doe@bitsky.be" ref={(input) => this.emailInput = input}/></label>
+            <label>Mot de passe<input id="password" type="password" placeholder="••••••••" ref={(input) => this.passwordInput = input}/></label>
+            <label>Répétez le mot de passe<input id="repeatPassword" type="password" placeholder="••••••••" ref={(input) => this.repeatPasswordInput = input}/></label>
+            <label>Nom<input id="lastname" type="text" placeholder="Doe" ref={(input) => this.lastnameInput = input}/></label>
+            <label>Prénom<input id="firstname" type="text" placeholder="John" ref={(input) => this.firstnameInput = input}/></label>
 
             <div className="button-group">
               <button className="primary" onClick={this.toggleConfirm}><span>Inscription</span></button>

@@ -15,7 +15,7 @@ import {
     DropdownItem
 } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown, faBell, faInbox, faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCaretDown, faCog, faUser, faPowerOff, faBell, faInbox, faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
 
 class Navbar extends Component {
   render() {
@@ -37,17 +37,17 @@ class Navbar extends Component {
                         </DropdownToggle>
                         <DropdownMenu right>
                         <DropdownItem>
-                            Option 1
+                        <FontAwesomeIcon icon={faUser} /> Profil
                         </DropdownItem>
                         <DropdownItem onClick={ () => this.props.history.push('/administration') }>
                             <FontAwesomeIcon icon={faUnlockAlt} /> Administration
                         </DropdownItem>
                         <DropdownItem>
-                            Option 2
+                            <FontAwesomeIcon icon={faCog} /> Paramètres
                         </DropdownItem>
                         <DropdownItem divider />
                         <DropdownItem onClick={(e) => {localStorage.removeItem('id'); localStorage.removeItem('token');}}>
-                            Déconnexion
+                            <FontAwesomeIcon icon={faPowerOff} /> Déconnexion
                         </DropdownItem>
                         </DropdownMenu>
                     </UncontrolledDropdown>

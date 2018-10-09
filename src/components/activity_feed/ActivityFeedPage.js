@@ -31,6 +31,7 @@ import {
     faTimes,
     faPaperPlane
 } from '@fortawesome/free-solid-svg-icons';
+import SideMenu from './SideMenu';
 
 export default class ActivityFeedPage extends Component {
     constructor(props) {
@@ -165,6 +166,7 @@ export default class ActivityFeedPage extends Component {
                         favorites={post.favorites}
                         comments={post.comments}
                         date={post.created_at}
+                        isOwner={(post.owner.firstname + " " + post.owner.lastname) === (this.state.session.firstname + " " + this.state.session.lastname)}
                     />);
                 });
                 this.setState({posts: statePosts});
@@ -201,16 +203,17 @@ export default class ActivityFeedPage extends Component {
                             <img src={avatar} alt="Avatar" />
                             <h5>{ this.state.session.firstname + ' ' + this.state.session.lastname }</h5>
                             <p className="rank">{ RankService.translate(this.state.session.rank) }</p>
-                            <hr/>
-                            <p className="text-left">Activité</p>
-                            <div className="badge pink text-left">
+                            {/*<hr/>
+                            <<p className="text-left">Activité</p>
+                            div className="badge pink text-left">
                                 <span><strong>174</strong></span>
                                 <span>Publications postées</span>
                             </div>
                             <div className="badge blue text-left">
                                 <span><strong>225</strong></span>
                                 <span>Fichiers téléchargés</span>
-                            </div>
+                            </div>*/}
+                            <SideMenu />
                         </div>
                     </Col>
                     <Col md="5" className="no-margin-left no-margin-right">
