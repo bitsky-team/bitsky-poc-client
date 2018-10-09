@@ -10,6 +10,7 @@ import RegisterConfirmationPage from './components/register/RegisterConfirmation
 
 // Services
 import AuthService from './services/AuthService';
+import AdministrationPage from './components/administration/AdministrationPage';
 
 function PrivateRoute ({component: Component, authed, ...rest}) {
   return (
@@ -53,6 +54,7 @@ class Router extends Component {
             <Route exact path='/register' component={RegisterPage} />
             <PrivateRoute exact authed={AuthService.verify()} path='/activity_feed' component={ActivityFeedPage} />
             <PrivateRoute exact authed={AuthService.verify()} path='/register_confirmation' component={RegisterConfirmationPage} />
+            <PrivateRoute exact authed={AuthService.verify()} path='/administration' component={AdministrationPage} />
         </div>
     )
   }

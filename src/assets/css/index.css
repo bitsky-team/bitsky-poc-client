@@ -798,3 +798,14 @@ body
 {
   transform: scale(1.05);
 }
+
+.nav-item-icon
+{
+  cursor: pointer;
+}
+
+.no-center
+{
+  text-align: left;
+}
+

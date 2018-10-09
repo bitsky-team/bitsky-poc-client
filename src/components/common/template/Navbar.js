@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {withRouter} from 'react-router-dom';
 import logo_small from '../../../assets/img/logo-small.png';
 import { 
     Collapse,
@@ -6,15 +7,17 @@ import {
     NavbarToggler,
     NavbarBrand,
     Nav,
+    NavItem,
+    NavLink,
     UncontrolledDropdown,
     DropdownToggle,
     DropdownMenu,
     DropdownItem
 } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
+import { faCaretDown, faBell, faInbox, faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
 
-export default class Navbar extends Component {
+class Navbar extends Component {
   render() {
     return (
         <ReactstrapNavbar light expand="md">
@@ -22,6 +25,12 @@ export default class Navbar extends Component {
             <NavbarToggler onClick={this.toggleNavbar} />
             <Collapse isOpen={this.props.isOpen} navbar>
                 <Nav className="ml-auto" navbar>
+                    <NavItem className="nav-item-icon">
+                        <NavLink href={null}><FontAwesomeIcon icon={faBell} /></NavLink>
+                    </NavItem>
+                    <NavItem className="nav-item-icon">
+                        <NavLink href={null}><FontAwesomeIcon icon={faInbox} /></NavLink>
+                    </NavItem>
                     <UncontrolledDropdown nav inNavbar>
                         <DropdownToggle nav>
                             { this.props.user.firstname + ' ' + this.props.user.lastname } <FontAwesomeIcon icon={faCaretDown} />
@@ -29,6 +38,9 @@ export default class Navbar extends Component {
                         <DropdownMenu right>
                         <DropdownItem>
                             Option 1
+                        </DropdownItem>
+                        <DropdownItem onClick={ () => this.props.history.push('/administration') }>
+                            <FontAwesomeIcon icon={faUnlockAlt} /> Administration
                         </DropdownItem>
                         <DropdownItem>
                             Option 2
@@ -45,3 +57,6 @@ export default class Navbar extends Component {
     )
   }
 }
+
+
+export default withRouter(Navbar);
