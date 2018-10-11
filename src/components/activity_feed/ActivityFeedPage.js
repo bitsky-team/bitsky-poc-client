@@ -19,7 +19,8 @@ import {
     ModalBody,
     ModalFooter,
     Label,
-    Input 
+    Input, 
+    Alert
 } from 'reactstrap';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -32,6 +33,7 @@ import {
     faPaperPlane
 } from '@fortawesome/free-solid-svg-icons';
 import SideMenu from './SideMenu';
+import Trend from './Trend';
 
 export default class ActivityFeedPage extends Component {
     constructor(props) {
@@ -40,7 +42,8 @@ export default class ActivityFeedPage extends Component {
         this.state = {
             session: jwtDecode(localStorage.getItem('token')),
             postModal: false,
-            posts: []
+            posts: [],
+            trends: []
         };
     }
 
@@ -101,11 +104,13 @@ export default class ActivityFeedPage extends Component {
                             ownerName={this.state.session.firstname + " " + this.state.session.lastname}
                             ownerRank={RankService.translate(response.ownerRank)}
                             content={content.val()}
-                            tag={tag.val()}
+                            tag={tag.val().charAt(0).toUpperCase() + tag.val().slice(1)}
                             filled={false}
                             favorites={0}
                             comments={0}
                             date={new Date()}
+                            isOwner={true}
+                            handleDeleteButtonClick={this.handleDeleteButtonClick}
                         />
                     );
                     posts.unshift(newPost);
@@ -116,6 +121,21 @@ export default class ActivityFeedPage extends Component {
                 }
             }.bind(this));
         }
+    }
+
+    handleDeleteButtonClick = (e) => {
+        e.preventDefault();
+        let str_id = e.target.parentElement.parentElement.id;
+        let id = str_id.split('-')[1];
+        let posts = this.state.posts;
+        posts = posts.filter((p) => { return p.key !== str_id });
+        axios.post(`${config.API_ROOT}/remove_post`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id:  id}))
+          .then(function(response) {
+            response = response.data;
+            if(response.success) {
+                $('#post-'+id).fadeOut(function(){ $(this).remove(); this.setState({posts}); }.bind(this));
+            }
+        }.bind(this));
     }
 
     togglePostModal = (e) => {
@@ -160,9 +180,36 @@ export default class ActivityFeedPage extends Component {
                         comments={post.comments}
                         date={post.created_at}
                         isOwner={(post.owner.firstname + " " + post.owner.lastname) === (this.state.session.firstname + " " + this.state.session.lastname)}
+                        handleDeleteButtonClick={this.handleDeleteButtonClick}
                     />);
                 });
                 this.setState({posts: statePosts});
+
+                document.getElementById('posts-loading').style.display = 'none';
+            }else {
+                console.log("Failed loading posts: " + response.message);
+            }
+        }.bind(this));
+
+        // Retrieving trends
+        axios.post(`${config.API_ROOT}/get_trends`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') }))
+        .then(function(response) {
+            response = response.data;
+            if(response.success) {
+                let trends = response.trends;
+                let stateTrends = this.state.trends;
+                
+                trends.forEach((trend) => {
+                    stateTrends.push(<Trend 
+                        key={"trend-" + trend.name}
+                        name={trend.name}
+                        content={trend.post.content}
+                        author={trend.post.owner}
+                    />);
+                });
+                this.setState({trends: stateTrends});
+
+                document.getElementById('trends-loading').style.display = 'none';
             }else {
                 console.log("Failed loading posts: " + response.message);
             }
@@ -171,6 +218,20 @@ export default class ActivityFeedPage extends Component {
 
     componentDidMount() {
         $('#post-content').parent().height($('#post-content').outerHeight());
+    }
+
+    componentDidUpdate() {
+        if(this.state.posts.length <= 0) {
+            document.getElementById('posts-message').style.display = 'block';
+        }else {
+            document.getElementById('posts-message').style.display = 'none';
+        }
+
+        if(this.state.trends.length <= 0) {
+            document.getElementById('trends-message').style.display = 'block';
+        }else {
+            document.getElementById('trends-message').style.display = 'none';
+        }
     }
 
     render() {
@@ -196,16 +257,6 @@ export default class ActivityFeedPage extends Component {
                             <img src={avatar} alt="Avatar" />
                             <h5>{ this.state.session.firstname + ' ' + this.state.session.lastname }</h5>
                             <p className="rank">{ RankService.translate(this.state.session.rank) }</p>
-                            {/*<hr/>
-                            <<p className="text-left">Activité</p>
-                            div className="badge pink text-left">
-                                <span><strong>174</strong></span>
-                                <span>Publications postées</span>
-                            </div>
-                            <div className="badge blue text-left">
-                                <span><strong>225</strong></span>
-                                <span>Fichiers téléchargés</span>
-                            </div>*/}
                             <SideMenu />
                         </div>
                     </Col>
@@ -224,25 +275,18 @@ export default class ActivityFeedPage extends Component {
                             <span className="publish-button" onClick={this.togglePostModal}><FontAwesomeIcon icon={faPaperPlane} /></span>
                         </div>
                         <div className="posts-container">
-                            { this.state.posts }
+                            <Alert id="posts-message" color="info" className="info-message">Il n'y a aucune publication pour le moment</Alert>
+                            <Alert id="posts-loading" color="info" className="info-message">Chargement...</Alert>
+                            <div>{ this.state.posts }</div>
                         </div>
                     </Col>
                     <Col md="4" className="no-margin-left no-margin-right">
                         <div className="user-container right-container">
                             <h5>Sujets du moment</h5>
                             <hr/>
-                            <p>Famille</p>
-                            <div>
-                                <p>Lorem LoremLoremLoremLorem Loremvv LoremLorem Lorem...</p>
-                                <small>Par <a href={null}>Sylvain Urbain</a></small>
-                            </div>
-                            <Button color="info" className="see-more-button">Voir plus</Button>{' '}
-                            <p>Anniversaire de Rara</p>
-                            <div>
-                                <p>Lorem LoremLoremLoremLorem Loremvv LoremLorem Lorem...</p>
-                                <small>Par <a href={null}>Sylvain Urbain</a></small>
-                            </div>
-                            <Button color="info" className="see-more-button">Voir plus</Button>{' '}
+                            <Alert id="trends-message" color="info" className="info-message">Aucune tendances pour le moment</Alert>
+                            <Alert id="trends-loading" color="info" className="info-message" style={{display:'block'}}>Chargement...</Alert>
+                            <div>{ this.state.trends }</div>
                         </div>
                     </Col>
                 </Row>

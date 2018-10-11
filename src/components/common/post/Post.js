@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
 import avatar from '../../../assets/img/avatar.png';
-import DateService from '../../../services/DateService';
 import { config } from '../../../config';
-import $ from 'jquery';
-import axios from 'axios';
-import qs from 'qs';
+import DateService from '../../../services/DateService';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTag, faStar as faFullStar, faClock, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faStar as faEmptyStar, faComments } from '@fortawesome/free-regular-svg-icons';
 
 import { Container, Row, Col } from 'reactstrap';
+import axios from 'axios';
+import qs from 'qs';
 
 class Post extends Component {
 
@@ -26,24 +25,45 @@ class Post extends Component {
 
     isOwner() {
         if(this.props.isOwner) {
-            return <FontAwesomeIcon className="delete" icon={faTimes} onClick={this.handleDeleteButtonClick}/>
+            return <FontAwesomeIcon className="delete" icon={faTimes} onClick={this.props.handleDeleteButtonClick}/>
         }
     }
 
     handleFavoriteButtonClick = (e) => {
         this.setState({favoriteFilled: !this.state.favoriteFilled});
-        if(this.state.favoriteFilled) this.setState({favorites: this.state.favorites - 1});
-        else this.setState({favorites: this.state.favorites + 1});
+        if(this.state.favoriteFilled) {
+            this.removeFavorite();
+            this.setState({favorites: this.state.favorites - 1});
+        }else {
+            this.addFavorite();
+            this.setState({favorites: this.state.favorites + 1});
+        }
     }
 
-    handleDeleteButtonClick = (e) => {
-        axios.post(`${config.API_ROOT}/remove_post`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id:  this.props.id}))
-          .then(function(response) {
+    addFavorite() {
+        axios.post(`${config.API_ROOT}/post_add_favorite`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }));
+    }
+
+    removeFavorite() {
+        axios.post(`${config.API_ROOT}/post_remove_favorite`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }));
+    }
+
+    checkFavorite() {
+        axios.post(`${config.API_ROOT}/post_get_user_favorite`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }))
+        .then(function(response){
             response = response.data;
-            if(response.success) {
-                $('#post-'+this.props.id).fadeOut(function(){ $(this).remove() });
+            if(response.success && response.favorite) {
+                this.setState({ favoriteFilled: true });
             }
         }.bind(this));
+    }
+
+    getContent() {
+        return {__html: this.props.content};
+    }
+
+    componentDidMount() {
+        this.checkFavorite();
     }
 
     render() {
@@ -55,20 +75,18 @@ class Post extends Component {
                     <h4>{this.props.ownerName}</h4>
                     <small>{this.props.ownerRank}</small>
                 </div>
-                <p className="post-content">
-                    {this.props.content}
-                </p>
+                <p className="post-content" dangerouslySetInnerHTML={this.getContent()}></p>
                 <Container className="post-details">
                     <Row>
-                        <Col md="4">
+                        <Col md="4" className="text-left">
                             <span className="tag"><FontAwesomeIcon icon={faTag} /> {this.props.tag}</span>
                         </Col>
-                        <Col md="4">
+                        <Col md="4" className="text-center">
                             <span className="fav-counter"><i><FontAwesomeIcon icon={this.state.favoriteFilled ? faFullStar : faEmptyStar} onClick={this.handleFavoriteButtonClick} /></i> {this.state.favorites}</span>
                             {' '}
                             <span className="comment-counter"><FontAwesomeIcon icon={faComments} /> {this.state.comments}</span>
                         </Col>
-                        <Col md="4">
+                        <Col md="4" className="text-right">
                             <span className="date"><FontAwesomeIcon icon={faClock} /> {DateService.timeSince(this.props.date)}</span>
                         </Col>
                     </Row>

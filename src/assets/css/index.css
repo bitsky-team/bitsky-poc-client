@@ -2,7 +2,6 @@
 {
   outline: 0 !important;
   user-select: none;
-  box-shadow: none !important;
 }
 
 .no-margin-left
@@ -21,6 +20,21 @@ body
   padding: 0;
   font-family: sans-serif;
   font-family: 'Roboto', sans-serif;
+  color: rgb(97, 97, 97);
+}
+
+.loading
+{
+  text-align: center;
+  font-size: 14px;
+  font-variant: small-caps;
+}
+
+.info-message
+{
+  text-align: center;
+  font-variant: small-caps;
+  display: none;
 }
 
 .App, .cloudsBackground
@@ -421,6 +435,11 @@ body
   text-align: center;
 }
 
+.user-container hr
+{
+  border-color: #f5f5f5;
+}
+
 .user-container h5
 {
   font-weight: 400;
@@ -610,7 +629,7 @@ body
 {
   margin-top: 25px;
   background-color: #F5F7F8;
-  color: #b7b7b7;
+  color: #949090;
   text-align: justify;
   font-size: 14px;
   padding: 10px;
@@ -623,6 +642,7 @@ body
 {
   color: #b7b7b7;
   font-weight: 200;
+  font-size: 15px;
 }
 
 .posts-container .post .fav-counter:hover
@@ -642,27 +662,27 @@ body
 
 .user-container.right-container h5
 {
-  color: #CAC8C8;
+  color: rgb(97, 97, 97);
 }
 
 .user-container.right-container p
 {
-  color: #9E9E9E;
+  color: rgb(97, 97, 97);
   font-weight: 500;
 }
 
-.user-container.right-container div
+.user-container.right-container div.trend-content
 {
   background-color: #F5F7F8;
   border-radius: 5px;
   padding: 5px;
   font-size: 15px;
-  color: #CAC8C8;
 }
 
-.user-container.right-container div p
+.user-container.right-container div.trend-content p
 {
   font-weight: 300;
+  color: #949090;
 }
 
 .user-container.right-container a
@@ -799,14 +819,50 @@ body
   transform: scale(1.05);
 }
 
+.nav-centered-icons
+{
+  position: absolute;
+  left: 50%;
+  margin-left: -74px;
+}
+
 .nav-item-icon
 {
+  display: inline-block;
+  border-radius: 50%;
+  border: 2px solid rgba(131, 178, 224, .4);
   cursor: pointer;
+  margin: 0 15px 0 15px;
+  width: 44px;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.nav-item-icon:hover
+{
+  background-color: rgba(207, 148, 202,.1);
+  border-color: rgba(207, 148, 202,.7) !important;
+}
+
+.nav-link
+{
+  transition: 0.2s;
+  color: rgb(131, 178, 224) !important;
+}
+
+.nav-item-icon:hover .nav-link, .nav-link:hover
+{
+  color: rgba(207, 148, 202,.7) !important;
 }
 
 .no-center
 {
   text-align: left;
+}
+
+.no-underline:hover, .no-underline:focus
+{
+  text-decoration: none;
 }
 
 .side-menu ul
@@ -832,14 +888,35 @@ body
   width: 100%;
   transition: 0.2s;
   border-left: 2px solid #FFF;
-  color: #646464 !important;
   font-size: 17px;
-  font-variant: small-caps;
 }
 .side-menu ul li a:hover
 {
-  background-color: #F5F7F8;
-  border-left: 2px solid #b7b7b7;
+  background-color: rgba(131, 178, 224, .15);
+  border-left: 2px solid rgb(207, 148, 202);
+  color: rgb(76, 134, 191) !important;
   padding-left: 35px;
+  cursor: pointer;
+}
+
+.alert-info
+{
+  border: 2px solid rgba(131, 178, 224, .4);
+  color: rgb(131, 178, 224) !important;
+  background-color: rgba(131, 178, 224, .1);
+}
+
+.dropdown-item
+{
+  color: rgb(76, 134, 191) !important;
+  border-left: 2px solid #FFF;
+  border-right: 2px solid #FFF;
+  transition: 0.2s;
+}
+
+.dropdown-item:hover, .dropdown-item:focus, .dropdown-item:active
+{
+  background-color: rgba(131, 178, 224, .15);
+  border-color: rgb(207, 148, 202);
   cursor: pointer;
 }

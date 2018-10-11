@@ -34,19 +34,28 @@ class Navbar extends Component {
         });
     }
 
+    goHome = (e) => {
+        e.preventDefault();
+        let history = this.props.history;
+        if(history.location.pathname !== "/activity_feed") history.push('/activity_feed');
+        else window.location.reload();
+    }
+
     render() {
         return (
             <ReactstrapNavbar light expand="md">
-                <NavbarBrand href="/"><img src={logo_small} height="40" alt="Logo"/></NavbarBrand>
+                <NavbarBrand onClick={this.goHome}><img src={logo_small} height="40" alt="Logo"/></NavbarBrand>
                 <NavbarToggler onClick={this.toggleNavbar} />
                 <Collapse isOpen={this.props.isOpen} navbar>
                     <Nav className="ml-auto" navbar>
-                        <NavItem className="nav-item-icon">
-                            <NavLink href={null}><FontAwesomeIcon icon={faBell} /></NavLink>
-                        </NavItem>
-                        <NavItem className="nav-item-icon">
-                            <NavLink href={null}><FontAwesomeIcon icon={faInbox} /></NavLink>
-                        </NavItem>
+                        <div className="nav-centered-icons">
+                            <NavItem className="nav-item-icon">
+                                <NavLink href={null}><FontAwesomeIcon icon={faInbox} /></NavLink>
+                            </NavItem>
+                            <NavItem className="nav-item-icon">
+                                <NavLink href={null}><FontAwesomeIcon icon={faBell} /></NavLink>
+                            </NavItem>
+                        </div>
                         <UncontrolledDropdown nav inNavbar>
                             <DropdownToggle nav>
                                 { this.state.session.firstname + ' ' + this.state.session.lastname } <FontAwesomeIcon icon={faCaretDown} />
