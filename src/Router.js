@@ -25,7 +25,18 @@ function PrivateRoute ({component: Component, authed, ...rest}) {
 
 class Router extends Component {
 
+  state = {
+    authenticated: (localStorage.getItem('token') && localStorage.getItem('id')) ? true : false
+  }
+
   componentDidMount() {
+    setInterval(async () => {
+      const authenticated = await AuthService.verify();
+      this.setState({authenticated});
+    }, 500);
+  }
+
+  componentDidUpdate() {
     let noAuthRoutes = [
       '/',
       '/login',
@@ -36,31 +47,29 @@ class Router extends Component {
       '/administration'
     ];
 
-    setInterval(() => {
-      if(!noAuthRoutes.includes(this.props.history.location.pathname)) {
-        if(!AuthService.verify() 
-           || ((adminRoutes.includes(this.props.history.location.pathname) && !AuthService.isAdmin()))) {
-          this.props.history.push('/');
-        }
-      }else
-      {
-        if(AuthService.verify()) {
-          this.props.history.push('/activity_feed');
-        }
+    if(!noAuthRoutes.includes(this.props.history.location.pathname)) {
+      if(!this.state.authenticated 
+          || ((adminRoutes.includes(this.props.history.location.pathname) && !AuthService.isAdmin()))) {
+        this.props.history.push('/');
       }
-    }, 400);
+    }else
+    {
+      if(this.state.authenticated) {
+        this.props.history.push('/activity_feed');
+      }
+    }
   }
 
   render() {
     return(
-        <div>
-            <Route exact path='/' component={LoginPage} />
-            <Route exact path='/login' component={LoginPage} />
-            <Route exact path='/register' component={RegisterPage} />
-            <PrivateRoute exact authed={AuthService.verify()} path='/activity_feed' component={ActivityFeedPage} />
-            <PrivateRoute exact authed={AuthService.verify()} path='/register_confirmation' component={RegisterConfirmationPage} />
-            <PrivateRoute exact authed={AuthService.verify()} path='/administration' component={AdministrationPage} />
-        </div>
+      <div>
+          <Route exact path='/' component={LoginPage} />
+          <Route exact path='/login' component={LoginPage} />
+          <Route exact path='/register' component={RegisterPage} />
+          <PrivateRoute exact authed={this.state.authenticated} path='/activity_feed' component={ActivityFeedPage} />
+          <PrivateRoute exact authed={this.state.authenticated} path='/register_confirmation' component={RegisterConfirmationPage} />
+          <PrivateRoute exact authed={this.state.authenticated} path='/administration' component={AdministrationPage} />
+      </div>
     )
   }
   

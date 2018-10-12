@@ -1,9 +1,15 @@
 import React, { Component } from 'react';
 import { Button } from 'reactstrap';
+import _ from 'lodash';
 
 export default class Trend extends Component {
     getContent() {
-        return {__html: this.props.content.trunc(80)};
+        return {
+            __html: _.truncate(this.props.content, {
+                'length': 80,
+                'separator': /,? +/
+            })
+        }
     }
 
     render() {

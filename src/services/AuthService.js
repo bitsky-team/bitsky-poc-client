@@ -1,76 +1,27 @@
 import { config } from '../config';
 import $ from 'jquery';
 import jwtDecode from 'jwt-decode';
+import axios from 'axios';
+import qs from 'qs';
 
 class AuthService {
-
-    static verify() {
-
+    static async verify() {
         if(localStorage.getItem('token') !== null && localStorage.getItem('id') !== null) {
             var result = false;
-            
-            $.ajax({
-                type: 'POST',
-                url: `${config.API_ROOT}/auth_verify`,
-                data: ({ token:  localStorage.getItem('token'), id: localStorage.getItem('id') }),
-                dataType: 'json',
-                async: false,
-                success: function(data) {
-                    if(data.success === true)
-                    {
-                        result = true;
-                    }else
-                    {
-                        console.log('Local storage removed for illicit use');
-                        localStorage.clear();
-                        result = false;
-                    }
-                    
-                },
-                error: function(e) {
-                    console.log(e);
-                }
-            });
-
+            const {data} = await axios.post(`${config.API_ROOT}/auth_verify`, qs.stringify({ token:  localStorage.getItem('token'), id: localStorage.getItem('id') }));
+            result = data.success;
+            if(!result) this.clearStorage();
             return result;
         }
-
         return false;
-        
     }
 
-    static get() {
-
+    static async get() {
         if(localStorage.getItem('token') !== null && localStorage.getItem('id') !== null) {
-            var result = false;
-            
-            $.ajax({
-                type: 'POST',
-                url: `${config.API_ROOT}/auth_verify`,
-                data: ({ token:  localStorage.getItem('token'), id: localStorage.getItem('id') }),
-                dataType: 'json',
-                async: false,
-                success: function(data) {
-
-                    if(data.success === true)
-                    {
-                        result = JSON.parse(data.message);
-                    }else
-                    {
-                        console.log('Local storage removed for illicit use');
-                        localStorage.clear();
-                        result = false;
-                    }
-                    
-                },
-                error: function(e) {
-                    console.log(e);
-                }
-            });
-
-            return result;
+            const {data} = await axios.post(`${config.API_ROOT}/auth_verify`, qs.stringify({ token:  localStorage.getItem('token'), id: localStorage.getItem('id') }));
+            if(!data.success) this.clearStorage();
+            return JSON.parse(data.message);
         }
-
         return false;
     }
 
@@ -83,6 +34,10 @@ class AuthService {
         }
     }
 
+    clearStorage() {
+        console.log('Local storage removed for illicit use');
+        localStorage.clear();
+    }
 }
 
 export default AuthService;
