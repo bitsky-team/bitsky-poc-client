@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import avatar from '../../assets/img/avatar.png';
+import { toast } from 'react-toastify';
 import { config } from '../../config';
 import TextareaAutosize from 'react-autosize-textarea';
 import $ from 'jquery';
@@ -118,6 +119,11 @@ export default class ActivityFeedPage extends Component {
                     this.closeTextArea();
                     this.adjustPublishContainer();
                     this.togglePostModal();
+                    toast.success('Votre publication a été postée !', {
+                        autoClose: 5000,
+                        position: toast.POSITION.BOTTOM_RIGHT,
+                        className: 'notification-success'
+                    });
                 }
             }.bind(this));
         }

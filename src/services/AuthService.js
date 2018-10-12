@@ -1,5 +1,4 @@
 import { config } from '../config';
-import $ from 'jquery';
 import jwtDecode from 'jwt-decode';
 import axios from 'axios';
 import qs from 'qs';

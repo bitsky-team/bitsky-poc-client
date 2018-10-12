@@ -920,3 +920,8 @@ body
   border-color: rgb(207, 148, 202);
   cursor: pointer;
 }
+
+.notification-success
+{
+  background-color: rgb(131, 178, 224);
+}
