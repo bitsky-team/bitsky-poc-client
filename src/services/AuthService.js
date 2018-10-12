@@ -10,7 +10,7 @@ class AuthService {
             var result = false;
             const {data} = await axios.post(`${config.API_ROOT}/auth_verify`, qs.stringify({ token:  localStorage.getItem('token'), id: localStorage.getItem('id') }));
             result = data.success;
-            if(!result) this.clearStorage();
+            if(!result) AuthService.clearStorage();
             return result;
         }
         return false;
@@ -19,22 +19,18 @@ class AuthService {
     static async get() {
         if(localStorage.getItem('token') !== null && localStorage.getItem('id') !== null) {
             const {data} = await axios.post(`${config.API_ROOT}/auth_verify`, qs.stringify({ token:  localStorage.getItem('token'), id: localStorage.getItem('id') }));
-            if(!data.success) this.clearStorage();
+            if(!data.success) AuthService.clearStorage();
             return JSON.parse(data.message);
         }
         return false;
     }
 
     static isAdmin() {
-        if(AuthService.verify()) {
-            const infos = jwtDecode(localStorage.getItem('token'));
-            return infos.rank === 2;
-        }else {
-            return false;
-        }
+        const infos = jwtDecode(localStorage.getItem('token'));
+        return infos.rank === 2;
     }
 
-    clearStorage() {
+    static clearStorage() {
         console.log('Local storage removed for illicit use');
         localStorage.clear();
     }
