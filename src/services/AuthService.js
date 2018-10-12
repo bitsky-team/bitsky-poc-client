@@ -6,7 +6,7 @@ import qs from 'qs';
 
 class AuthService {
     static async verify() {
-        if(localStorage.getItem('token') !== null && localStorage.getItem('id') !== null) {
+        if(localStorage.getItem('token') !== null || localStorage.getItem('id') !== null) {
             var result = false;
             const {data} = await axios.post(`${config.API_ROOT}/auth_verify`, qs.stringify({ token:  localStorage.getItem('token'), id: localStorage.getItem('id') }));
             result = data.success;
@@ -17,7 +17,7 @@ class AuthService {
     }
 
     static async get() {
-        if(localStorage.getItem('token') !== null && localStorage.getItem('id') !== null) {
+        if(localStorage.getItem('token') !== null || localStorage.getItem('id') !== null) {
             const {data} = await axios.post(`${config.API_ROOT}/auth_verify`, qs.stringify({ token:  localStorage.getItem('token'), id: localStorage.getItem('id') }));
             if(!data.success) AuthService.clearStorage();
             return JSON.parse(data.message);
