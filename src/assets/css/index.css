@@ -4,6 +4,11 @@
   user-select: none;
 }
 
+*:focus
+{
+  box-shadow: none !important;
+}
+
 a, a:hover {cursor: pointer;}
 
 .no-margin-left
@@ -706,6 +711,26 @@ body
 }
 
 .user-container.right-container .see-more-button:hover, .user-container.right-container .see-more-button:focus
+{
+  color: rgb(131, 178, 224);
+  background-color: #FFF;
+}
+
+.user-container.right-container .right-container-header
+{
+  display: flex;
+}
+
+.user-container.right-container .right-container-header .refresh-trends
+{
+  background-color: rgb(131, 178, 224);
+  border-color: rgb(131, 178, 224);
+  padding: 3px 12px 3px 12px;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+.user-container.right-container .right-container-header .refresh-trends:hover
 {
   color: rgb(131, 178, 224);
   background-color: #FFF;

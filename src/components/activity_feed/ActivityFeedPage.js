@@ -31,7 +31,8 @@ import {
     faCamera, 
     faPencilAlt, 
     faTimes,
-    faPaperPlane
+    faPaperPlane,
+    faSync
 } from '@fortawesome/free-solid-svg-icons';
 import SideMenu from './SideMenu';
 import Trend from './Trend';
@@ -49,35 +50,33 @@ export default class ActivityFeedPage extends Component {
     }
 
     openTextArea() {
-        $('#post-content').prop("disabled", false);
-        $('.main-container .publish-container .icons').slideUp(function(){
-            $('.main-container .publish-container .remove-box').slideDown();
-        });
-        $('#post-content').focus();
+        document.getElementById('post-content').disabled = false;
+        document.querySelectorAll('.main-container .publish-container .remove-box')[0].style.display = 'block';
+        document.querySelectorAll('.main-container .publish-container .icons')[0].style.display = 'none';
+        document.getElementById('post-content').focus();
     }
 
-    closeTextArea = (e) => {
-        $('#post-content').val('');
-        $('#post-content').css('height', '');
-        $('#post-content').prop("disabled", true);
-        $('.main-container .publish-container .remove-box').slideUp(function(){
-            $('.main-container .publish-container .icons').slideDown();
-        });
+    closeTextArea() {
+        document.getElementById('post-content').value = '';
+        document.getElementById('post-content').height = '';
+        document.getElementById('post-content').disabled = true;
+        document.querySelectorAll('.main-container .publish-container .remove-box')[0].style.display = 'none';
+        document.querySelectorAll('.main-container .publish-container .icons')[0].style.display = 'block';
     }
 
-    adjustPublishContainer() {
-        // Height
-        let postContentContent = $('#post-content').val();
+    adjustPublishContainer = () => {
+        let postContent = document.getElementById('post-content');
+        let postContentValue = postContent.value;
         
-        if(!postContentContent) {
-            $('#post-content').height('24px');
-            $('.publish-button').hide();
+        if(!postContentValue) {
+            postContent.style.height = '24px';
+            this.refs.publishButton.style.display = 'none';
         }else
         {
-            $('.publish-button').show();
+            this.refs.publishButton.style.display = 'block';
         }
 
-        $('.publish-container').height($('#post-content').height());
+        this.refs.publishContainer.style.height = postContent.style.height;
     }
 
     handlePictureButtonClick = (e) => {
@@ -85,15 +84,15 @@ export default class ActivityFeedPage extends Component {
     }
 
     handlePublishButtonClick = (e) => {
-        let content = $('#post-content');
-        let tag = $('#post-tag');
+        let content = document.getElementById('post-content');
+        let tag = document.getElementById('post-tag');
 
-        let isContentFilled = $.trim(content.val()).length > 0;
-        let isTagFilled = $.trim(tag.val()).length > 0;
+        let isContentFilled = $.trim(content.value).length > 0;
+        let isTagFilled = $.trim(tag.value).length > 0;
 
         if(isContentFilled && isTagFilled)
         {
-            axios.post(`${config.API_ROOT}/store_post`, qs.stringify({ token: localStorage.getItem('token'), owner_uniq_id: localStorage.getItem('id'), content: content.val(),  tag: tag.val() }))
+            axios.post(`${config.API_ROOT}/store_post`, qs.stringify({ token: localStorage.getItem('token'), owner_uniq_id: localStorage.getItem('id'), content: content.value,  tag: tag.value }))
             .then(function(response) {
                 response = response.data;
                 if(response.success) {
@@ -104,8 +103,8 @@ export default class ActivityFeedPage extends Component {
                             key={"post-" + response.postId}
                             ownerName={this.state.session.firstname + " " + this.state.session.lastname}
                             ownerRank={RankService.translate(response.ownerRank)}
-                            content={content.val()}
-                            tag={tag.val().charAt(0).toUpperCase() + tag.val().slice(1)}
+                            content={content.value}
+                            tag={tag.value.charAt(0).toUpperCase() + tag.value.slice(1)}
                             filled={false}
                             favorites={0}
                             comments={0}
@@ -132,7 +131,8 @@ export default class ActivityFeedPage extends Component {
 
     handleDeleteButtonClick = (e) => {
         e.preventDefault();
-        let str_id = e.target.parentElement.parentElement.id;
+        let element = e.target.parentElement.parentElement;
+        let str_id = element.id;
         let id = str_id.split('-')[1];
         let posts = this.state.posts;
         posts = posts.filter((p) => { return p.key !== str_id });
@@ -140,14 +140,20 @@ export default class ActivityFeedPage extends Component {
           .then(function(response) {
             response = response.data;
             if(response.success) {
-                $('#post-'+id).fadeOut(function(){ $(this).remove(); this.setState({posts}); }.bind(this));
+                this.setState({posts});
+                this.getTrends();
+                toast.success('La publication a été supprimée !', {
+                    autoClose: 5000,
+                    position: toast.POSITION.BOTTOM_RIGHT,
+                    className: 'notification-success'
+                });
             }
         }.bind(this));
     }
 
     togglePostModal = (e) => {
         // Checking if textarea's content is not empty
-        if(this.state.postModal || /\S/.test($('#post-content').val())) {
+        if(this.state.postModal || /\S/.test(document.getElementById('post-content').value)) {
             this.setState({
                 postModal: !this.state.postModal
             });
@@ -174,12 +180,12 @@ export default class ActivityFeedPage extends Component {
                         favorites={post.favorites}
                         comments={post.comments}
                         date={post.created_at}
-                        isOwner={(post.owner.firstname + " " + post.owner.lastname) === (this.state.session.firstname + " " + this.state.session.lastname)}
+                        isOwner={(post.owner.firstname + " " + post.owner.lastname) === (this.state.session.firstname + " " + this.state.session.lastname) || this.state.session.rank == 2}
                         handleDeleteButtonClick={this.handleDeleteButtonClick}
                     />);
                 });
-                this.setState({posts: statePosts});
 
+                this.setState({posts: statePosts});
                 document.getElementById('posts-loading').style.display = 'none';
             }else {
                 console.log("Failed loading posts: " + response.message);
@@ -225,15 +231,9 @@ export default class ActivityFeedPage extends Component {
             }
         }.bind(this));
 
-        // Retrieving posts
+        // Retrieving posts & trends
         this.getPosts();
-
-        // Retrieving trends
         this.getTrends();
-    }
-
-    componentDidMount() {
-        $('#post-content').parent().height($('#post-content').outerHeight());
     }
 
     componentDidUpdate() {
@@ -277,7 +277,7 @@ export default class ActivityFeedPage extends Component {
                         </div>
                     </Col>
                     <Col md="5" className="no-margin-left no-margin-right">
-                        <div className="publish-container">
+                        <div className="publish-container" ref="publishContainer">
                             <input type="file" id="file" ref="fileUploader" style={{display: "none"}}/>
                             <TextareaAutosize id="post-content" placeholder="Poster une publication" onKeyUp={this.adjustPublishContainer} disabled></TextareaAutosize>
                             <div className="icons">
@@ -288,7 +288,7 @@ export default class ActivityFeedPage extends Component {
                             <div className="remove-box">
                                 <span onClick={this.closeTextArea}><FontAwesomeIcon icon={ faTimes }  /></span>
                             </div>
-                            <span className="publish-button" onClick={this.togglePostModal}><FontAwesomeIcon icon={faPaperPlane} /></span>
+                            <span ref='publishButton' className="publish-button" onClick={this.togglePostModal}><FontAwesomeIcon icon={faPaperPlane} /></span>
                         </div>
                         <div className="posts-container">
                             <Alert id="posts-message" color="info" className="info-message">Il n'y a aucune publication pour le moment</Alert>
@@ -298,7 +298,10 @@ export default class ActivityFeedPage extends Component {
                     </Col>
                     <Col md="4" className="no-margin-left no-margin-right">
                         <div className="user-container right-container">
-                            <h5>Sujets du moment</h5>
+                            <div className="right-container-header">
+                                <h5>Sujets du moment</h5>
+                                <Button color="info" className="refresh-trends" onClick={this.getTrends}><FontAwesomeIcon icon={faSync} /></Button>
+                            </div>
                             <hr/>
                             <Alert id="trends-message" color="info" className="info-message">Aucune tendances pour le moment</Alert>
                             <Alert id="trends-loading" color="info" className="info-message" style={{display:'block'}}>Chargement...</Alert>

@@ -4,22 +4,14 @@ import axios from 'axios';
 import qs from 'qs';
 
 class AuthService {
-    static async verify() {
+    static async verify(get = false) {
         if(localStorage.getItem('token') !== null || localStorage.getItem('id') !== null) {
             var result = false;
             const {data} = await axios.post(`${config.API_ROOT}/auth_verify`, qs.stringify({ token:  localStorage.getItem('token'), id: localStorage.getItem('id') }));
             result = data.success;
             if(!result) AuthService.clearStorage();
-            return result;
-        }
-        return false;
-    }
-
-    static async get() {
-        if(localStorage.getItem('token') !== null || localStorage.getItem('id') !== null) {
-            const {data} = await axios.post(`${config.API_ROOT}/auth_verify`, qs.stringify({ token:  localStorage.getItem('token'), id: localStorage.getItem('id') }));
-            if(!data.success) AuthService.clearStorage();
-            return JSON.parse(data.message);
+            if(get) { return JSON.parse(data.message); }
+            else { return result; }
         }
         return false;
     }
