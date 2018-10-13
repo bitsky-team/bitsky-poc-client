@@ -116,6 +116,7 @@ export default class ActivityFeedPage extends Component {
                     );
                     posts.unshift(newPost);
                     this.setState({posts: posts});
+                    this.getTrends();
                     this.closeTextArea();
                     this.adjustPublishContainer();
                     this.togglePostModal();
@@ -153,19 +154,7 @@ export default class ActivityFeedPage extends Component {
         }
     }
 
-    componentWillMount() {
-        // Checking firsttime
-        axios.post(`${config.API_ROOT}/get_firsttime`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') }))
-          .then(function(response) {
-            response = response.data;
-            if(response.success) {
-              let firstTime = Boolean(parseInt(response.message, 10));
-              localStorage.setItem('firsttime', firstTime);
-              if(firstTime) this.props.history.push('/register_confirmation');
-            }
-        }.bind(this));
-
-        // Retrieving posts
+    getPosts = () => {
         axios.post(`${config.API_ROOT}/get_allposts`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') }))
         .then(function(response) {
             response = response.data;
@@ -196,8 +185,10 @@ export default class ActivityFeedPage extends Component {
                 console.log("Failed loading posts: " + response.message);
             }
         }.bind(this));
+    }
 
-        // Retrieving trends
+    getTrends = () => {
+        this.setState({trends: []})
         axios.post(`${config.API_ROOT}/get_trends`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') }))
         .then(function(response) {
             response = response.data;
@@ -220,6 +211,25 @@ export default class ActivityFeedPage extends Component {
                 console.log("Failed loading posts: " + response.message);
             }
         }.bind(this));
+    }
+
+    componentWillMount() {
+        // Checking firsttime
+        axios.post(`${config.API_ROOT}/get_firsttime`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') }))
+          .then(function(response) {
+            response = response.data;
+            if(response.success) {
+              let firstTime = Boolean(parseInt(response.message, 10));
+              localStorage.setItem('firsttime', firstTime);
+              if(firstTime) this.props.history.push('/register_confirmation');
+            }
+        }.bind(this));
+
+        // Retrieving posts
+        this.getPosts();
+
+        // Retrieving trends
+        this.getTrends();
     }
 
     componentDidMount() {
@@ -282,7 +292,7 @@ export default class ActivityFeedPage extends Component {
                         </div>
                         <div className="posts-container">
                             <Alert id="posts-message" color="info" className="info-message">Il n'y a aucune publication pour le moment</Alert>
-                            <Alert id="posts-loading" color="info" className="info-message">Chargement...</Alert>
+                            <Alert id="posts-loading" color="info" className="info-message" style={{display:'block'}}>Chargement...</Alert>
                             <div>{ this.state.posts }</div>
                         </div>
                     </Col>

@@ -22,7 +22,7 @@
     "react-dom": "^16.4.1",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "^1.1.5",
+    "react-scripts": "^2.0.3",
     "react-toastify": "^4.4.0",
     "reactstrap": "^6.3.0"
   },
@@ -52,5 +52,11 @@
     "directories": {
       "buildResources": "assets"
     }
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }

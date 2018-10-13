@@ -105,7 +105,7 @@ export default class LoginPage extends Component {
               <input type="checkbox"/><span className="checkmark"></span>
               <span className="text">Se souvenir de moi</span>
             </label>
-            <a href="" className="password-lost">Mot de passe oublié ?</a>
+            <a href className="password-lost">Mot de passe oublié ?</a>
 
             <div className="button-group">
               <button className="primary" onClick={this.handleSubmit}><span>Connexion</span></button>
@@ -118,10 +118,10 @@ export default class LoginPage extends Component {
             <div className="container">
               <nav>
                 <ul>
-                  <li><a href="">À propos</a></li>
-                  <li><a href="">Support</a></li>
-                  <li><a href="">Mises à jour</a></li>
-                  <li><a href="">Documentation</a></li>
+                  <li><a href>À propos</a></li>
+                  <li><a href>Support</a></li>
+                  <li><a href>Mises à jour</a></li>
+                  <li><a href>Documentation</a></li>
                 </ul>
               </nav>
               <img src={logo} alt="logo"/>

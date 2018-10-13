@@ -111,7 +111,7 @@ export default class RegisterPage extends Component {
         <Modal isOpen={this.state.confirmModal} toggle={this.toggleConfirm} className={this.props.className + ' login-error-modal'}>
           <ModalHeader toggle={this.toggleConfirm}>Conditions d'utilisation</ModalHeader>
           <ModalBody>
-            <p>En vous inscrivant, vous acceptez nos <a href="">conditions d'utilisation</a> et notre <a href="">politique de confidentialité</a>.</p>
+            <p>En vous inscrivant, vous acceptez nos <a href>conditions d'utilisation</a> et notre <a href>politique de confidentialité</a>.</p>
           </ModalBody>
           <ModalFooter>
             <button className="secondary" onClick={this.handleSubmit}>Continuer</button>
@@ -143,10 +143,10 @@ export default class RegisterPage extends Component {
             <div className="container">
               <nav>
                 <ul>
-                  <li><a href="">À propos</a></li>
-                  <li><a href="">Support</a></li>
-                  <li><a href="">Mises à jour</a></li>
-                  <li><a href="">Documentation</a></li>
+                  <li><a href>À propos</a></li>
+                  <li><a href>Support</a></li>
+                  <li><a href>Mises à jour</a></li>
+                  <li><a href>Documentation</a></li>
                 </ul>
               </nav>
               <img src={logo} alt="logo"/>
