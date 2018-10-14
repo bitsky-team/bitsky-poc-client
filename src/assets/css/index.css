@@ -21,6 +21,32 @@ a, a:hover {cursor: pointer;}
   margin-right: 0 !important;
 }
 
+.no-padding-left
+{
+  padding-left: 0 !important;
+}
+
+.no-padding-right
+{
+  padding-right: 0 !important;
+}
+
+.margin-top-10
+{
+  margin-top: 10px;
+}
+
+.align-items-center
+{
+  align-items: center;
+}
+
+h1, h2, h3, h4, h5
+{
+  font-weight: 400;
+  margin: 0;
+}
+
 body 
 {
   margin: 0;
@@ -420,6 +446,7 @@ body
   min-height: calc(100vh - 66px);
   max-width: none;
   padding-top: 40px;
+  padding-bottom: 30px;
 }
 
 .search-container
@@ -723,16 +750,21 @@ body
 
 .user-container.right-container .right-container-header .refresh-trends
 {
+  margin-left: 10px;
+}
+
+.btn-info
+{
   background-color: rgb(131, 178, 224);
   border-color: rgb(131, 178, 224);
   padding: 3px 12px 3px 12px;
   font-size: 14px;
-  margin-left: 10px;
 }
 
-.user-container.right-container .right-container-header .refresh-trends:hover
+.btn-info:hover
 {
   color: rgb(131, 178, 224);
+  border-color: rgb(131, 178, 224);
   background-color: #FFF;
 }
 
@@ -879,7 +911,7 @@ body
 
 .no-center
 {
-  text-align: left;
+  text-align: left !important;
 }
 
 .no-underline:hover, .no-underline:focus
@@ -946,4 +978,100 @@ body
 .notification-success
 {
   background-color: rgb(131, 178, 224);
+}
+
+.user-container.admin-top-bar
+{
+  padding-top: 10px;
+}
+
+.filter-button
+{
+  font-size: 20px;
+  margin-left: 5px;
+  margin-right: 5px;
+  border: 2px solid #83B2E0;
+  border-radius: 50%;
+  padding: 3px;
+  width: 40px;
+  display:inline-block;
+  text-align: center;
+  color: #83B2E0;
+  transition: 0.2s;
+}
+
+.filter-button.active, .filter-button:hover
+{
+  color: #FFF;
+  background-color: #83B2E0;
+  cursor: pointer;
+}
+
+.user-thumbnail
+{
+  background: linear-gradient(45deg, #83B2E0 0, #A5CDF5 100%);
+  border-radius: 5px;
+  color: #FFF;
+  text-align: center;
+  padding: 10px;
+  position: relative;
+}
+
+.user-thumbnail.admin
+{
+  background: linear-gradient(45deg, #CF94CA 0, #E8B4E3 100%);
+}
+
+.user-thumbnail .infos
+{
+  padding-left: 50px;
+}
+
+.user-thumbnail .infos img
+{
+  height: 55px;
+  width: 55px;
+  position: absolute;
+  top: 10px;
+  left: 5px;
+  border: 1px solid #FFF;
+}
+
+.user-thumbnail .infos h4, .user-thumbnail .infos h5
+{
+  font-weight: 200;
+}
+
+.user-thumbnail .infos h4
+{
+  font-size: 21px;
+}
+
+.user-thumbnail .infos h5
+{
+  font-size: 14px;
+}
+
+.user-thumbnail .infos small
+{
+  font-size: 11px;
+}
+
+.user-thumbnail hr
+{
+  border-color: rgba(255,255,255,0.2);
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.user-thumbnail * .action
+{
+  font-size: 18px;
+  transition: 0.2s;
+}
+
+.user-thumbnail * .action:hover
+{
+  cursor: pointer;
+  transform: scale(1.15);
 }
