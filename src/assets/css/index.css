@@ -947,3 +947,150 @@ body
 {
   background-color: rgb(131, 178, 224);
 }
+
+.admin-dashboard h4 
+{
+  text-align: left;
+  margin-top: 5px;
+}
+
+.admin-dashboard div.connection-state 
+{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFF;
+  font-weight: 200;
+  font-size: 20px;
+  height: 100px;
+  width: 100px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #84DE86 0, #68B06A 100%);
+}
+
+.admin-dashboard div p 
+{
+  text-align: left;
+}
+
+.admin-dashboard .admin-dashboard-info 
+{
+  width: 200px;
+  color: #FFF;
+  padding: 5px;
+  background: linear-gradient(45deg, #83B2E0 0, #A5CDF5 100%);
+  border-radius: 5px;
+  margin-left: 40px;
+}
+
+.admin-dashboard .admin-dashboard-info p 
+{
+  font-weight: lighter !important;
+} 
+
+.admin-dashboard .admin-dashboard-info h3
+{
+  font-size: 35px;
+  font-weight: 400;
+}
+
+.flex-row-left
+{
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  flex-direction: row;
+}
+
+.admin-dashboard-storage
+{
+  height: 130px;
+  width: 250px;
+  color: #FFF;
+  padding: 5px;
+  background: linear-gradient(45deg, #83B2E0 0, #A5CDF5 100%);
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.admin-dashboard-storage p
+{
+  font-size: 20px;
+}
+
+.admin-dashboard-storage hr
+{
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0));
+}
+
+.used-volume-info
+{
+  margin-top: -10px;
+}
+
+.used-volume-info div
+{
+  display: inline-block;
+}
+
+
+.admin-dashboard-storage div.used-volume
+{
+  background-color: #87B5E3;
+  border: 5px solid rgba(255, 255, 255, 0.15);
+  border-right-color: #FFF; 
+  border-top-color: #FFF;
+  height: 60px;
+  width: 60px;
+  border-radius: 50px;
+  margin-right: 50px;
+}
+
+.admin-dashboard-storage .used-volume-info p
+{
+  font-weight: 200;
+  margin-top: -15px;
+}
+
+.admin-logs-container
+{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.admin-logs-container .admin-log
+{
+  background: linear-gradient(45deg, #83B2E0 0, #A5CDF5 100%);
+  height: 30px;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.admin-dashboard .see-more-button
+{
+  background-color: rgb(131, 178, 224);
+  border-color: rgb(131, 178, 224);
+  padding: 3px 12px 3px 12px;
+  font-size: 19px;
+  color: rgb(131, 178, 224);
+  background-color: #FFF;
+}
+
+.admin-dashboard .see-more-button:hover
+{
+  background-color: rgb(131, 178, 224);
+  border-color: rgb(131, 178, 224);
+  color: #FFF;
+}
+
+.pink-gradient
+{
+  background: linear-gradient(45deg, #CF94CA 0, #E8B4E3 100%) !important;
+}
+
+
+
