@@ -4,9 +4,8 @@ export default class AdministrationUsedStorage extends Component {
     render() {
         return (
             <div>
-                <div className="admin-dashboard-storage">
-                    <p>{this.props.diskNumber}</p>
-                    <hr />
+                <div className={(this.props.warning) ? 'admin-dashboard-storage warning' : 'admin-dashboard-storage'}>
+                    <h5>{this.props.diskNumber}</h5>
                     <div className="used-volume-info">
                         <div className="used-volume"></div>
                         <div>
