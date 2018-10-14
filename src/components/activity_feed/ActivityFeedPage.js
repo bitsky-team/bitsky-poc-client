@@ -180,7 +180,7 @@ export default class ActivityFeedPage extends Component {
                         favorites={post.favorites}
                         comments={post.comments}
                         date={post.created_at}
-                        isOwner={(post.owner.firstname + " " + post.owner.lastname) === (this.state.session.firstname + " " + this.state.session.lastname) || this.state.session.rank == 2}
+                        isOwner={(post.owner.firstname + " " + post.owner.lastname) === (this.state.session.firstname + " " + this.state.session.lastname) || this.state.session.rank === 2}
                         handleDeleteButtonClick={this.handleDeleteButtonClick}
                     />);
                 });
@@ -228,12 +228,13 @@ export default class ActivityFeedPage extends Component {
               let firstTime = Boolean(parseInt(response.message, 10));
               localStorage.setItem('firsttime', firstTime);
               if(firstTime) this.props.history.push('/register_confirmation');
+              else {
+                // Retrieving posts & trends
+                this.getPosts();
+                this.getTrends();
+              }
             }
         }.bind(this));
-
-        // Retrieving posts & trends
-        this.getPosts();
-        this.getTrends();
     }
 
     componentDidUpdate() {
