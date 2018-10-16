@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import avatar from '../../assets/img/avatar.png';
 import { toast } from 'react-toastify';
 import { config } from '../../config';
 import TextareaAutosize from 'react-autosize-textarea';
@@ -101,6 +100,7 @@ export default class ActivityFeedPage extends Component {
                         <Post 
                             id={response.postId} 
                             key={"post-" + response.postId}
+                            ownerAvatar={localStorage.getItem('avatar')}
                             ownerName={this.state.session.firstname + " " + this.state.session.lastname}
                             ownerRank={RankService.translate(response.ownerRank)}
                             content={content.value}
@@ -172,6 +172,7 @@ export default class ActivityFeedPage extends Component {
                     statePosts.push(<Post 
                         id={post.id} 
                         key={"post-" + post.id}
+                        ownerAvatar={post.owner.avatar}
                         ownerName={post.owner.firstname + " " + post.owner.lastname}
                         ownerRank={RankService.translate(post.owner.rank)}
                         content={post.content}
@@ -186,7 +187,8 @@ export default class ActivityFeedPage extends Component {
                 });
 
                 this.setState({posts: statePosts});
-                document.getElementById('posts-loading').style.display = 'none';
+                let postsLoading = document.getElementById('posts-loading');
+                if(postsLoading) postsLoading.style.display = 'none';
             }else {
                 console.log("Failed loading posts: " + response.message);
             }
@@ -212,9 +214,10 @@ export default class ActivityFeedPage extends Component {
                 });
                 this.setState({trends: stateTrends});
 
-                document.getElementById('trends-loading').style.display = 'none';
+                let trendsLoading = document.getElementById('trends-loading');
+                if(trendsLoading) trendsLoading.style.display = 'none';
             }else {
-                console.log("Failed loading posts: " + response.message);
+                console.log("Failed loading trends: " + response.message);
             }
         }.bind(this));
     }
@@ -271,7 +274,7 @@ export default class ActivityFeedPage extends Component {
                 <Row>
                     <Col md="3" className="no-margin-left no-margin-right">
                         <div className="user-container">
-                            <img src={avatar} alt="Avatar" />
+                            <img src={localStorage.getItem('avatar')} alt="Avatar" />
                             <h5>{ this.state.session.firstname + ' ' + this.state.session.lastname }</h5>
                             <p className="rank">{ RankService.translate(this.state.session.rank) }</p>
                             <SideMenu />

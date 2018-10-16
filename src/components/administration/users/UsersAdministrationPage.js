@@ -5,10 +5,10 @@ import {
     Row, 
     Col, 
     Table,
+    Alert,
 } from 'reactstrap';
 import jwtDecode from 'jwt-decode';
 import RankService from '../../../services/RankService';
-import avatar from '../../../assets/img/avatar.png';
 import AdministrationSideMenu from '../common/AdministrationSideMenu';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTh, faList, faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -61,7 +61,7 @@ export default class UsersAdministrationPage extends Component {
                 let i = 0;
                 usersData.forEach(user => {
                     i++;
-                    users.push(<UserThumbnail margin={(i > 3 ? 'margin-top-10' : null)} key={'user-'+user.id} firstname={user.firstname} lastname={user.lastname} uniq_id={user.uniq_id} rank={RankService.translate(user.rank)}/>);
+                    users.push(<UserThumbnail margin={(i > 3 ? 'margin-top-10' : null)} key={'user-'+user.id} avatar={user.avatar} firstname={user.firstname} lastname={user.lastname} uniq_id={user.uniq_id} rank={RankService.translate(user.rank)}/>);
                 });
             break;
 
@@ -78,6 +78,8 @@ export default class UsersAdministrationPage extends Component {
         }
 
         this.setState({users});
+        let usersLoading = document.getElementById('users-loading');
+        if(usersLoading) usersLoading.style.display = 'none';
     }
 
     componentWillMount() {
@@ -92,7 +94,7 @@ export default class UsersAdministrationPage extends Component {
                 <Row>
                     <Col md="3" className="no-margin-left no-margin-right">
                         <div className="user-container">
-                            <img src={avatar} alt="Avatar" />
+                            <img src={localStorage.getItem('avatar')} alt="Avatar" />
                             <h5>{ this.state.session.firstname + ' ' + this.state.session.lastname }</h5>
                             <p className="rank">{ RankService.translate(this.state.session.rank) }</p>
                             <AdministrationSideMenu />
@@ -118,6 +120,7 @@ export default class UsersAdministrationPage extends Component {
 
                         <div className="user-container no-center" style={{marginTop: '15px'}}>
                             <Container className="no-padding-left no-padding-right">
+                                <Alert id="users-loading" color="info" className="info-message" style={{display:'block'}}>Chargement...</Alert>
                                 <Row>
                                     {this.state.displayType === 'list' && 
                                     <Table>
