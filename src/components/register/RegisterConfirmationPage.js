@@ -22,6 +22,7 @@ import Cropper from 'react-cropper';
 import {  faUserCheck, faTimes, faSave } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import qs from 'qs';
+import downscale from 'downscale';
 
 export default class RegisterConfirmationPage extends Component {
     constructor(props) {
@@ -51,30 +52,25 @@ export default class RegisterConfirmationPage extends Component {
       }
       const reader = new FileReader();
       reader.onload = () => {
-        this.setState({ avatarSrc: reader.result });
+        let image = new Image();
+        image.onload = () => {
+          const width = (image.width / image.width) * 400;
+          const height = (image.height / image.width) * 400;
+          downscale(reader.result, width, height)
+          .then((dataURL) => {
+            fetch(dataURL)
+            .then((response) => {
+              return response.blob()
+            })
+            .then((blob) => {
+              const blobDataURI = window.URL.createObjectURL(blob);
+              this.setState({ avatarSrc:  blobDataURI});
+            });
+          });
+        };
+        image.src = reader.result;
       };
       reader.readAsDataURL(files[0]);
-    }
-
-    b64toBlob = (b64Data, contentType='', sliceSize=512) => {
-      const byteCharacters = atob(b64Data);
-      const byteArrays = [];
-      
-      for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-        const slice = byteCharacters.slice(offset, offset + sliceSize);
-        
-        const byteNumbers = new Array(slice.length);
-        for (let i = 0; i < slice.length; i++) {
-          byteNumbers[i] = slice.charCodeAt(i);
-        }
-        
-        const byteArray = new Uint8Array(byteNumbers);
-        
-        byteArrays.push(byteArray);
-      }
-      
-      const blob = new Blob(byteArrays, {type: contentType});
-      return blob;
     }
 
     cropImage = () => {

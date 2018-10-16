@@ -30,6 +30,8 @@ export default class UsersAdministrationPage extends Component {
     }
 
     filterUsers = (action) => {
+        let usersLoading = document.getElementById('users-loading');
+        if(usersLoading) usersLoading.style.display = 'block';
         switch(action) {
             case 'filterThumbnails':
                 this.refs.filterToList.classList.remove('active');
