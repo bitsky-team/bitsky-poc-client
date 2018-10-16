@@ -1115,15 +1115,6 @@ body
   font-weight: 400;
 }
 
-.flex-row-left
-{
-  display: flex;
-  align-items: center;
-  justify-content: left;
-  flex-direction: row;
-  margin-top: 10px;
-}
-
 .admin-dashboard-storage
 {
   display: flex;
