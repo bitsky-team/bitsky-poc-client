@@ -11,15 +11,16 @@ import AdministrationInfos from './common/AdministrationInfos';
 import jwtDecode from 'jwt-decode';
 import RankService from '../../services/RankService';
 import Navbar from '../common/template/Navbar';
-import avatar from '../../assets/img/avatar.png';
-
+import axios from 'axios';
+import qs from 'qs';
+import {config} from '../../config';
 
 export default class AdministrationPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
             session: jwtDecode(localStorage.getItem('token')),
-            temperature: 40,
+            temperature: '?',
             cpuPercentage: 30,
             diskStorage: {
                 disque1: 13.5, 
@@ -37,6 +38,16 @@ export default class AdministrationPage extends Component {
         };
     }
 
+    getTemp = async () => {
+        const response = await axios.post(`${config.API_ROOT}/get_temp`, qs.stringify({ token: localStorage.getItem('token'), uniq_id: localStorage.getItem('id')}));
+        const temperature = (response.data.success) ? response.data.temperature : '?';
+        this.setState({temperature});
+    }
+
+    componentWillMount() {
+        this.getTemp();
+    }
+
     render() {
         return (
             <div>
@@ -45,7 +56,7 @@ export default class AdministrationPage extends Component {
                     <Row>
                         <Col md="3" className="no-margin-left no-margin-right">
                             <div className="user-container">
-                                <img src={avatar} alt="Avatar" />
+                                <img src={localStorage.getItem('avatar')} alt="Avatar" />
                                 <h5>{this.state.session.firstname + ' ' + this.state.session.lastname}</h5>
                                 <p className="rank">{RankService.translate(this.state.session.rank)}</p>
                                 <AdministrationSideMenu />

@@ -11,6 +11,7 @@ import RegisterConfirmationPage from './components/register/RegisterConfirmation
 // Services
 import AuthService from './services/AuthService';
 import AdministrationPage from './components/administration/AdministrationPage';
+import UsersAdministrationPage from './components/administration/users/UsersAdministrationPage';
 
 function PrivateRoute ({component: Component, authed, ...rest}) {
   return (
@@ -44,7 +45,8 @@ class Router extends Component {
     ];
 
     let adminRoutes = [
-      '/administration'
+      '/administration',
+      '/admin_manage_users'
     ];
 
     if(!noAuthRoutes.includes(this.props.history.location.pathname)) {
@@ -68,7 +70,9 @@ class Router extends Component {
           <Route exact path='/register' component={RegisterPage} />
           <PrivateRoute exact authed={this.state.authenticated} path='/activity_feed' component={ActivityFeedPage} />
           <PrivateRoute exact authed={this.state.authenticated} path='/register_confirmation' component={RegisterConfirmationPage} />
+          
           <PrivateRoute exact authed={this.state.authenticated} path='/administration' component={AdministrationPage} />
+          <PrivateRoute exact authed={this.state.authenticated} path='/admin_manage_users' component={UsersAdministrationPage} />
       </div>
     )
   }

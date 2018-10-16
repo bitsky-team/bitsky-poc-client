@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import avatar from '../../../assets/img/avatar.png';
 import { config } from '../../../config';
 import DateService from '../../../services/DateService';
 
@@ -70,7 +69,7 @@ class Post extends Component {
         return (
             <div id={"post-"+this.props.id} className="post">
                 {this.isOwner()}
-                <img src={avatar} alt="Avatar" />
+                <img src={this.props.ownerAvatar} alt="Avatar" />
                 <div className="title">
                     <h4>{this.props.ownerName}</h4>
                     <small>{this.props.ownerRank}</small>

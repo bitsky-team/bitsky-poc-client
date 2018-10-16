@@ -73,7 +73,7 @@ class Navbar extends Component {
                                 <FontAwesomeIcon icon={faUserCog} /> Préférences
                             </DropdownItem>
                             <DropdownItem divider />
-                            <DropdownItem onClick={(e) => {localStorage.removeItem('id'); localStorage.removeItem('token');}}>
+                            <DropdownItem onClick={(e) => {localStorage.setItem('id',''); localStorage.setItem('token','');}}>
                                 <FontAwesomeIcon icon={faPowerOff} /> Déconnexion
                             </DropdownItem>
                             </DropdownMenu>

@@ -9,7 +9,7 @@ class AdministrationSideMenu extends Component {
     return (
       <div className="side-menu">
         <ul>
-            <li><a href onClick={(e) => {e.preventDefault(); this.props.history.push('/admin_manage_users') }}><FontAwesomeIcon icon={faTh} /> Tableau de bord</a></li>
+            <li><a href onClick={(e) => {e.preventDefault(); this.props.history.push('/administration') }}><FontAwesomeIcon icon={faTh} /> Tableau de bord</a></li>
             <li><a href onClick={(e) => {e.preventDefault(); this.props.history.push('/admin_manage_users') }}><FontAwesomeIcon icon={faUserAlt} /> Utilisateurs</a></li>
             <li><a href onClick={(e) => {e.preventDefault(); this.props.history.push('/admin_manage_files') }}><FontAwesomeIcon icon={faArchive} /> Fichiers</a></li>
             <li><a href onClick={(e) => {e.preventDefault(); this.props.history.push('/admin_manage_posts') }}><FontAwesomeIcon icon={faCommentAlt} /> Publications</a></li>

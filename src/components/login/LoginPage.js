@@ -52,8 +52,9 @@ export default class LoginPage extends Component {
       .then(function( response ) {
         response = response.data;
         if(response.success) {
-          localStorage.setItem('id', response.uniq_id);
+          localStorage.setItem('avatar', response.avatar);          
           localStorage.setItem('token', response.message);
+          localStorage.setItem('id', response.uniq_id);
           this.props.history.push('/activity_feed');
         }else {
           this.toggleError();
