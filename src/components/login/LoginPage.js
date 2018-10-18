@@ -1,77 +1,77 @@
-import React, { Component } from 'react';
-import logo from '../../assets/img/logo.png';
-import logo_small from '../../assets/img/logo-small.png';
-import $ from 'jquery';
-import { config } from '../../config';
-import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import axios from 'axios';
-import qs from 'qs';
+import React, { Component } from 'react'
+import logo from '../../assets/img/logo.png'
+import logo_small from '../../assets/img/logo-small.png'
+import $ from 'jquery'
+import { config } from '../../config'
+import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
+import axios from 'axios'
+import qs from 'qs'
 
 export default class LoginPage extends Component {
 
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       modal: false
-    };
+    }
   }
 
   componentDidMount() {
     setInterval(() => {
-      let container = $('.single-form-subcontainer.right .container');
-      let img = $('.single-form-subcontainer.right .container img');
-      let subcontainer = $('.single-form-subcontainer.right');
+      let container = $('.single-form-subcontainer.right .container')
+      let img = $('.single-form-subcontainer.right .container img')
+      let subcontainer = $('.single-form-subcontainer.right')
 
-      container.width(subcontainer.width());
-      img.css('top',(subcontainer.height()-img.height())/2 + 'px');
-      img.css('left',(subcontainer.width()-img.width())/2 + 'px');
+      container.width(subcontainer.width())
+      img.css('top',(subcontainer.height()-img.height())/2 + 'px')
+      img.css('left',(subcontainer.width()-img.width())/2 + 'px')
 
-      container.fadeIn();
-      img.fadeIn();
-    }, 300);
+      container.fadeIn()
+      img.fadeIn()
+    }, 300)
   }
 
   toggleError = (e) => {
     this.setState({
       modal: !this.state.modal
-    });
+    })
   }
 
   handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    let email = this.loginInput.value;
-    let password =  this.passwordInput.value;
+    let email = this.loginInput.value
+    let password =  this.passwordInput.value
     // eslint-disable-next-line
-    let emailReg = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    let emailCheck = emailReg.test(email);
-    let passwordCheckLength = password.length >= 8;
+    let emailReg = /^(([^<>()[\]\\.,:\s@\"]+(\.[^<>()[\]\\.,:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    let emailCheck = emailReg.test(email)
+    let passwordCheckLength = password.length >= 8
 
     if(emailCheck && passwordCheckLength) {
       axios.post(`${config.API_ROOT}/login`, qs.stringify({ email: this.loginInput.value, password: this.passwordInput.value }))
       .then(function( response ) {
-        response = response.data;
+        response = response.data
         if(response.success) {
-          localStorage.setItem('avatar', response.avatar);          
-          localStorage.setItem('token', response.message);
-          localStorage.setItem('id', response.uniq_id);
-          this.props.history.push('/activity_feed');
+          localStorage.setItem('avatar', response.avatar)          
+          localStorage.setItem('token', response.message)
+          localStorage.setItem('id', response.uniq_id)
+          this.props.history.push('/activity_feed')
         }else {
-          this.toggleError();
-          $('#errorMessage').text(response.message);
+          this.toggleError()
+          $('#errorMessage').text(response.message)
         }
-      }.bind(this));
+      }.bind(this))
     }else {
-      this.toggleError();
+      this.toggleError()
 
       if(!email || !password) {
-        setTimeout(function(){$('#errorMessage').html('<p>Veuillez remplir tous les champs !</p>');}, 1);
+        setTimeout(function(){$('#errorMessage').html('<p>Veuillez remplir tous les champs !</p>')}, 1)
       }else {
         setTimeout(function(){
-          $('#errorMessage').html('<p>Veuillez vérifier les points suivants:</p><ul id=\'errorsList\'></ul>');
-          if(!emailCheck) $('#errorsList').append('<li>Votre adresse email est incorrecte</li>');
-          if(!passwordCheckLength) $('#errorsList').append('<li>Le mot de passe doit comporter au moins 8 caractères</li>');
-        }, 1);
+          $('#errorMessage').html('<p>Veuillez vérifier les points suivants:</p><ul id=\'errorsList\'></ul>')
+          if(!emailCheck) $('#errorsList').append('<li>Votre adresse email est incorrecte</li>')
+          if(!passwordCheckLength) $('#errorsList').append('<li>Le mot de passe doit comporter au moins 8 caractères</li>')
+        }, 1)
       }
     }
   }
@@ -122,7 +122,7 @@ export default class LoginPage extends Component {
                   <li><a href>À propos</a></li>
                   <li><a href>Support</a></li>
                   <li><a href>Mises à jour</a></li>
-                  <li><a href>Documentation</a></li>
+                  <li><a href onClick={(e) => this.props.history.push('/docs')}>Documentation</a></li>
                 </ul>
               </nav>
               <img src={logo} alt="logo"/>
@@ -130,6 +130,6 @@ export default class LoginPage extends Component {
           </div>
         </div>
       </div>
-    );
+    )
   }
 }

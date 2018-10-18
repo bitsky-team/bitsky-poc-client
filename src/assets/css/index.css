@@ -54,6 +54,7 @@ body
   font-family: sans-serif;
   font-family: 'Roboto', sans-serif;
   color: rgb(97, 97, 97);
+  background-color: #F5F7F8;
 }
 
 .loading
@@ -762,6 +763,12 @@ body
   background-color: #FFF;
 }
 
+.btn-info:active
+{
+  background-color: rgb(131, 178, 224) !important;
+  border-color: rgb(131, 178, 224) !important;
+}
+
 .infos-container
 {
   background-color: rgba(255, 255, 255, 0.8);
@@ -1069,10 +1076,22 @@ body
   cursor: pointer;
   transform: scale(1.15);
 }
+
+.admin-dashboard
+{
+  padding: 20px !important;
+  padding-top: 10px !important;
+}
+
+.admin-dashboard:not(:first-child)
+{
+  margin-top: 10px;
+}
+
 .admin-dashboard h4 
 {
+  margin: 0;
   text-align: left;
-  margin-top: 5px;
 }
 
 .admin-dashboard div.connection-state 
@@ -1225,5 +1244,37 @@ body
   background: linear-gradient(45deg, #CF94CA 0, #E8B4E3 100%) !important;
 }
 
+.docs-container
+{
+  margin-top: 20px;
+}
 
+.docs-left-subcontainer, .docs-right-subcontainer, .docs-top-subcontainer
+{
+  margin-top: 10px;
+  background: #FFF;
+  padding: 10px;
+  border-radius: 5px;
+}
 
+.dropdown-toggler .dropdown-content
+{
+  margin-left: 20px;
+  visibility: hidden;
+  opacity: 0;
+  transition: 0.5s;
+  overflow: hidden;
+  height: 0;
+}
+
+.dropdown-toggler:hover .dropdown-content
+{
+  visibility: visible;
+  opacity: 1;
+  height: auto;
+}
+
+.navbar-light
+{
+  background: #FFF;
+}

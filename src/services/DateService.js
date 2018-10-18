@@ -1,34 +1,34 @@
 class DateService {
     static timeSince(date) {
-        var seconds = Math.floor((new Date() - new Date(date)) / 1000);
+        var seconds = Math.floor((new Date() - new Date(date)) / 1000)
         
-        var interval = Math.floor(seconds / 31536000);
+        var interval = Math.floor(seconds / 31536000)
         if (interval >= 1) {
-            return interval + " ans";
+            return interval + " ans"
         }
 
-        interval = Math.floor(seconds / 2592000);  
+        interval = Math.floor(seconds / 2592000)  
         if (interval >= 1) {
-            return interval + " mois";
+            return interval + " mois"
         }
 
-        interval = Math.floor(seconds / 86400);
+        interval = Math.floor(seconds / 86400)
         if (interval >= 1) {
-            return interval + " jours";
+            return interval + " jours"
         }
 
-        interval = Math.floor(seconds / 3600);
+        interval = Math.floor(seconds / 3600)
         if (interval >= 1) {
-            return interval + " heures";
+            return interval + " heures"
         }
 
-        interval = Math.floor(seconds / 60);
+        interval = Math.floor(seconds / 60)
         if (interval >= 1) {
-            return interval + " minutes";
+            return interval + " minutes"
         }
 
-        return Math.floor(seconds) + " secondes";
+        return Math.floor(seconds) + " secondes"
     }
 }
 
-export default DateService;
+export default DateService

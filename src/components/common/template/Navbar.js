@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import {withRouter} from 'react-router-dom';
-import logo_small from '../../../assets/img/logo-small.png';
-import AuthService from '../../../services/AuthService';
-import jwtDecode from 'jwt-decode';
+import React, { Component } from 'react'
+import {withRouter} from 'react-router-dom'
+import logo_small from '../../../assets/img/logo-small.png'
+import AuthService from '../../../services/AuthService'
+import jwtDecode from 'jwt-decode'
 import { 
     Collapse,
     Navbar as ReactstrapNavbar,
@@ -15,30 +15,36 @@ import {
     DropdownToggle,
     DropdownMenu,
     DropdownItem
-} from 'reactstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown, faUserCog, faUser, faPowerOff, faBell, faInbox, faUnlockAlt } from '@fortawesome/free-solid-svg-icons';
+} from 'reactstrap'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCaretDown, faUserCog, faUser, faPowerOff, faBell, faInbox, faUnlockAlt } from '@fortawesome/free-solid-svg-icons'
 
 class Navbar extends Component {
     constructor(props) {
-        super(props);
+        super(props)
         this.state = {
             isOpen: false,
-            session: jwtDecode(localStorage.getItem('token'))
+            session: (localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null),
         }
     }
     
     toggleNavbar = (e) => {
         this.setState({
             isOpen: !this.state.isOpen
-        });
+        })
     }
 
     goHome = (e) => {
-        e.preventDefault();
-        let history = this.props.history;
-        if(history.location.pathname !== "/activity_feed") history.push('/activity_feed');
-        else window.location.reload();
+        e.preventDefault()
+        let history = this.props.history
+        if(history.location.pathname !== "/activity_feed") history.push('/activity_feed')
+        else window.location.reload()
+    }
+
+    logout = () => {
+        localStorage.removeItem('id') 
+        localStorage.removeItem('token')
+        window.location.href = '/login'
     }
 
     render() {
@@ -61,21 +67,21 @@ class Navbar extends Component {
                                 { this.state.session.firstname + ' ' + this.state.session.lastname } <FontAwesomeIcon icon={faCaretDown} />
                             </DropdownToggle>
                             <DropdownMenu right>
-                            <DropdownItem>
-                            <FontAwesomeIcon icon={faUser} /> Profil
-                            </DropdownItem>
-                            {AuthService.isAdmin() && 
-                                <DropdownItem onClick={ () => this.props.history.push('/administration') }>
-                                    <FontAwesomeIcon icon={faUnlockAlt} /> Administration
+                                <DropdownItem>
+                                    <FontAwesomeIcon icon={faUser} /> Profil
                                 </DropdownItem>
-                            }
-                            <DropdownItem>
-                                <FontAwesomeIcon icon={faUserCog} /> Préférences
-                            </DropdownItem>
-                            <DropdownItem divider />
-                            <DropdownItem onClick={(e) => {localStorage.setItem('id',''); localStorage.setItem('token','');}}>
-                                <FontAwesomeIcon icon={faPowerOff} /> Déconnexion
-                            </DropdownItem>
+                                {AuthService.isAdmin() && 
+                                    <DropdownItem onClick={ () => this.props.history.push('/administration') }>
+                                        <FontAwesomeIcon icon={faUnlockAlt} /> Administration
+                                    </DropdownItem>
+                                }
+                                <DropdownItem>
+                                    <FontAwesomeIcon icon={faUserCog} /> Préférences
+                                </DropdownItem>
+                                <DropdownItem divider />
+                                <DropdownItem onClick={this.logout}>
+                                    <FontAwesomeIcon icon={faPowerOff} /> Déconnexion
+                                </DropdownItem>
                             </DropdownMenu>
                         </UncontrolledDropdown>
                     </Nav>
@@ -86,4 +92,4 @@ class Navbar extends Component {
 }
 
 
-export default withRouter(Navbar);
+export default withRouter(Navbar)

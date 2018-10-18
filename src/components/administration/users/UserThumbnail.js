@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import {Container, Col, Row} from 'reactstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faTrash, faPencilAlt } from '@fortawesome/free-solid-svg-icons';
+import {Container, Col, Row} from 'reactstrap'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEye, faTrash, faPencilAlt } from '@fortawesome/free-solid-svg-icons'
 
 export default class UserThumbnail extends Component {
   render() {

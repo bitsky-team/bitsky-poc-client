@@ -1,17 +1,18 @@
 // React
-import React, { Component } from 'react';
-import { Route, Redirect, withRouter } from 'react-router-dom';
+import React, { Component } from 'react'
+import { Route, Redirect, withRouter } from 'react-router-dom'
 
 // Components 
-import LoginPage from './components/login/LoginPage';
-import RegisterPage from './components/register/RegisterPage';
-import ActivityFeedPage from './components/activity_feed/ActivityFeedPage';
-import RegisterConfirmationPage from './components/register/RegisterConfirmationPage';
+import LoginPage from './components/login/LoginPage'
+import RegisterPage from './components/register/RegisterPage'
+import ActivityFeedPage from './components/activity_feed/ActivityFeedPage'
+import RegisterConfirmationPage from './components/register/RegisterConfirmationPage'
 
 // Services
-import AuthService from './services/AuthService';
-import AdministrationPage from './components/administration/AdministrationPage';
-import UsersAdministrationPage from './components/administration/users/UsersAdministrationPage';
+import AuthService from './services/AuthService'
+import AdministrationPage from './components/administration/AdministrationPage'
+import UsersAdministrationPage from './components/administration/users/UsersAdministrationPage'
+import UserDocumentationPage from './components/docs/user/UserDocumentationPage'
 
 function PrivateRoute ({component: Component, authed, ...rest}) {
   return (
@@ -32,32 +33,33 @@ class Router extends Component {
 
   componentDidMount() {
     setInterval(async () => {
-      const authenticated = await AuthService.verify();
-      this.setState({authenticated});
-    }, 500);
+      const authenticated = await AuthService.verify()
+      this.setState({authenticated})
+    }, 500)
   }
 
   componentDidUpdate() {
     let noAuthRoutes = [
       '/',
       '/login',
-      '/register'
-    ];
+      '/register',
+      '/docs'
+    ]
 
     let adminRoutes = [
       '/administration',
       '/admin_manage_users'
-    ];
+    ]
 
     if(!noAuthRoutes.includes(this.props.history.location.pathname)) {
       if(!this.state.authenticated 
           || ((adminRoutes.includes(this.props.history.location.pathname) && !AuthService.isAdmin()))) {
-        this.props.history.push('/');
+        this.props.history.push('/')
       }
     }else
     {
       if(this.state.authenticated) {
-        this.props.history.push('/activity_feed');
+        this.props.history.push('/activity_feed')
       }
     }
   }
@@ -68,6 +70,8 @@ class Router extends Component {
           <Route exact path='/' component={LoginPage} />
           <Route exact path='/login' component={LoginPage} />
           <Route exact path='/register' component={RegisterPage} />
+          <Route exact path='/docs' component={UserDocumentationPage} />
+
           <PrivateRoute exact authed={this.state.authenticated} path='/activity_feed' component={ActivityFeedPage} />
           <PrivateRoute exact authed={this.state.authenticated} path='/register_confirmation' component={RegisterConfirmationPage} />
           
@@ -79,4 +83,4 @@ class Router extends Component {
   
 }
 
-export default withRouter(Router);
+export default withRouter(Router)

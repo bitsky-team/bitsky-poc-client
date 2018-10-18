@@ -1,19 +1,19 @@
-import React, { Component } from 'react';
-import { config } from '../../../config';
-import DateService from '../../../services/DateService';
+import React, { Component } from 'react'
+import { config } from '../../../config'
+import DateService from '../../../services/DateService'
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTag, faStar as faFullStar, faClock, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { faStar as faEmptyStar, faComments } from '@fortawesome/free-regular-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTag, faStar as faFullStar, faClock, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faStar as faEmptyStar, faComments } from '@fortawesome/free-regular-svg-icons'
 
-import { Container, Row, Col } from 'reactstrap';
-import axios from 'axios';
-import qs from 'qs';
+import { Container, Row, Col } from 'reactstrap'
+import axios from 'axios'
+import qs from 'qs'
 
 class Post extends Component {
 
     constructor(props) {
-        super(props);
+        super(props)
 
         this.state = {
             favoriteFilled: this.props.favoriteFilled,
@@ -29,40 +29,40 @@ class Post extends Component {
     }
 
     handleFavoriteButtonClick = (e) => {
-        this.setState({favoriteFilled: !this.state.favoriteFilled});
+        this.setState({favoriteFilled: !this.state.favoriteFilled})
         if(this.state.favoriteFilled) {
-            this.removeFavorite();
-            this.setState({favorites: this.state.favorites - 1});
+            this.removeFavorite()
+            this.setState({favorites: this.state.favorites - 1})
         }else {
-            this.addFavorite();
-            this.setState({favorites: this.state.favorites + 1});
+            this.addFavorite()
+            this.setState({favorites: this.state.favorites + 1})
         }
     }
 
     addFavorite() {
-        axios.post(`${config.API_ROOT}/post_add_favorite`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }));
+        axios.post(`${config.API_ROOT}/post_add_favorite`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }))
     }
 
     removeFavorite() {
-        axios.post(`${config.API_ROOT}/post_remove_favorite`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }));
+        axios.post(`${config.API_ROOT}/post_remove_favorite`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }))
     }
 
     checkFavorite() {
         axios.post(`${config.API_ROOT}/post_get_user_favorite`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }))
         .then(function(response){
-            response = response.data;
+            response = response.data
             if(response.success && response.favorite) {
-                this.setState({ favoriteFilled: true });
+                this.setState({ favoriteFilled: true })
             }
-        }.bind(this));
+        }.bind(this))
     }
 
     getContent() {
-        return {__html: this.props.content};
+        return {__html: this.props.content}
     }
 
     componentDidMount() {
-        this.checkFavorite();
+        this.checkFavorite()
     }
 
     render() {
@@ -91,8 +91,8 @@ class Post extends Component {
                     </Row>
                 </Container>                    
             </div>
-        );
+        )
     }
 }
 
-export default Post;
+export default Post

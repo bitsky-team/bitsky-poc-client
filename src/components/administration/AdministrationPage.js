@@ -1,25 +1,25 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import {
     Container,
     Row,
     Col,
     Button,
-} from 'reactstrap';
-import AdministrationSideMenu from './common/AdministrationSideMenu';
-import AdministrationUsedStorage from './common/AdministrationUsedStorage';
-import AdministrationInfos from './common/AdministrationInfos';
-import jwtDecode from 'jwt-decode';
-import RankService from '../../services/RankService';
-import Navbar from '../common/template/Navbar';
-import axios from 'axios';
-import qs from 'qs';
-import {config} from '../../config';
+} from 'reactstrap'
+import AdministrationSideMenu from './common/AdministrationSideMenu'
+import AdministrationUsedStorage from './common/AdministrationUsedStorage'
+import AdministrationInfos from './common/AdministrationInfos'
+import jwtDecode from 'jwt-decode'
+import RankService from '../../services/RankService'
+import Navbar from '../common/template/Navbar'
+import axios from 'axios'
+import qs from 'qs'
+import {config} from '../../config'
 
 export default class AdministrationPage extends Component {
     constructor(props) {
-        super(props);
+        super(props)
         this.state = {
-            session: jwtDecode(localStorage.getItem('token')),
+            session: (localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null),
             temperature: '?',
             cpuPercentage: 30,
             diskStorage: {
@@ -35,17 +35,17 @@ export default class AdministrationPage extends Component {
                 disque4: 3
             }
 
-        };
+        }
     }
 
     getTemp = async () => {
-        const response = await axios.post(`${config.API_ROOT}/get_temp`, qs.stringify({ token: localStorage.getItem('token'), uniq_id: localStorage.getItem('id')}));
-        const temperature = (response.data.success) ? response.data.temperature : '?';
-        this.setState({temperature});
+        const response = await axios.post(`${config.API_ROOT}/get_temp`, qs.stringify({ token: localStorage.getItem('token'), uniq_id: localStorage.getItem('id')}))
+        const temperature = (response.data.success) ? response.data.temperature : '?'
+        this.setState({temperature})
     }
 
     componentWillMount() {
-        this.getTemp();
+        this.getTemp()
     }
 
     render() {
@@ -84,7 +84,8 @@ export default class AdministrationPage extends Component {
                                         </Col>
                                     </Row>
                                 </Container>
-
+                            </div>
+                            <div className="user-container no-center admin-dashboard">
                                 <h4>Espace de stockage utilisé</h4>
                                 <Container className="margin-top-10">
                                     <Row>
@@ -110,7 +111,8 @@ export default class AdministrationPage extends Component {
                                         </Col>
                                     </Row>
                                 </Container>
-
+                            </div>
+                            <div className="user-container no-center admin-dashboard">
                                 <h4>Derniers logs</h4>
                                 <div className="admin-logs-container">
                                     <div className="admin-log"></div>
