@@ -9,6 +9,7 @@ import { faStar as faEmptyStar, faComments } from '@fortawesome/free-regular-svg
 import { Container, Row, Col } from 'reactstrap'
 import axios from 'axios'
 import qs from 'qs'
+import Rank from '../../common/Rank'
 
 class Post extends Component {
 
@@ -65,7 +66,7 @@ class Post extends Component {
                 <img src={this.props.ownerAvatar} alt="Avatar" />
                 <div className="title">
                     <h4>{this.props.ownerName}</h4>
-                    <small>{this.props.ownerRank}</small>
+                    <small><Rank id={this.props.ownerRank} /></small>
                 </div>
                 <p className="post-content" dangerouslySetInnerHTML={this.getContent()}></p>
                 <Container className="post-details">

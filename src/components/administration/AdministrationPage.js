@@ -9,11 +9,11 @@ import AdministrationSideMenu from './common/AdministrationSideMenu'
 import AdministrationUsedStorage from './common/AdministrationUsedStorage'
 import AdministrationInfos from './common/AdministrationInfos'
 import jwtDecode from 'jwt-decode'
-import RankService from '../../services/RankService'
 import Navbar from '../common/template/Navbar'
 import axios from 'axios'
 import qs from 'qs'
 import {config} from '../../config'
+import Rank from '../common/Rank'
 
 export default class AdministrationPage extends Component {
     state = {
@@ -54,7 +54,7 @@ export default class AdministrationPage extends Component {
                             <div className="user-container">
                                 <img src={localStorage.getItem('avatar')} alt="Avatar" />
                                 <h5>{this.state.session.firstname + ' ' + this.state.session.lastname}</h5>
-                                <p className="rank">{RankService.translate(this.state.session.rank)}</p>
+                                <p className="rank"><Rank id={ this.state.session.rank } /></p>
                                 <AdministrationSideMenu />
                             </div>
                         </Col>

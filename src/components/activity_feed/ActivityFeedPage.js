@@ -5,10 +5,10 @@ import TextareaAutosize from 'react-autosize-textarea'
 import _ from 'lodash'
 import jwtDecode from 'jwt-decode'
 import Post from '../common/post/Post'
-import RankService from '../../services/RankService'
 import Navbar from '../common/template/Navbar'
 import axios from 'axios'
 import qs from 'qs'
+import Rank from '../common/Rank'
 
 import { 
     Container, 
@@ -129,7 +129,7 @@ export default class ActivityFeedPage extends Component {
                             key={"post-" + postId}
                             ownerAvatar={localStorage.getItem('avatar')}
                             ownerName={this.state.session.firstname + " " + this.state.session.lastname}
-                            ownerRank={RankService.translate(ownerRank)}
+                            ownerRank={ownerRank}
                             content={content.value}
                             tag={this.state.tagValue.charAt(0).toUpperCase() + this.state.tagValue.slice(1)}
                             filled={false}
@@ -202,7 +202,7 @@ export default class ActivityFeedPage extends Component {
                         key={"post-" + post.id}
                         ownerAvatar={post.owner.avatar}
                         ownerName={post.owner.firstname + " " + post.owner.lastname}
-                        ownerRank={RankService.translate(post.owner.rank)}
+                        ownerRank={post.owner.rank}
                         content={post.content}
                         tag={post.tag}
                         filled={false}
@@ -216,8 +216,10 @@ export default class ActivityFeedPage extends Component {
 
                 this.setState({posts: statePosts})
 
-                let postsLoading = this.postsContainer.childNodes[1]
-                if(postsLoading) postsLoading.style.display = 'none'
+                if(this.postsContainer) {
+                    let postsLoading = this.postsContainer.childNodes[1]
+                    if(postsLoading) postsLoading.style.display = 'none'
+                }
             }else {
                 console.log("Failed loading posts: " + response.message)
             }
@@ -243,8 +245,10 @@ export default class ActivityFeedPage extends Component {
 
                 this.setState({trends: stateTrends})
 
-                let trendsLoading = this.trendsContainer.childNodes[1]
-                if(trendsLoading) trendsLoading.style.display = 'none'
+                if(this.trendsContainer) {
+                    let trendsLoading = this.trendsContainer.childNodes[1]
+                    if(trendsLoading) trendsLoading.style.display = 'none'
+                }
             }else {
                 console.log("Failed loading trends: " + response.message)
             }
@@ -270,20 +274,24 @@ export default class ActivityFeedPage extends Component {
     }
 
     componentDidUpdate = () => {
-        let postsMessage = this.postsContainer.childNodes[0]
+        if(this.postsContainer) {
+            let postsMessage = this.postsContainer.childNodes[0]
 
-        if(this.state.posts.length <= 0) {
-            postsMessage.style.display = 'block'
-        }else {
-            postsMessage.style.display = 'none'
+            if(this.state.posts.length <= 0) {
+                postsMessage.style.display = 'block'
+            }else {
+                postsMessage.style.display = 'none'
+            }
         }
 
-        let trendsMessage = this.trendsContainer.childNodes[0]
+        if(this.trendsContainer) {
+            let trendsMessage = this.trendsContainer.childNodes[0]
 
-        if(this.state.trends.length <= 0) {
-            trendsMessage.style.display = 'block'
-        }else {
-            trendsMessage.style.display = 'none'
+            if(this.state.trends.length <= 0) {
+                trendsMessage.style.display = 'block'
+            }else {
+                trendsMessage.style.display = 'none'
+            }
         }
     }
 
@@ -309,7 +317,7 @@ export default class ActivityFeedPage extends Component {
                         <div className="user-container">
                             <img src={localStorage.getItem('avatar')} alt="Avatar" />
                             <h5>{ this.state.session.firstname + ' ' + this.state.session.lastname }</h5>
-                            <p className="rank">{ RankService.translate(this.state.session.rank) }</p>
+                            <p className="rank"><Rank id={ this.state.session.rank } /></p>
                             <SideMenu />
                         </div>
                     </Col>

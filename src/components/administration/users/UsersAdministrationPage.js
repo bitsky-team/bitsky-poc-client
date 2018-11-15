@@ -12,7 +12,6 @@ import {
     ModalFooter,
 } from 'reactstrap'
 import jwtDecode from 'jwt-decode'
-import RankService from '../../../services/RankService'
 import AdministrationSideMenu from '../common/AdministrationSideMenu'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTh, faList, faPlus, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
@@ -23,6 +22,7 @@ import UserThumbnail from './UserThumbnail'
 import UserTableEntry from './UserTableEntry'
 import _ from 'lodash'
 import UserAddModal from './UserAddModal'
+import Rank from '../../common/Rank'
 
 export default class UsersAdministrationPage extends Component {
     state = {
@@ -77,14 +77,14 @@ export default class UsersAdministrationPage extends Component {
                 let i = 0
                 usersData.forEach(user => {
                     i++
-                    usersList.push(<UserThumbnail margin={(i > 3 ? 'margin-top-10' : null)} key={'user-'+user.id} avatar={user.avatar} firstname={user.firstname} lastname={user.lastname} uniq_id={user.uniq_id} rank={RankService.translate(user.rank)}/>)
+                    usersList.push(<UserThumbnail margin={(i > 3 ? 'margin-top-10' : null)} key={'user-'+user.id} avatar={user.avatar} firstname={user.firstname} lastname={user.lastname} uniq_id={user.uniq_id} rank={user.rank}/>)
                 })
             break
 
             case 'list':
                 this.setState({displayType: displayType})
                 usersData.forEach(user => {
-                    usersList.push(<UserTableEntry key={'user-'+user.id} id={user.id} uid={_.truncate(user.uniq_id, {'length': 8,'separator': /,? +/})} lastname={user.lastname} firstname={user.firstname} email={user.email} rank={RankService.translate(user.rank)}/>)
+                    usersList.push(<UserTableEntry key={'user-'+user.id} id={user.id} uid={_.truncate(user.uniq_id, {'length': 8,'separator': /,? +/})} lastname={user.lastname} firstname={user.firstname} email={user.email} rank={user.rank}/>)
                 })
             break
 
@@ -122,7 +122,7 @@ export default class UsersAdministrationPage extends Component {
                             <div className="user-container">
                                 <img src={localStorage.getItem('avatar')} alt="Avatar" />
                                 <h5>{ this.state.session.firstname + ' ' + this.state.session.lastname }</h5>
-                                <p className="rank">{ RankService.translate(this.state.session.rank) }</p>
+                                <p className="rank"><Rank id={ this.state.session.rank } /></p>
                                 <AdministrationSideMenu />
                             </div>
                         </Col>

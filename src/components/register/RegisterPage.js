@@ -6,7 +6,6 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
 import axios from 'axios'
 import qs from 'qs'
 
-// Test
 export default class RegisterPage extends Component {
   state = {
     errorModal: false,
