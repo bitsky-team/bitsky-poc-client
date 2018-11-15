@@ -35,7 +35,7 @@ class Router extends Component {
     setInterval(async () => {
       const authenticated = await AuthService.verify()
       this.setState({authenticated})
-    }, 500)
+    }, 1000)
   }
 
   componentDidUpdate() {

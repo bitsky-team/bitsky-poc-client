@@ -147,6 +147,7 @@ export default class ActivityFeedPage extends Component {
                     this.closeTextArea()
                     this.adjustPublishContainer()
                     this.togglePostModal()
+                    this.checkEmpty()
                     toast.success('Votre publication a été postée !', {
                         autoClose: 5000,
                         position: toast.POSITION.BOTTOM_RIGHT,
@@ -171,6 +172,7 @@ export default class ActivityFeedPage extends Component {
             if(success) {
                 this.setState({posts})
                 this.setTrends()
+                this.checkEmpty()
                 toast.success('La publication a été supprimée !', {
                     autoClose: 5000,
                     position: toast.POSITION.BOTTOM_RIGHT,
@@ -186,6 +188,36 @@ export default class ActivityFeedPage extends Component {
             this.setState({
                 postModal: !this.state.postModal
             })
+        }
+    }
+
+    checkEmpty = () => {
+        setTimeout(() => {
+            if(this.postsContainer && this.trendsContainer) {
+                if(this.state.posts.length === 0) {
+                    this.postsContainer.firstChild.style.display = 'block'
+                }else {
+                    this.postsContainer.firstChild.style.display = 'none'
+                }
+    
+                if(this.state.trends.length === 0) {
+                    this.trendsContainer.firstChild.style.display = 'block'
+                }else {
+                    this.trendsContainer.firstChild.style.display = 'none'
+                }
+            }
+        }, 200)
+    }
+
+    removeLoading = (element) => {
+        if(element === 'posts') {
+            if(this.postsContainer) {
+                this.postsContainer.childNodes[1].style.display = 'none'
+            }
+        }else if(element === 'trends') {
+            if(this.trendsContainer) {
+                this.trendsContainer.childNodes[1].style.display = 'none'
+            }
         }
     }
 
@@ -215,11 +247,8 @@ export default class ActivityFeedPage extends Component {
                 })
 
                 this.setState({posts: statePosts})
-
-                if(this.postsContainer) {
-                    let postsLoading = this.postsContainer.childNodes[1]
-                    if(postsLoading) postsLoading.style.display = 'none'
-                }
+                this.removeLoading('posts')
+                this.checkEmpty()
             }else {
                 console.log("Failed loading posts: " + response.message)
             }
@@ -244,11 +273,8 @@ export default class ActivityFeedPage extends Component {
                 })
 
                 this.setState({trends: stateTrends})
-
-                if(this.trendsContainer) {
-                    let trendsLoading = this.trendsContainer.childNodes[1]
-                    if(trendsLoading) trendsLoading.style.display = 'none'
-                }
+                this.removeLoading('trends')
+                this.checkEmpty()
             }else {
                 console.log("Failed loading trends: " + response.message)
             }
@@ -271,28 +297,6 @@ export default class ActivityFeedPage extends Component {
                 }
             }
         })
-    }
-
-    componentDidUpdate = () => {
-        if(this.postsContainer) {
-            let postsMessage = this.postsContainer.childNodes[0]
-
-            if(this.state.posts.length <= 0) {
-                postsMessage.style.display = 'block'
-            }else {
-                postsMessage.style.display = 'none'
-            }
-        }
-
-        if(this.trendsContainer) {
-            let trendsMessage = this.trendsContainer.childNodes[0]
-
-            if(this.state.trends.length <= 0) {
-                trendsMessage.style.display = 'block'
-            }else {
-                trendsMessage.style.display = 'none'
-            }
-        }
     }
 
     render() {
