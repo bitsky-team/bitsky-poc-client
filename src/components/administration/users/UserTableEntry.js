@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faPencilAlt, faTrash } from '@fortawesome/free-solid-svg-icons'
+import Rank from '../../common/Rank'
 
 export default class UserTableEntry extends Component {
   render() {
@@ -11,7 +12,7 @@ export default class UserTableEntry extends Component {
             <td>{this.props.lastname}</td>
             <td>{this.props.firstname}</td>
             <td>{this.props.email}</td>
-            <td>{this.props.rank}</td>
+            <td><Rank id={this.props.rank} /></td>
             <td><button className="btn btn-info"><FontAwesomeIcon icon={faEye}/></button>{' '}<button className="btn btn-info"><FontAwesomeIcon icon={faPencilAlt}/></button>{' '}<button className="btn btn-info"><FontAwesomeIcon icon={faTrash}/></button>{' '}</td>
         </tr>
     )
