@@ -285,6 +285,10 @@ body
   font-weight: 100;
   cursor: pointer;
   transition: 0.2s;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .single-form-subcontainer.left form button:hover, .login-error-modal .modal-footer .secondary
@@ -301,9 +305,6 @@ body
 .single-form-subcontainer.left form button.primary span
 {
   z-index: 5;
-  position: absolute;
-  top: 25%;
-  left: 22%;
   letter-spacing: 1px;
 }
 
@@ -327,7 +328,9 @@ body
   border: 1px solid #8a8a8a;
   color: #8a8a8a;
   box-sizing: border-box;
-  padding-top: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .single-form-subcontainer.left p 
@@ -817,7 +820,7 @@ body
 {
   position: absolute;
   bottom: 3px;
-  background-color: #BBBBBF;
+  background-color: #E0E1E4;
   left: 20px;
   color: #FFF;
   width: 88px;
@@ -871,7 +874,7 @@ body
 
 .modal-choice:hover
 {
-  transform: scale(1.05);
+  transform: scale(1.01);
 }
 
 .nav-centered-icons
@@ -937,6 +940,8 @@ body
 
 .side-menu ul li a
 {
+  color: rgb(97, 97, 97);
+  text-decoration: none;
   display: block;
   padding: 5px;
   padding-left: 30px;
@@ -1246,15 +1251,31 @@ body
 
 .docs-container
 {
-  margin-top: 20px;
+  max-width: none !important;
+  width: 100%;
+  padding: 0;
 }
 
 .docs-left-subcontainer, .docs-right-subcontainer, .docs-top-subcontainer
 {
-  margin-top: 10px;
   background: #FFF;
   padding: 10px;
-  border-radius: 5px;
+}
+
+.docs-left-subcontainer
+{
+  background: rgb(241, 241, 241);
+  box-shadow: inset -3px 3px 10px -5px #888;
+}
+
+.docs-right-subcontainer
+{
+  box-shadow: inset 0px 3px 10px -5px #888;
+}
+
+.docs-left-subcontainer, .docs-right-subcontainer
+{
+  min-height: calc(100vh - 49px);
 }
 
 .dropdown-toggler .dropdown-content
@@ -1277,4 +1298,17 @@ body
 .navbar-light
 {
   background: #FFF;
+}
+
+.user-add-modal
+{
+  max-width: none;
+  margin: 0 auto;
+  margin-top: 30px;
+  width: 80vw;  
+}
+
+.user-add-modal .modal-content
+{
+  width: 80vw;
 }

@@ -12,14 +12,10 @@ import qs from 'qs'
 
 class Post extends Component {
 
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            favoriteFilled: this.props.favoriteFilled,
-            favorites: this.props.favorites,
-            comments: this.props.comments
-        }
+    state = {
+        favoriteFilled: this.props.favoriteFilled,
+        favorites: this.props.favorites,
+        comments: this.props.comments
     }
 
     isOwner() {
@@ -39,22 +35,19 @@ class Post extends Component {
         }
     }
 
-    addFavorite() {
-        axios.post(`${config.API_ROOT}/post_add_favorite`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }))
+    addFavorite = async () => {
+        await axios.post(`${config.API_ROOT}/post_add_favorite`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }))
     }
 
-    removeFavorite() {
-        axios.post(`${config.API_ROOT}/post_remove_favorite`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }))
+    removeFavorite = async () => {
+        await axios.post(`${config.API_ROOT}/post_remove_favorite`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }))
     }
 
-    checkFavorite() {
-        axios.post(`${config.API_ROOT}/post_get_user_favorite`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }))
-        .then(function(response){
-            response = response.data
-            if(response.success && response.favorite) {
-                this.setState({ favoriteFilled: true })
-            }
-        }.bind(this))
+    checkFavorite = async () => {
+        const response = await axios.post(`${config.API_ROOT}/post_get_user_favorite`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }))
+        if(response.success && response.favorite) {
+            this.setState({ favoriteFilled: true })
+        }
     }
 
     getContent() {

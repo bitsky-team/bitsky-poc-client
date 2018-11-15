@@ -8,27 +8,25 @@ import axios from 'axios'
 import qs from 'qs'
 
 export default class RegisterPage extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      errorModal: false,
-      confirmModal: false
-    }
+  state = {
+    errorModal: false,
+    confirmModal: false
   }
 
   componentDidMount() {
     setInterval(() => {
-      let container = $('.single-form-subcontainer.right .container')
-      let img = $('.single-form-subcontainer.right .container img')
-      let subcontainer = $('.single-form-subcontainer.right')
+      let container = this.container
+      let img = this.img
+      let subcontainer = this.subcontainerRight
 
-      container.width(subcontainer.width())
-      img.css('top',(subcontainer.height()-img.height())/2 + 'px')
-      img.css('left',(subcontainer.width()-img.width())/2 + 'px')
-
-      container.fadeIn()
-      img.fadeIn()
-    }, 300)
+      if(container && img && subcontainer) {
+        container.style.width = subcontainer.clientWidth
+        img.style.top = ((subcontainer.clientHeight - img.clientHeight)/2) + 'px'
+        img.style.left = ((subcontainer.clientWidth - img.clientWidth)/2) + 'px'
+        img.style.display = 'block'
+        container.style.display = 'flex'
+      }
+    }, 50)
   }
 
   toggleError = (e) => {
@@ -52,9 +50,7 @@ export default class RegisterPage extends Component {
     let repeatPassword = this.repeatPasswordInput.value
     let lastname = this.lastnameInput.value
     let firstname = this.firstnameInput.value
-
-    // eslint-disable-next-line
-    let emailReg = /^(([^<>()[\]\\.,:\s@\"]+(\.[^<>()[\]\\.,:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    let emailReg = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
     let emailCheck = emailReg.test(email)
     let passwordCheckLength = password.length >= 8
     let repeatPasswordCheckLength = repeatPassword.length >= 8
@@ -63,33 +59,39 @@ export default class RegisterPage extends Component {
     let firstnameCheck = firstname.length >= 2
 
     if(emailCheck && passwordCheckLength && repeatPasswordCheckLength && passwordCheckEquality && lastnameCheck && firstnameCheck) {
-      axios.post(`${config.API_ROOT}/register`, qs.stringify({ email: this.emailInput.value, password: this.passwordInput.value, repeatPassword: this.repeatPasswordInput.value, lastname: this.lastnameInput.value, firstname: this.firstnameInput.value}))
-      .then(function( response ) {
-        response = response.data
+      const response = axios.post(`${config.API_ROOT}/register`, qs.stringify({ email: this.emailInput.value, password: this.passwordInput.value, repeatPassword: this.repeatPasswordInput.value, lastname: this.lastnameInput.value, firstname: this.firstnameInput.value}))
+      const { success, uniq_id, message } = response.data
 
-        if(response.success) {
-          localStorage.setItem('id', response.uniq_id)
-          localStorage.setItem('token', response.message)
-          this.props.history.push('/register_confirmation')
-        }else {
-          this.toggleError()
-          $('#errorMessage').html(response.message)
-        }
-      }.bind(this))
+      if(success) {
+        localStorage.setItem('id', uniq_id)
+        localStorage.setItem('token', message)
+        this.props.history.push('/register_confirmation')
+      }else {
+        this.toggleError()
+        $('#errorMessage').html(message)
+      }
     }else {
       this.toggleError()
 
       if(!email || !password || !repeatPassword || !lastname || !firstname) {
-        setTimeout(function(){$('#errorMessage').html('<p>Veuillez remplir tous les champs !</p>')}, 1)
+        setTimeout(() => {
+          if(this.errorMessage) {
+            this.errorMessage.innerHTML = 'Veuillez remplir tous les champs !'
+          }
+        }, 100)
       }else {
-        setTimeout(function(){
-          $('#errorMessage').html('<p>Veuillez vérifier les points suivants:</p><ul id=\'errorsList\'></ul>')
-          if(!emailCheck) $('#errorsList').append('<li>Votre adresse email est incorrecte</li>')
-          if(!passwordCheckLength || !repeatPasswordCheckLength) $('#errorsList').append('<li>Les mots de passe doivent comporter au moins 8 caractères</li>')
-          if(!passwordCheckEquality) $('#errorsList').append('<li>Les mots de passe ne sont pas identiques</li>')
-          if(!lastnameCheck) $('#errorsList').append('<li>Votre nom doit comporter au moins 2 caractères</li>')
-          if(!firstnameCheck) $('#errorsList').append('<li>Votre prénom doit comporter au moins 2 caractères</li>')
-        }, 1)
+        setTimeout(() => {
+          if(this.errorMessage && this.errorsList) {
+            console.log(this.errorsList)
+            this.errorMessage.innerHTML = 'Veuillez vérifier les points suivants:'
+            if(!emailCheck) this.errorsList.innerHTML += '<li>Votre adresse email est incorrecte</li>'
+            if(!passwordCheckLength || !repeatPasswordCheckLength) this.errorsList.innerHTML += '<li>Les mots de passe doivent comporter au moins 8 caractères</li>'
+            if(!passwordCheckEquality) this.errorsList.innerHTML += '<li>Les mots de passe ne sont pas identiques</li>'
+            if(!lastnameCheck) this.errorsList.innerHTML += '<li>Votre nom doit comporter au moins 2 caractères</li>'
+            if(!firstnameCheck) this.errorsList.innerHTML += '<li>Votre prénom doit comporter au moins 2 caractères</li>'
+            this.errorsList.style.display = 'block'            
+          }
+        }, 100)
       }
     }
   }
@@ -100,8 +102,9 @@ export default class RegisterPage extends Component {
         <Modal isOpen={this.state.errorModal} toggle={this.toggleError} className={this.props.className + ' login-error-modal'}>
           <ModalHeader toggle={this.toggleError}>Erreur lors de l'inscription</ModalHeader>
           <ModalBody>
-            <div id="errorContent">
-              <p id="errorMessage"></p>
+            <div>
+              <p id="errorMessage" ref={node => this.errorMessage = node}></p>
+              <ul id="errorsList" style={{display: 'none'}} ref={node => this.errorsList = node}></ul>
             </div>
           </ModalBody>
           <ModalFooter>
@@ -138,9 +141,9 @@ export default class RegisterPage extends Component {
             </div>
           </form>
           </div>
-          <div className="single-form-subcontainer right">
+          <div className="single-form-subcontainer right" ref={node => this.subcontainerRight = node}>
             <div className="overlay"></div>
-            <div className="container">
+            <div className="container" ref={node => this.container = node}>
               <nav>
                 <ul>
                   <li><a href>À propos</a></li>
@@ -149,7 +152,7 @@ export default class RegisterPage extends Component {
                   <li><a href onClick={(e) => this.props.history.push('/docs')}>Documentation</a></li>
                 </ul>
               </nav>
-              <img src={logo} alt="logo"/>
+              <img src={logo} alt="logo" ref={node => this.img = node} />
             </div>
           </div>
         </div>

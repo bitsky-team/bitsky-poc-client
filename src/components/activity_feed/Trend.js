@@ -18,7 +18,7 @@ export default class Trend extends Component {
                 <p>{this.props.name}</p>
                 <div className="trend-content">
                     <p dangerouslySetInnerHTML={this.getContent()}></p>
-                    <small>Par <a href>{this.props.author}</a></small>
+                    <small>Par <a href="/profile/USER">{this.props.author}</a></small>
                 </div>
                 <Button color="info" className="see-more-button">Voir plus</Button>{' '}      
             </div>

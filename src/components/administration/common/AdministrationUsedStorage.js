@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 
 export default class AdministrationUsedStorage extends Component {
+
     render() {
         return (
             <div>
@@ -17,4 +18,5 @@ export default class AdministrationUsedStorage extends Component {
             </div>
         )
     }
+    
 }

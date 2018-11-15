@@ -14,7 +14,7 @@ import AdministrationPage from './components/administration/AdministrationPage'
 import UsersAdministrationPage from './components/administration/users/UsersAdministrationPage'
 import UserDocumentationPage from './components/docs/user/UserDocumentationPage'
 
-function PrivateRoute ({component: Component, authed, ...rest}) {
+const PrivateRoute = ({component: Component, authed, ...rest}) => {
   return (
     <Route
       {...rest}

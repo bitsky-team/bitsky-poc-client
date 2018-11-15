@@ -8,10 +8,10 @@ export default class SideMenu extends Component {
     return (
       <div className="side-menu">
         <ul>
-            <li><a href><FontAwesomeIcon icon={faHome} /> Accueil</a></li>
-            <li><a href><FontAwesomeIcon icon={faArchive} /> Fichiers</a></li>
-            <li><a href><FontAwesomeIcon icon={faStickyNote} /> Mémos</a></li>
-            <li><a href><FontAwesomeIcon icon={faCalendarAlt} /> Calendrier</a></li>
+            <li><a href="/"><FontAwesomeIcon icon={faHome} /> Accueil</a></li>
+            <li><a href="/"><FontAwesomeIcon icon={faArchive} /> Fichiers</a></li>
+            <li><a href="/"><FontAwesomeIcon icon={faStickyNote} /> Mémos</a></li>
+            <li><a href="/"><FontAwesomeIcon icon={faCalendarAlt} /> Calendrier</a></li>
         </ul>
       </div>
     )

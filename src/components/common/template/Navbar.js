@@ -20,12 +20,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretDown, faUserCog, faUser, faPowerOff, faBell, faInbox, faUnlockAlt } from '@fortawesome/free-solid-svg-icons'
 
 class Navbar extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            isOpen: false,
-            session: (localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null),
-        }
+    state = {
+        isOpen: false,
+        session: (localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null),
     }
     
     toggleNavbar = (e) => {

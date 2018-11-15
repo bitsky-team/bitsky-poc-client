@@ -29,6 +29,7 @@ class AdministrationSideMenu extends Component {
       </div>
     )
   }
+  
 }
 
 export default withRouter(AdministrationSideMenu)

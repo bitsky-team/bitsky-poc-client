@@ -1,34 +1,30 @@
 import React, { Component } from 'react'
 import logo from '../../assets/img/logo.png'
 import logo_small from '../../assets/img/logo-small.png'
-import $ from 'jquery'
 import { config } from '../../config'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
 import axios from 'axios'
 import qs from 'qs'
 
 export default class LoginPage extends Component {
-
-  constructor(props) {
-    super(props)
-    this.state = {
-      modal: false
-    }
+  state = {
+    modal: false
   }
 
   componentDidMount() {
     setInterval(() => {
-      let container = $('.single-form-subcontainer.right .container')
-      let img = $('.single-form-subcontainer.right .container img')
-      let subcontainer = $('.single-form-subcontainer.right')
+      let container = this.container
+      let img = this.img
+      let subcontainer = this.subcontainerRight
 
-      container.width(subcontainer.width())
-      img.css('top',(subcontainer.height()-img.height())/2 + 'px')
-      img.css('left',(subcontainer.width()-img.width())/2 + 'px')
-
-      container.fadeIn()
-      img.fadeIn()
-    }, 300)
+      if(container && img && subcontainer) {
+        container.style.width = subcontainer.clientWidth
+        img.style.top = ((subcontainer.clientHeight - img.clientHeight)/2) + 'px'
+        img.style.left = ((subcontainer.clientWidth - img.clientWidth)/2) + 'px'
+        img.style.display = 'block'
+        container.style.display = 'flex'
+      }
+    }, 50)
   }
 
   toggleError = (e) => {
@@ -37,41 +33,49 @@ export default class LoginPage extends Component {
     })
   }
 
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     e.preventDefault()
 
     let email = this.loginInput.value
     let password =  this.passwordInput.value
-    // eslint-disable-next-line
-    let emailReg = /^(([^<>()[\]\\.,:\s@\"]+(\.[^<>()[\]\\.,:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    let emailReg = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
     let emailCheck = emailReg.test(email)
     let passwordCheckLength = password.length >= 8
 
     if(emailCheck && passwordCheckLength) {
-      axios.post(`${config.API_ROOT}/login`, qs.stringify({ email: this.loginInput.value, password: this.passwordInput.value }))
-      .then(function( response ) {
-        response = response.data
-        if(response.success) {
-          localStorage.setItem('avatar', response.avatar)          
-          localStorage.setItem('token', response.message)
-          localStorage.setItem('id', response.uniq_id)
-          this.props.history.push('/activity_feed')
-        }else {
-          this.toggleError()
-          $('#errorMessage').text(response.message)
-        }
-      }.bind(this))
+      this.loginButton.innerHTML = 'Chargement...';
+      
+      const response = await axios.post(`${config.API_ROOT}/login`, qs.stringify({ email: this.loginInput.value, password: this.passwordInput.value }))
+      const { success, avatar, message, uniq_id } = response.data
+
+      if(success) {
+        localStorage.setItem('avatar', avatar)          
+        localStorage.setItem('token', message)
+        localStorage.setItem('id', uniq_id)
+        this.props.history.push('/activity_feed')
+      }else {
+        this.loginButton.innerHTML = 'Connexion';
+        this.toggleError()
+        if(this.errorMessage) this.errorMessage.innerHTML = message
+      }
     }else {
       this.toggleError()
 
       if(!email || !password) {
-        setTimeout(function(){$('#errorMessage').html('<p>Veuillez remplir tous les champs !</p>')}, 1)
+        setTimeout(() => {
+          if(this.errorMessage) {
+            this.errorMessage.innerHTML = 'Veuillez remplir tous les champs !'
+          }
+        }, 100)
       }else {
-        setTimeout(function(){
-          $('#errorMessage').html('<p>Veuillez vérifier les points suivants:</p><ul id=\'errorsList\'></ul>')
-          if(!emailCheck) $('#errorsList').append('<li>Votre adresse email est incorrecte</li>')
-          if(!passwordCheckLength) $('#errorsList').append('<li>Le mot de passe doit comporter au moins 8 caractères</li>')
-        }, 1)
+        setTimeout(() => {
+          if(this.errorMessage && this.errorsList) {
+            this.errorMessage.innerHTML = 'Veuillez vérifier les points suivants:'
+            if(!emailCheck) this.errorsList.innerHTML += '<li>Votre adresse email est incorrecte</li>'
+            if(!passwordCheckLength) this.errorsList.innerHTML += '<li>Le mot de passe doit comporter au moins 8 caractères</li>'
+            this.errorsList.style.display = 'block'
+          }
+        }, 100)
       }
     }
   }
@@ -82,7 +86,10 @@ export default class LoginPage extends Component {
         <Modal isOpen={this.state.modal} toggle={this.toggleError} className={this.props.className + ' login-error-modal'}>
           <ModalHeader toggle={this.toggleError}>Erreur lors de la connexion</ModalHeader>
           <ModalBody>
-            <p id="errorMessage"></p>
+            <div>
+              <p id="errorMessage" ref={node => this.errorMessage = node}></p>
+              <ul id="errorsList" style={{display: 'none'}} ref={node => this.errorsList = node}></ul>
+            </div>
           </ModalBody>
           <ModalFooter>
             <button className="secondary" onClick={this.toggleError}>J'ai compris</button>
@@ -109,14 +116,14 @@ export default class LoginPage extends Component {
             <a href className="password-lost">Mot de passe oublié ?</a>
 
             <div className="button-group">
-              <button className="primary" onClick={this.handleSubmit}><span>Connexion</span></button>
+              <button className="primary" onClick={this.handleSubmit}><span ref={(btn) => this.loginButton = btn }>Connexion</span></button>
               <button className="secondary" type="button" onClick={ () => this.props.history.push('/register') }>Inscription</button>
             </div>
            </form>
           </div>
-          <div className="single-form-subcontainer right">
+          <div className="single-form-subcontainer right" ref={node => this.subcontainerRight = node}>
             <div className="overlay"></div>
-            <div className="container">
+            <div className="container" ref={node => this.container = node}>
               <nav>
                 <ul>
                   <li><a href>À propos</a></li>
@@ -125,7 +132,7 @@ export default class LoginPage extends Component {
                   <li><a href onClick={(e) => this.props.history.push('/docs')}>Documentation</a></li>
                 </ul>
               </nav>
-              <img src={logo} alt="logo"/>
+              <img src={logo} alt="logo" ref={node => this.img = node} />
             </div>
           </div>
         </div>

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { toast } from 'react-toastify'
 import { config } from '../../config'
 import TextareaAutosize from 'react-autosize-textarea'
-import $ from 'jquery'
+import _ from 'lodash'
 import jwtDecode from 'jwt-decode'
 import Post from '../common/post/Post'
 import RankService from '../../services/RankService'
@@ -37,34 +37,61 @@ import SideMenu from './SideMenu'
 import Trend from './Trend'
 
 export default class ActivityFeedPage extends Component {
-    constructor(props) {
-        super(props)
 
-        this.state = {
-            session: (localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null),
-            postModal: false,
-            posts: [],
-            trends: []
-        }
+    state = {
+        session: (localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null),
+        postModal: false,
+        tagValue: '',
+        posts: [],
+        trends: []
     }
 
-    openTextArea() {
-        document.getElementById('post-content').disabled = false
-        document.querySelectorAll('.main-container .publish-container .remove-box')[0].style.display = 'block'
-        document.querySelectorAll('.main-container .publish-container .icons')[0].style.display = 'none'
-        document.getElementById('post-content').focus()
+    getFirstTime = async () => {
+        const response = await axios.post(`${config.API_ROOT}/get_firsttime`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') }))
+        return await response
     }
 
-    closeTextArea() {
-        document.getElementById('post-content').value = ''
-        document.getElementById('post-content').height = ''
-        document.getElementById('post-content').disabled = true
-        document.querySelectorAll('.main-container .publish-container .remove-box')[0].style.display = 'none'
-        document.querySelectorAll('.main-container .publish-container .icons')[0].style.display = 'block'
+    getPosts = async () => {
+        const response = await axios.post(`${config.API_ROOT}/get_allposts`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') }))
+        return await response
+    }
+
+    getTrends = async () => {
+        const response = await axios.post(`${config.API_ROOT}/get_trends`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') }))
+        return await response
+    }
+
+    storePost = async (content) => {
+        const response = await axios.post(`${config.API_ROOT}/store_post`, qs.stringify({ token: localStorage.getItem('token'), owner_uniq_id: localStorage.getItem('id'), content: content.value,  tag: this.state.tagValue }))
+        return await response
+    }
+
+    deletePost = async (id) => {
+        const response = await axios.post(`${config.API_ROOT}/remove_post`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id:  id})) 
+        return await response
+    }
+
+    resetTrends = () => {
+        this.setState({trends: []})
+    }
+
+    openTextArea = () => {
+        this.postContent.textarea.disabled = false
+        this.removeBox.style.display = 'block'
+        this.iconsBox.style.display = 'none'
+        this.postContent.textarea.focus()
+    }
+
+    closeTextArea = () => {
+        this.postContent.textarea.value = ''
+        this.postContent.textarea.height = ''
+        this.postContent.textarea.disabled = true
+        this.removeBox.style.display = 'none'
+        this.iconsBox.style.display = 'block'
     }
 
     adjustPublishContainer = () => {
-        let postContent = document.getElementById('post-content')
+        let postContent = this.postContent.textarea
         let postContentValue = postContent.value
         
         if(!postContentValue) {
@@ -83,28 +110,28 @@ export default class ActivityFeedPage extends Component {
     }
 
     handlePublishButtonClick = (e) => {
-        let content = document.getElementById('post-content')
-        let tag = document.getElementById('post-tag')
+        let content = this.postContent.textarea
 
-        let isContentFilled = $.trim(content.value).length > 0
-        let isTagFilled = $.trim(tag.value).length > 0
+        let isContentFilled = _.trim(content.value).length > 0
+        let isTagFilled = _.trim(this.state.tagValue).length > 0
 
         if(isContentFilled && isTagFilled)
         {
-            axios.post(`${config.API_ROOT}/store_post`, qs.stringify({ token: localStorage.getItem('token'), owner_uniq_id: localStorage.getItem('id'), content: content.value,  tag: tag.value }))
-            .then(function(response) {
-                response = response.data
-                if(response.success) {
+            this.storePost(content)
+            .then((response) => {
+                const {success, postId, ownerRank} = response.data
+
+                if(success) {
                     let posts = this.state.posts
                     let newPost = (
                         <Post 
-                            id={response.postId} 
-                            key={"post-" + response.postId}
+                            id={postId} 
+                            key={"post-" + postId}
                             ownerAvatar={localStorage.getItem('avatar')}
                             ownerName={this.state.session.firstname + " " + this.state.session.lastname}
-                            ownerRank={RankService.translate(response.ownerRank)}
+                            ownerRank={RankService.translate(ownerRank)}
                             content={content.value}
-                            tag={tag.value.charAt(0).toUpperCase() + tag.value.slice(1)}
+                            tag={this.state.tagValue.charAt(0).toUpperCase() + this.state.tagValue.slice(1)}
                             filled={false}
                             favorites={0}
                             comments={0}
@@ -113,9 +140,10 @@ export default class ActivityFeedPage extends Component {
                             handleDeleteButtonClick={this.handleDeleteButtonClick}
                         />
                     )
+
                     posts.unshift(newPost)
                     this.setState({posts: posts})
-                    this.getTrends()
+                    this.setTrends()
                     this.closeTextArea()
                     this.adjustPublishContainer()
                     this.togglePostModal()
@@ -125,7 +153,7 @@ export default class ActivityFeedPage extends Component {
                         className: 'notification-success'
                     })
                 }
-            }.bind(this))
+            })
         }
     }
 
@@ -136,36 +164,36 @@ export default class ActivityFeedPage extends Component {
         let id = str_id.split('-')[1]
         let posts = this.state.posts
         posts = posts.filter((p) => { return p.key !== str_id })
-        axios.post(`${config.API_ROOT}/remove_post`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id:  id}))
-          .then(function(response) {
-            response = response.data
-            if(response.success) {
+        
+        this.deletePost(id)
+        .then((response) => {
+            const { success } = response.data
+            if(success) {
                 this.setState({posts})
-                this.getTrends()
+                this.setTrends()
                 toast.success('La publication a été supprimée !', {
                     autoClose: 5000,
                     position: toast.POSITION.BOTTOM_RIGHT,
                     className: 'notification-success'
                 })
             }
-        }.bind(this))
+        })
     }
 
     togglePostModal = (e) => {
         // Checking if textarea's content is not empty
-        if(this.state.postModal || /\S/.test(document.getElementById('post-content').value)) {
+        if(this.state.postModal || /\S/.test(this.postContent.textarea.value)) {
             this.setState({
                 postModal: !this.state.postModal
             })
         }
     }
 
-    getPosts = () => {
-        axios.post(`${config.API_ROOT}/get_allposts`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') }))
-        .then(function(response) {
-            response = response.data
-            if(response.success) {
-                let posts = response.posts
+    setPosts = () => {
+        this.getPosts()
+        .then((response) => {
+            const { success, posts } = response.data
+            if(success) {
                 let statePosts = this.state.posts
                 
                 posts.forEach((post) => {
@@ -187,21 +215,21 @@ export default class ActivityFeedPage extends Component {
                 })
 
                 this.setState({posts: statePosts})
-                let postsLoading = document.getElementById('posts-loading')
+
+                let postsLoading = this.postsContainer.childNodes[1]
                 if(postsLoading) postsLoading.style.display = 'none'
             }else {
                 console.log("Failed loading posts: " + response.message)
             }
-        }.bind(this))
+        })
     }
 
-    getTrends = () => {
-        this.setState({trends: []})
-        axios.post(`${config.API_ROOT}/get_trends`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') }))
-        .then(function(response) {
-            response = response.data
-            if(response.success) {
-                let trends = response.trends
+    setTrends = () => {
+        this.resetTrends()
+        this.getTrends()
+        .then((response) => {
+            const { success, trends } = response.data
+            if(success) {
                 let stateTrends = this.state.trends
                 
                 trends.forEach((trend) => {
@@ -212,45 +240,50 @@ export default class ActivityFeedPage extends Component {
                         author={trend.post.owner}
                     />)
                 })
+
                 this.setState({trends: stateTrends})
 
-                let trendsLoading = document.getElementById('trends-loading')
+                let trendsLoading = this.trendsContainer.childNodes[1]
                 if(trendsLoading) trendsLoading.style.display = 'none'
             }else {
                 console.log("Failed loading trends: " + response.message)
             }
-        }.bind(this))
+        })
     }
 
-    componentWillMount() {
+    componentWillMount = () => {
         // Checking firsttime
-        axios.post(`${config.API_ROOT}/get_firsttime`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') }))
-          .then(function(response) {
-            response = response.data
-            if(response.success) {
-              let firstTime = Boolean(parseInt(response.message, 10))
-              localStorage.setItem('firsttime', firstTime)
-              if(firstTime) this.props.history.push('/register_confirmation')
-              else {
-                // Retrieving posts & trends
-                this.getPosts()
-                this.getTrends()
-              }
+        this.getFirstTime()
+        .then((response) => {
+            const { success, message } = response.data
+            if(success) {
+                let firstTime = Boolean(parseInt(message, 10))
+                localStorage.setItem('firsttime', firstTime)
+                if(firstTime) this.props.history.push('/register_confirmation')
+                else {
+                    // Retrieving posts & trends
+                    this.setPosts()
+                    this.setTrends()
+                }
             }
-        }.bind(this))
+        })
     }
 
-    componentDidUpdate() {
+    componentDidUpdate = () => {
+        let postsMessage = this.postsContainer.childNodes[0]
+
         if(this.state.posts.length <= 0) {
-            document.getElementById('posts-message').style.display = 'block'
+            postsMessage.style.display = 'block'
         }else {
-            document.getElementById('posts-message').style.display = 'none'
+            postsMessage.style.display = 'none'
         }
 
+        let trendsMessage = this.trendsContainer.childNodes[0]
+
         if(this.state.trends.length <= 0) {
-            document.getElementById('trends-message').style.display = 'block'
+            trendsMessage.style.display = 'block'
         }else {
-            document.getElementById('trends-message').style.display = 'none'
+            trendsMessage.style.display = 'none'
         }
     }
 
@@ -260,7 +293,7 @@ export default class ActivityFeedPage extends Component {
                 <Modal isOpen={this.state.postModal} toggle={this.togglePostModal} className={this.props.className}>
                     <ModalBody>
                         <Label for="post-tag">Veuillez indiquer le sujet de votre publication</Label>
-                        <Input type="text" name="post-tag" id="post-tag" placeholder="Sujet de la publication" />
+                        <Input type="text" name="post-tag" id="post-tag" onChange={(e) => this.setState({ tagValue: `${e.target.value}` })} placeholder="Sujet de la publication" />
                     </ModalBody>
                     <ModalFooter>
                         <Button className="modal-choice" color="primary" onClick={this.handlePublishButtonClick}><FontAwesomeIcon icon={ faPaperPlane } /></Button>{' '}
@@ -283,18 +316,18 @@ export default class ActivityFeedPage extends Component {
                     <Col md="5" className="no-margin-left no-margin-right">
                         <div className="publish-container" ref="publishContainer">
                             <input type="file" id="file" ref="fileUploader" style={{display: "none"}}/>
-                            <TextareaAutosize id="post-content" placeholder="Poster une publication" onKeyUp={this.adjustPublishContainer} disabled></TextareaAutosize>
-                            <div className="icons">
+                            <TextareaAutosize id="post-content" ref={postContent => this.postContent = postContent} placeholder="Poster une publication" onKeyUp={this.adjustPublishContainer} disabled></TextareaAutosize>
+                            <div className="icons" ref={iconsBox => this.iconsBox = iconsBox}>
                                 <span><FontAwesomeIcon icon={faClipboardList} /></span>
                                 <span onClick={this.handlePictureButtonClick}><FontAwesomeIcon icon={faCamera} /></span>
                                 <span onClick={this.openTextArea}><FontAwesomeIcon icon={faPencilAlt} /></span>
                             </div>
-                            <div className="remove-box">
+                            <div className="remove-box" ref={removeBox => this.removeBox = removeBox}>
                                 <span onClick={this.closeTextArea}><FontAwesomeIcon icon={ faTimes }  /></span>
                             </div>
                             <span ref='publishButton' className="publish-button" onClick={this.togglePostModal}><FontAwesomeIcon icon={faPaperPlane} /></span>
                         </div>
-                        <div className="posts-container">
+                        <div className="posts-container" ref={postsContainer => this.postsContainer = postsContainer}>
                             <Alert id="posts-message" color="info" className="info-message">Il n'y a aucune publication pour le moment</Alert>
                             <Alert id="posts-loading" color="info" className="info-message" style={{display:'block'}}>Chargement...</Alert>
                             <div>{ this.state.posts }</div>
@@ -304,12 +337,14 @@ export default class ActivityFeedPage extends Component {
                         <div className="user-container right-container">
                             <div className="right-container-header">
                                 <h5>Sujets du moment</h5>
-                                <Button color="info" className="refresh-trends" onClick={this.getTrends}><FontAwesomeIcon icon={faSync} /></Button>
+                                <Button color="info" className="refresh-trends" onClick={this.setTrends}><FontAwesomeIcon icon={faSync} /></Button>
                             </div>
                             <hr/>
-                            <Alert id="trends-message" color="info" className="info-message">Aucune tendances pour le moment</Alert>
-                            <Alert id="trends-loading" color="info" className="info-message" style={{display:'block'}}>Chargement...</Alert>
-                            <div>{ this.state.trends }</div>
+                            <div ref={trendsContainer => this.trendsContainer = trendsContainer}>
+                                <Alert id="trends-message" color="info" className="info-message">Aucune tendances pour le moment</Alert>
+                                <Alert id="trends-loading" color="info" className="info-message" style={{display:'block'}}>Chargement...</Alert>
+                                <div>{ this.state.trends }</div>
+                            </div>
                         </div>
                     </Col>
                 </Row>

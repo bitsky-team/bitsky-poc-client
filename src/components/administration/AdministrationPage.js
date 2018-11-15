@@ -16,25 +16,21 @@ import qs from 'qs'
 import {config} from '../../config'
 
 export default class AdministrationPage extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            session: (localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null),
-            temperature: '?',
-            cpuPercentage: 30,
-            diskStorage: {
-                disque1: 13.5, 
-                disque2: 13.5, 
-                disque3: 1.3,
-                disque4: 2.5
-            },
-            diskTotalVolume: {
-                disque1: 30, 
-                disque2: 30, 
-                disque3: 3,
-                disque4: 3
-            }
-
+    state = {
+        session: (localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null),
+        temperature: '?',
+        cpuPercentage: 30,
+        diskStorage: {
+            disque1: 13.5, 
+            disque2: 13.5, 
+            disque3: 1.3,
+            disque4: 2.5
+        },
+        diskTotalVolume: {
+            disque1: 30, 
+            disque2: 30, 
+            disque3: 3,
+            disque4: 3
         }
     }
 

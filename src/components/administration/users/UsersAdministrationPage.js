@@ -25,15 +25,12 @@ import _ from 'lodash'
 import UserAddModal from './UserAddModal'
 
 export default class UsersAdministrationPage extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            session: (localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null),
-            users: [],
-            displayType: 'thumbnails',
-            userAddModal: false,
-            userSearchModal: false
-        }
+    state = {
+        session: (localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null),
+        users: [],
+        displayType: 'thumbnails',
+        userAddModal: false,
+        userSearchModal: false
     }
 
     toggleUserAddModal = () => {
@@ -45,7 +42,7 @@ export default class UsersAdministrationPage extends Component {
     }
 
     filterUsers = (action) => {
-        let usersLoading = document.getElementById('users-loading')
+        let usersLoading = this.usersLoading.firstChild
         if(usersLoading) usersLoading.style.display = 'block'
         switch(action) {
             case 'filterThumbnails':
@@ -69,8 +66,10 @@ export default class UsersAdministrationPage extends Component {
     getUsers = async (displayType) => {
         this.setState({users: []})
         const response = await axios.post(`${config.API_ROOT}/get_allusers`, qs.stringify({ token: localStorage.getItem('token'), uniq_id: localStorage.getItem('id')}))
-        const usersData = (response.data.success) ? response.data.users : null
-        let users = []
+        const { success, users } = response.data
+        const usersData = (success) ? users : null
+        
+        let usersList = []
         
         switch(displayType) {
             case 'thumbnails':
@@ -78,14 +77,14 @@ export default class UsersAdministrationPage extends Component {
                 let i = 0
                 usersData.forEach(user => {
                     i++
-                    users.push(<UserThumbnail margin={(i > 3 ? 'margin-top-10' : null)} key={'user-'+user.id} avatar={user.avatar} firstname={user.firstname} lastname={user.lastname} uniq_id={user.uniq_id} rank={RankService.translate(user.rank)}/>)
+                    usersList.push(<UserThumbnail margin={(i > 3 ? 'margin-top-10' : null)} key={'user-'+user.id} avatar={user.avatar} firstname={user.firstname} lastname={user.lastname} uniq_id={user.uniq_id} rank={RankService.translate(user.rank)}/>)
                 })
             break
 
             case 'list':
                 this.setState({displayType: displayType})
                 usersData.forEach(user => {
-                    users.push(<UserTableEntry key={'user-'+user.id} id={user.id} uid={_.truncate(user.uniq_id, {'length': 8,'separator': /,? +/})} lastname={user.lastname} firstname={user.firstname} email={user.email} rank={RankService.translate(user.rank)}/>)
+                    usersList.push(<UserTableEntry key={'user-'+user.id} id={user.id} uid={_.truncate(user.uniq_id, {'length': 8,'separator': /,? +/})} lastname={user.lastname} firstname={user.firstname} email={user.email} rank={RankService.translate(user.rank)}/>)
                 })
             break
 
@@ -94,8 +93,8 @@ export default class UsersAdministrationPage extends Component {
             break
         }
 
-        this.setState({users})
-        let usersLoading = document.getElementById('users-loading')
+        this.setState({users: usersList})
+        let usersLoading = this.usersLoading.firstChild
         if(usersLoading) usersLoading.style.display = 'none'
     }
 
@@ -148,7 +147,9 @@ export default class UsersAdministrationPage extends Component {
 
                             <div className="user-container no-center" style={{marginTop: '15px'}}>
                                 <Container className="no-padding-left no-padding-right">
-                                    <Alert id="users-loading" color="info" className="info-message" style={{display:'block'}}>Chargement...</Alert>
+                                    <div ref={node => this.usersLoading = node}>
+                                        <Alert id="users-loading" color="info" className="info-message" style={{display:'block'}}>Chargement...</Alert>
+                                    </div>
                                     <Row>
                                         {this.state.displayType === 'list' && 
                                         <Table>
