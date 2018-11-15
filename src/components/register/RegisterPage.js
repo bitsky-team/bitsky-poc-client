@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import logo from '../../assets/img/logo.png'
 import logo_small from '../../assets/img/logo-small.png'
-import $ from 'jquery'
 import { config } from '../../config'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
 import axios from 'axios'
 import qs from 'qs'
 
+// Test
 export default class RegisterPage extends Component {
   state = {
     errorModal: false,
@@ -68,7 +68,7 @@ export default class RegisterPage extends Component {
         this.props.history.push('/register_confirmation')
       }else {
         this.toggleError()
-        $('#errorMessage').html(message)
+        this.errorMessage.innerHTML = message
       }
     }else {
       this.toggleError()
