@@ -28,7 +28,7 @@ export default class UsersAdministrationPage extends Component {
     state = {
         session: (localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null),
         users: [],
-        displayType: 'thumbnails',
+        displayType: 'list',
         userAddModal: false,
         userSearchModal: false
     }
@@ -42,8 +42,14 @@ export default class UsersAdministrationPage extends Component {
     }
 
     filterUsers = (action) => {
-        let usersLoading = this.usersLoading.firstChild
-        if(usersLoading) usersLoading.style.display = 'block'
+        let displayType = this.state.displayType
+        if(action === 'filter' + displayType[0].toUpperCase() + displayType.slice(1)) return
+
+        if(this.usersLoading) {
+            let usersLoading = this.usersLoading.firstChild
+            if(usersLoading) usersLoading.style.display = 'block'
+        }
+
         switch(action) {
             case 'filterThumbnails':
                 this.refs.filterToList.classList.remove('active')
@@ -65,6 +71,7 @@ export default class UsersAdministrationPage extends Component {
 
     getUsers = async (displayType) => {
         this.setState({users: []})
+
         const response = await axios.post(`${config.API_ROOT}/get_allusers`, qs.stringify({ token: localStorage.getItem('token'), uniq_id: localStorage.getItem('id')}))
         const { success, users } = response.data
         const usersData = (success) ? users : null
@@ -94,8 +101,11 @@ export default class UsersAdministrationPage extends Component {
         }
 
         this.setState({users: usersList})
-        let usersLoading = this.usersLoading.firstChild
-        if(usersLoading) usersLoading.style.display = 'none'
+        
+        if(this.usersLoading) {
+            let usersLoading = this.usersLoading.firstChild
+            if(usersLoading) usersLoading.style.display = 'none'
+        }
     }
 
     componentWillMount() {
@@ -151,7 +161,7 @@ export default class UsersAdministrationPage extends Component {
                                         <Alert id="users-loading" color="info" className="info-message" style={{display:'block'}}>Chargement...</Alert>
                                     </div>
                                     <Row>
-                                        {this.state.displayType === 'list' && 
+                                        {(this.state.displayType === 'list' && this.state.users.length > 0) && 
                                         <Table>
                                             <thead>
                                                 <tr>

@@ -4,7 +4,7 @@ import { config } from '../../config'
 
 export default class Rank extends Component {
     state = {
-        rank: ''
+        rank: '?'
     }
 
     getRank = async () => {
