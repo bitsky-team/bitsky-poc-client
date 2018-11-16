@@ -49,7 +49,7 @@ export default class RegisterPage extends Component {
     let repeatPassword = this.repeatPasswordInput.value
     let lastname = this.lastnameInput.value
     let firstname = this.firstnameInput.value
-    let emailReg = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
+    let emailReg = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,4}$/
     let emailCheck = emailReg.test(email)
     let passwordCheckLength = password.length >= 8
     let repeatPasswordCheckLength = repeatPassword.length >= 8

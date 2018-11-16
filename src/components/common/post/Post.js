@@ -28,11 +28,13 @@ class Post extends Component {
     handleFavoriteButtonClick = (e) => {
         this.setState({favoriteFilled: !this.state.favoriteFilled})
         if(this.state.favoriteFilled) {
-            this.removeFavorite()
-            this.setState({favorites: this.state.favorites - 1})
+            this.removeFavorite().then(() => {
+                this.setState({favorites: this.state.favorites - 1})
+            })
         }else {
-            this.addFavorite()
-            this.setState({favorites: this.state.favorites + 1})
+            this.addFavorite().then(() => {
+                this.setState({favorites: this.state.favorites + 1})
+            })
         }
     }
 
@@ -46,7 +48,9 @@ class Post extends Component {
 
     checkFavorite = async () => {
         const response = await axios.post(`${config.API_ROOT}/post_get_user_favorite`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }))
-        if(response.success && response.favorite) {
+        const { success, favorite } = response.data
+       
+        if (success && favorite) {
             this.setState({ favoriteFilled: true })
         }
     }

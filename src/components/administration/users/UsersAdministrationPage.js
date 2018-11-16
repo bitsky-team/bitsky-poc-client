@@ -28,7 +28,7 @@ export default class UsersAdministrationPage extends Component {
     state = {
         session: (localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null),
         users: [],
-        displayType: 'list',
+        displayType: 'thumbnails',
         userAddModal: false,
         userSearchModal: false
     }

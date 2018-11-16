@@ -38,7 +38,7 @@ export default class LoginPage extends Component {
 
     let email = this.loginInput.value
     let password =  this.passwordInput.value
-    let emailReg = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
+    let emailReg = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,4}$/
     let emailCheck = emailReg.test(email)
     let passwordCheckLength = password.length >= 8
 
