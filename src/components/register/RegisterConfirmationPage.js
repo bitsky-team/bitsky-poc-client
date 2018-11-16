@@ -13,12 +13,12 @@ import {
   ModalFooter
 } from 'reactstrap'
 import jwtDecode from 'jwt-decode'
-import { config } from '../../config'
 import logo from '../../assets/img/logo-small.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'cropperjs/dist/cropper.css'
 import Cropper from 'react-cropper'
 import {  faUserCheck, faTimes, faSave } from '@fortawesome/free-solid-svg-icons'
+import { config } from '../../config'
 import axios from 'axios'
 import qs from 'qs'
 import downscale from 'downscale'
@@ -201,7 +201,7 @@ export default class RegisterConfirmationPage extends Component {
                       </Col>  
                       <Col md="6" style={{paddingTop: '10px'}}>
                         <FormGroup>
-                          <Label for="sex">Sexe</Label>
+                          <Label for="sex">Genre</Label>
                           <Input 
                             type="select" 
                             name="sex" 

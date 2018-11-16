@@ -116,7 +116,7 @@ export default class UsersAdministrationPage extends Component {
         return (
             <div>
                 <Navbar />
-                <UserAddModal open={this.state.userAddModal} toggleUserAddModal={this.toggleUserAddModal} />
+                <UserAddModal open={this.state.userAddModal} toggleUserAddModal={this.toggleUserAddModal} refreshUsers={(e) => this.getUsers(this.state.displayType)}/>
                 
                 <Modal isOpen={this.state.userSearchModal} toggle={this.toggleUserSearchModal}>
                     <ModalBody>
