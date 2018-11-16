@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Row, Modal, ModalHeader, ModalBody, ModalFooter, Col, Button, Form, FormGroup, Label, Input, FormFeedback } from 'reactstrap'
+import { Row, Modal, ModalHeader, ModalBody, ModalFooter, Col, Button, Form, FormGroup, Label, Input, FormFeedback, Alert } from 'reactstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { toast } from 'react-toastify'
@@ -20,6 +20,7 @@ export default class UserAddModal extends Component {
         email: null,
         emailError: false,
 
+        ranks: [],
         rank: 'Utilisateur',
         rankError: false,
 
@@ -51,14 +52,26 @@ export default class UserAddModal extends Component {
         livingplaceError: false
     }
 
-    ranks = ['Utilisateur', 'Administrateur']
+    getRanks = async () => {
+        const response = await axios.get(`${config.API_ROOT}/get_ranks`)
+        const { success, ranks } = response.data
+        if (success) {
+            let stateRanks = this.state.ranks
+            
+            ranks.forEach(rank => {
+                stateRanks.push(rank.name)
+            });
+
+            this.setState({ranks: stateRanks})
+        }
+    }
 
     checkRank = () => {
-        return this.ranks.includes(this.state.rank)
+        return this.state.ranks.includes(this.state.rank)
     }
 
     getRankNumber = () => {
-        return (this.ranks.findIndex((rank) => rank === this.state.rank)) + 1
+        return (this.state.ranks.findIndex((rank) => rank === this.state.rank)) + 1
     }
 
     checkSex = () => {
@@ -70,6 +83,7 @@ export default class UserAddModal extends Component {
     }
 
     checkForm = async () => {
+        if(this.error) this.error.firstChild.style.display = 'none'
         this.setState({lastnameError: false, firstnameError: false, emailError: false, rankError: false, passwordError: false, repeatPasswordError: false, biographyError: false, sexError: false, jobError: false, birthdateError: false, birthplaceError: false, relationshipstatusError: false, livingplaceError: false })
 
         let    isLastnameOk                   = this.state.lastname && this.state.lastname.length >= 2,
@@ -119,6 +133,11 @@ export default class UserAddModal extends Component {
 
                 this.props.refreshUsers();
                 this.props.toggleUserAddModal();
+            } else {
+                if(this.error) {
+                    this.error.firstChild.innerHTML = response.data.message
+                    this.error.firstChild.style.display = 'block'
+                }
             }
 
         } else {
@@ -140,6 +159,10 @@ export default class UserAddModal extends Component {
         }
     }
 
+    componentWillMount = () => {
+        this.getRanks()
+    }
+
     render() {
         return (
             <Modal isOpen={this.props.open} toggle={this.props.toggleUserAddModal} className="user-add-modal">
@@ -147,6 +170,9 @@ export default class UserAddModal extends Component {
                     Ajouter un utilisateur
                 </ModalHeader>
                 <ModalBody>
+                    <div ref={node => this.error = node}>
+                        <Alert color="danger" style={{display: 'none'}}></Alert>
+                    </div>
                     <Form>
                         <Row form>
                             <Col md={6}>
