@@ -195,18 +195,20 @@ export default class ActivityFeedPage extends Component {
         setTimeout(() => {
             if(this.postsContainer && this.trendsContainer) {
                 if(this.state.posts.length === 0) {
-                    this.postsContainer.firstChild.style.display = 'block'
+                    this.postsContainer.childNodes[0].style.display = 'block'
+                    this.postsContainer.childNodes[1].style.display = 'none'
                 }else {
-                    this.postsContainer.firstChild.style.display = 'none'
+                    this.postsContainer.childNodes[0].style.display = 'none'
                 }
     
                 if(this.state.trends.length === 0) {
-                    this.trendsContainer.firstChild.style.display = 'block'
+                    this.postsContainer.childNodes[0].style.display = 'block'
+                    this.trendsContainer.childNodes[1].style.display = 'none'
                 }else {
-                    this.trendsContainer.firstChild.style.display = 'none'
+                    this.trendsContainer.childNodes[0].style.display = 'none'
                 }
             }
-        }, 200)
+        }, 1000)
     }
 
     removeLoading = (element) => {
