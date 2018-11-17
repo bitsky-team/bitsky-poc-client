@@ -147,7 +147,12 @@ export default class ActivityFeedPage extends Component {
                     this.closeTextArea()
                     this.adjustPublishContainer()
                     this.togglePostModal()
-                    this.checkEmpty()
+                    
+                    if (this.postsContainer && this.trendsContainer) {
+                        this.postsContainer.childNodes[0].style.display = 'none'
+                        this.trendsContainer.childNodes[0].style.display = 'none'
+                    }
+
                     toast.success('Votre publication a été postée !', {
                         autoClose: 5000,
                         position: toast.POSITION.BOTTOM_RIGHT,
@@ -202,7 +207,7 @@ export default class ActivityFeedPage extends Component {
                 }
     
                 if(this.state.trends.length === 0) {
-                    this.postsContainer.childNodes[0].style.display = 'block'
+                    this.trendsContainer.childNodes[0].style.display = 'block'
                     this.trendsContainer.childNodes[1].style.display = 'none'
                 }else {
                     this.trendsContainer.childNodes[0].style.display = 'none'
