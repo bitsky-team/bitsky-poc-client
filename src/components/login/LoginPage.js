@@ -3,6 +3,7 @@ import logo from '../../assets/img/logo.png'
 import logo_small from '../../assets/img/logo-small.png'
 import { config } from '../../config'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
+import { Link } from 'react-router-dom'
 import axios from 'axios'
 import qs from 'qs'
 
@@ -113,7 +114,7 @@ export default class LoginPage extends Component {
               <input type="checkbox"/><span className="checkmark"></span>
               <span className="text">Se souvenir de moi</span>
             </label>
-            <a href className="password-lost">Mot de passe oublié ?</a>
+            <Link to="/" className="password-lost">Mot de passe oublié ?</Link>
 
             <div className="button-group">
               <button className="primary" onClick={this.handleSubmit}><span ref={(btn) => this.loginButton = btn }>Connexion</span></button>
@@ -126,10 +127,10 @@ export default class LoginPage extends Component {
             <div className="container" ref={node => this.container = node}>
               <nav>
                 <ul>
-                  <li><a href>À propos</a></li>
-                  <li><a href>Support</a></li>
-                  <li><a href>Mises à jour</a></li>
-                  <li><a href onClick={(e) => this.props.history.push('/docs')}>Documentation</a></li>
+                  <li><Link to='/'>À propos</Link></li>
+                  <li><Link to='/'>Support</Link></li>
+                  <li><Link to='/'>Mises à jour</Link></li>
+                  <li><Link to='/docs'>Documentation</Link></li>
                 </ul>
               </nav>
               <img src={logo} alt="logo" ref={node => this.img = node} />
