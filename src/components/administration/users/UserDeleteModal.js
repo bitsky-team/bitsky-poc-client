@@ -14,7 +14,7 @@ export default class UserDeleteModal extends Component {
 
     deleteUser = async () => {
         const response = await axios.post(`${config.API_ROOT}/delete_user`, qs.stringify({ token: localStorage.getItem('token'), uniq_id: localStorage.getItem('id'), user_id: this.props.user.id}))
-        const { success, message } = response.data
+        const { success } = response.data
 
         if(success) {
             this.props.toggleUserDeleteModal(null, null, null)
