@@ -22,6 +22,7 @@ import UserThumbnail from './UserThumbnail'
 import UserTableEntry from './UserTableEntry'
 import _ from 'lodash'
 import UserAddModal from './UserAddModal'
+import UserDeleteModal from './UserDeleteModal'
 import Rank from '../../common/Rank'
 
 export default class UsersAdministrationPage extends Component {
@@ -30,11 +31,20 @@ export default class UsersAdministrationPage extends Component {
         users: [],
         displayType: 'thumbnails',
         userAddModal: false,
+        userDeleteModal: false,
+        deletedUser: null,
         userSearchModal: false
     }
 
     toggleUserAddModal = () => {
         this.setState({userAddModal: !this.state.userAddModal})
+    }
+
+    toggleUserDeleteModal = (id, firstname, lastname) => {
+        if(id && firstname && lastname) {
+            this.setState({ deletedUser: {id: id, firstname: firstname, lastname: lastname} })
+        }
+        this.setState({userDeleteModal: !this.state.userDeleteModal})
     }
 
     toggleUserSearchModal = () => {
@@ -84,14 +94,14 @@ export default class UsersAdministrationPage extends Component {
                 let i = 0
                 usersData.forEach(user => {
                     i++
-                    usersList.push(<UserThumbnail margin={(i > 3 ? 'margin-top-10' : null)} key={'user-'+user.id} avatar={user.avatar} firstname={user.firstname} lastname={user.lastname} uniq_id={user.uniq_id} rank={user.rank}/>)
+                    usersList.push(<UserThumbnail margin={(i > 3 ? 'margin-top-10' : null)} key={'user-'+user.id} avatar={user.avatar} id={user.id} firstname={user.firstname} lastname={user.lastname} uniq_id={user.uniq_id} rank={user.rank} toggleUserDeleteModal={this.toggleUserDeleteModal}/>)
                 })
             break
 
             case 'list':
                 this.setState({displayType: displayType})
                 usersData.forEach(user => {
-                    usersList.push(<UserTableEntry key={'user-'+user.id} id={user.id} uid={_.truncate(user.uniq_id, {'length': 8,'separator': /,? +/})} lastname={user.lastname} firstname={user.firstname} email={user.email} rank={user.rank}/>)
+                    usersList.push(<UserTableEntry key={'user-'+user.id} id={user.id} uid={_.truncate(user.uniq_id, {'length': 8,'separator': /,? +/})} lastname={user.lastname} firstname={user.firstname} email={user.email} rank={user.rank} toggleUserDeleteModal={this.toggleUserDeleteModal}/>)
                 })
             break
 
@@ -117,7 +127,8 @@ export default class UsersAdministrationPage extends Component {
             <div>
                 <Navbar />
                 <UserAddModal open={this.state.userAddModal} toggleUserAddModal={this.toggleUserAddModal} refreshUsers={(e) => this.getUsers(this.state.displayType)}/>
-                
+                <UserDeleteModal open={this.state.userDeleteModal} user={this.state.deletedUser} toggleUserDeleteModal={this.toggleUserDeleteModal} refreshUsers={(e) => this.getUsers(this.state.displayType)}/>
+            
                 <Modal isOpen={this.state.userSearchModal} toggle={this.toggleUserSearchModal}>
                     <ModalBody>
                         <p>User Search</p>

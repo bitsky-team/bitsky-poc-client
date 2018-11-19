@@ -57,12 +57,12 @@ export default class UserAddModal extends Component {
         const { success, ranks } = response.data
         if (success) {
             let stateRanks = this.state.ranks
-            
+
             ranks.forEach(rank => {
                 stateRanks.push(rank.name)
             });
 
-            this.setState({ranks: stateRanks})
+            this.setState({ ranks: stateRanks })
         }
     }
 
@@ -83,43 +83,43 @@ export default class UserAddModal extends Component {
     }
 
     checkForm = async () => {
-        if(this.error) this.error.firstChild.style.display = 'none'
-        this.setState({lastnameError: false, firstnameError: false, emailError: false, rankError: false, passwordError: false, repeatPasswordError: false, biographyError: false, sexError: false, jobError: false, birthdateError: false, birthplaceError: false, relationshipstatusError: false, livingplaceError: false })
+        if (this.error) this.error.firstChild.style.display = 'none'
+        this.setState({ lastnameError: false, firstnameError: false, emailError: false, rankError: false, passwordError: false, repeatPasswordError: false, biographyError: false, sexError: false, jobError: false, birthdateError: false, birthplaceError: false, relationshipstatusError: false, livingplaceError: false })
 
-        let    isLastnameOk                   = this.state.lastname && this.state.lastname.length >= 2,
-                isFirstnameOk                   = this.state.firstname && this.state.firstname.length >= 2,
-                isEmailOk                           = this.state.email && this.state.email.match(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,4}$/),
-                isRankOk                            = this.checkRank(),
-                isPasswordOk                   = this.state.password && this.state.password.length >= 8,
-                isRepeatPasswordOk      = this.state.repeatPassword && this.state.repeatPassword.length >= 8,
-                arePasswordsOk              = this.state.password === this.state.repeatPassword,
-                isBiographyOk                  = this.state.biography && this.state.biography.length >= 10,
-                isSexOk                              = this.checkSex(),
-                isJobOk                              = this.state.job && this.state.job.length >= 3,
-                isBirthdateOk                    = this.state.birthdate && this.state.birthdate.length === 10,
-                isBirthplaceOk                  = this.state.birthplace && this.state.birthplace.length >= 3,
-                isRelationshipstatusOk  = this.checkRelationshipstatus(),
-                isLivingplaceOk               = this.state.livingplace && this.state.livingplace.length >= 3,
-                isFormOk                          = isLastnameOk && isFirstnameOk && isEmailOk && isRankOk && isPasswordOk && isRepeatPasswordOk && arePasswordsOk && isBiographyOk && isSexOk && isJobOk && isBirthdateOk && isBirthplaceOk && isRelationshipstatusOk &&  isLivingplaceOk
-       
+        let isLastnameOk = this.state.lastname && this.state.lastname.length >= 2,
+            isFirstnameOk = this.state.firstname && this.state.firstname.length >= 2,
+            isEmailOk = this.state.email && this.state.email.match(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,4}$/),
+            isRankOk = this.checkRank(),
+            isPasswordOk = this.state.password && this.state.password.length >= 8,
+            isRepeatPasswordOk = this.state.repeatPassword && this.state.repeatPassword.length >= 8,
+            arePasswordsOk = this.state.password === this.state.repeatPassword,
+            isBiographyOk = this.state.biography && this.state.biography.length >= 10,
+            isSexOk = this.checkSex(),
+            isJobOk = this.state.job && this.state.job.length >= 3,
+            isBirthdateOk = this.state.birthdate && this.state.birthdate.length === 10,
+            isBirthplaceOk = this.state.birthplace && this.state.birthplace.length >= 3,
+            isRelationshipstatusOk = this.checkRelationshipstatus(),
+            isLivingplaceOk = this.state.livingplace && this.state.livingplace.length >= 3,
+            isFormOk = isLastnameOk && isFirstnameOk && isEmailOk && isRankOk && isPasswordOk && isRepeatPasswordOk && arePasswordsOk && isBiographyOk && isSexOk && isJobOk && isBirthdateOk && isBirthplaceOk && isRelationshipstatusOk && isLivingplaceOk
+
         if (isFormOk) {
             const response = await axios.post(`${config.API_ROOT}/create_user`, qs.stringify({
-                    uniq_id: localStorage.getItem('id'),
-                    token: localStorage.getItem('token'),
-                    lastname: this.state.lastname,
-                    firstname: this.state.firstname,
-                    email: this.state.email,
-                    password: this.state.password,
-                    repeatPassword: this.state.repeatPassword,
-                    rank: this.getRankNumber(),
-                    biography: this.state.biography,
-                    sex: this.state.sex,
-                    job: this.state.job,
-                    birthdate: this.state.birthdate,
-                    birthplace: this.state.birthplace,
-                    relationshipstatus: this.state.relationshipstatus,
-                    livingplace: this.state.livingplace,
-                    avatar: avatar_default
+                uniq_id: localStorage.getItem('id'),
+                token: localStorage.getItem('token'),
+                lastname: this.state.lastname,
+                firstname: this.state.firstname,
+                email: this.state.email,
+                password: this.state.password,
+                repeatPassword: this.state.repeatPassword,
+                rank: this.getRankNumber(),
+                biography: this.state.biography,
+                sex: this.state.sex,
+                job: this.state.job,
+                birthdate: this.state.birthdate,
+                birthplace: this.state.birthplace,
+                relationshipstatus: this.state.relationshipstatus,
+                livingplace: this.state.livingplace,
+                avatar: avatar_default
             }))
 
             const { success } = response.data
@@ -134,7 +134,7 @@ export default class UserAddModal extends Component {
                 this.props.refreshUsers();
                 this.props.toggleUserAddModal();
             } else {
-                if(this.error) {
+                if (this.error) {
                     this.error.firstChild.innerHTML = response.data.message
                     this.error.firstChild.style.display = 'block'
                 }
@@ -165,26 +165,26 @@ export default class UserAddModal extends Component {
 
     render() {
         return (
-            <Modal isOpen={this.props.open} toggle={this.props.toggleUserAddModal} className="user-add-modal">
+            <Modal isOpen={this.props.open} toggle={this.props.toggleUserAddModal} className="user-modal">
                 <ModalHeader>
                     Ajouter un utilisateur
                 </ModalHeader>
                 <ModalBody>
                     <div ref={node => this.error = node}>
-                        <Alert color="danger" style={{display: 'none'}}></Alert>
+                        <Alert color="danger" style={{ display: 'none' }}></Alert>
                     </div>
                     <Form>
                         <Row form>
                             <Col md={6}>
                                 <FormGroup>
                                     <Label for="userAddLastname">Nom</Label>
-                                    <Input 
-                                        type="text" 
-                                        name="userAddLastname" 
-                                        id="userAddLastname" 
-                                        placeholder="Nom" 
+                                    <Input
+                                        type="text"
+                                        name="userAddLastname"
+                                        id="userAddLastname"
+                                        placeholder="Nom"
                                         className={(this.state.lastnameError) ? 'is-invalid' : ''}
-                                        onChange={(e) => this.setState({lastname: e.target.value})}
+                                        onChange={(e) => this.setState({ lastname: e.target.value })}
                                     />
                                     <FormFeedback>Le nom doit contenir au moins 2 caractères</FormFeedback>
                                 </FormGroup>
@@ -192,13 +192,13 @@ export default class UserAddModal extends Component {
                             <Col md={6}>
                                 <FormGroup>
                                     <Label for="userAddFirstname">Prénom</Label>
-                                    <Input 
-                                        type="text" 
-                                        name="userAddFirstname" 
-                                        id="userAddFirstname" 
-                                        placeholder="Prénom" 
+                                    <Input
+                                        type="text"
+                                        name="userAddFirstname"
+                                        id="userAddFirstname"
+                                        placeholder="Prénom"
                                         className={(this.state.firstnameError) ? 'is-invalid' : ''}
-                                        onChange={(e) => this.setState({firstname: e.target.value})}
+                                        onChange={(e) => this.setState({ firstname: e.target.value })}
                                     />
                                     <FormFeedback>Le prénom doit contenir au moins 2 caractères</FormFeedback>
                                 </FormGroup>
@@ -209,12 +209,12 @@ export default class UserAddModal extends Component {
                                 <FormGroup>
                                     <Label for="userAddEmail">Adresse email</Label>
                                     <Input
-                                        type="email" 
-                                        name="userAddEmail" 
-                                        id="userAddEmail" 
-                                        placeholder="Adresse email" 
+                                        type="email"
+                                        name="userAddEmail"
+                                        id="userAddEmail"
+                                        placeholder="Adresse email"
                                         className={(this.state.emailError) ? 'is-invalid' : ''}
-                                        onChange={(e) => this.setState({email: e.target.value})}
+                                        onChange={(e) => this.setState({ email: e.target.value })}
                                     />
                                     <FormFeedback>L'adresse email est incorrecte</FormFeedback>
                                 </FormGroup>
@@ -223,11 +223,11 @@ export default class UserAddModal extends Component {
                                 <FormGroup>
                                     <Label for="userAddRank">Rang</Label>
                                     <Input
-                                         type="select"
-                                         name="select" 
+                                        type="select"
+                                        name="select"
                                         id="userAddRank"
                                         className={(this.state.rankError) ? 'is-invalid' : ''}
-                                        onChange={(e) => this.setState({rank: e.target.value})}
+                                        onChange={(e) => this.setState({ rank: e.target.value })}
                                     >
                                         <option>Utilisateur</option>
                                         <option>Administrateur</option>
@@ -240,13 +240,13 @@ export default class UserAddModal extends Component {
                             <Col md={6}>
                                 <FormGroup>
                                     <Label for="userAddPassword">Mot de passe</Label>
-                                    <Input 
-                                        type="password" 
+                                    <Input
+                                        type="password"
                                         name="userAddPassword"
-                                        id="userAddPassword" 
-                                        placeholder="Mot de passe" 
+                                        id="userAddPassword"
+                                        placeholder="Mot de passe"
                                         className={(this.state.passwordError) ? 'is-invalid' : ''}
-                                        onChange={(e) => this.setState({password: e.target.value})}
+                                        onChange={(e) => this.setState({ password: e.target.value })}
                                     />
                                     <FormFeedback>Le mot de passe est trop court ou ne correspond pas</FormFeedback>
                                 </FormGroup>
@@ -254,13 +254,13 @@ export default class UserAddModal extends Component {
                             <Col md={6}>
                                 <FormGroup>
                                     <Label for="userAddPassword">Répétez le mot de passe</Label>
-                                    <Input 
-                                        type="password" 
-                                        name="userAddRepeatPassword" 
-                                        id="userAddRepeatPassword" 
-                                        placeholder="Répétez le mot de passe" 
+                                    <Input
+                                        type="password"
+                                        name="userAddRepeatPassword"
+                                        id="userAddRepeatPassword"
+                                        placeholder="Répétez le mot de passe"
                                         className={(this.state.repeatPasswordError) ? 'is-invalid' : ''}
-                                        onChange={(e) => this.setState({repeatPassword: e.target.value})}
+                                        onChange={(e) => this.setState({ repeatPassword: e.target.value })}
                                     />
                                     <FormFeedback>Le mot de passe est trop court ou ne correspond pas</FormFeedback>
                                 </FormGroup>
@@ -269,12 +269,12 @@ export default class UserAddModal extends Component {
                         <FormGroup row>
                             <Label for="userAddBiography" sm={2}>Biographie</Label>
                             <Col sm={10}>
-                                <Input 
-                                    type="textarea" 
+                                <Input
+                                    type="textarea"
                                     name="userAddBiography"
-                                    id="userAddBiography" 
+                                    id="userAddBiography"
                                     className={(this.state.biographyError) ? 'is-invalid' : ''}
-                                    onChange={(e) => this.setState({biography: e.target.value})}
+                                    onChange={(e) => this.setState({ biography: e.target.value })}
                                 />
                                 <FormFeedback>La biographie doit contenir au moins 10 caractères</FormFeedback>
                             </Col>
@@ -284,11 +284,11 @@ export default class UserAddModal extends Component {
                                 <FormGroup>
                                     <Label for="userAddSex">Genre</Label>
                                     <Input
-                                        type="select" 
-                                        name="userAddSex" 
+                                        type="select"
+                                        name="userAddSex"
                                         id="userAddSex"
                                         className={(this.state.sexError) ? 'is-invalid' : ''}
-                                        onChange={(e) => this.setState({sex: e.target.value})}
+                                        onChange={(e) => this.setState({ sex: e.target.value })}
                                     >
                                         <option>Homme</option>
                                         <option>Femme</option>
@@ -300,13 +300,13 @@ export default class UserAddModal extends Component {
                             <Col md={6}>
                                 <FormGroup>
                                     <Label for="userAddJob">Emploi</Label>
-                                    <Input 
-                                        type="text" 
-                                        name="userAddJob" 
-                                        id="userAddJob" 
-                                        placeholder="Emploi" 
+                                    <Input
+                                        type="text"
+                                        name="userAddJob"
+                                        id="userAddJob"
+                                        placeholder="Emploi"
                                         className={(this.state.jobError) ? 'is-invalid' : ''}
-                                        onChange={(e) => this.setState({job: e.target.value})}
+                                        onChange={(e) => this.setState({ job: e.target.value })}
                                     />
                                     <FormFeedback>L'emploi doit contenir au moins 3 caractères</FormFeedback>
                                 </FormGroup>
@@ -316,12 +316,12 @@ export default class UserAddModal extends Component {
                             <Col md={6}>
                                 <FormGroup>
                                     <Label for="userAddBirthdate">Date de naissance</Label>
-                                    <Input 
-                                        type="date" 
-                                        name="userAddBirthdate" 
-                                        id="userAddBirthdate" 
+                                    <Input
+                                        type="date"
+                                        name="userAddBirthdate"
+                                        id="userAddBirthdate"
                                         className={(this.state.birthdateError) ? 'is-invalid' : ''}
-                                        onChange={(e) => this.setState({birthdate: e.target.value})}
+                                        onChange={(e) => this.setState({ birthdate: e.target.value })}
                                     />
                                     <FormFeedback>La date de naissance est incorrecte</FormFeedback>
                                 </FormGroup>
@@ -329,13 +329,13 @@ export default class UserAddModal extends Component {
                             <Col md={6}>
                                 <FormGroup>
                                     <Label for="userAddBirthplace">Ville d'origine</Label>
-                                    <Input 
-                                        type="text" 
-                                        name="userAddBirthplace" 
+                                    <Input
+                                        type="text"
+                                        name="userAddBirthplace"
                                         id="userAddBirthplace"
-                                        placeholder="Ville d'origine" 
+                                        placeholder="Ville d'origine"
                                         className={(this.state.birthplaceError) ? 'is-invalid' : ''}
-                                        onChange={(e) => this.setState({birthplace: e.target.value})}
+                                        onChange={(e) => this.setState({ birthplace: e.target.value })}
                                     />
                                     <FormFeedback>La ville d'origine doit contenir au moins 3 caractères</FormFeedback>
                                 </FormGroup>
@@ -345,12 +345,12 @@ export default class UserAddModal extends Component {
                             <Col md={6}>
                                 <FormGroup>
                                     <Label for="userAddRelationshipstatus">Situation amoureuse</Label>
-                                    <Input 
-                                        type="select" 
-                                        name="userAddRelationshipstatus" 
+                                    <Input
+                                        type="select"
+                                        name="userAddRelationshipstatus"
                                         id="userAddRelationshipstatus"
                                         className={(this.state.relationshipstatusError) ? 'is-invalid' : ''}
-                                        onChange={(e) => this.setState({relationshipstatus: e.target.value})}
+                                        onChange={(e) => this.setState({ relationshipstatus: e.target.value })}
                                     >
                                         <option>Célibataire</option>
                                         <option>En couple</option>
@@ -364,13 +364,13 @@ export default class UserAddModal extends Component {
                             <Col md={6}>
                                 <FormGroup>
                                     <Label for="userAddLivingplace">Ville actuelle</Label>
-                                    <Input 
-                                        type="text" 
+                                    <Input
+                                        type="text"
                                         name="userAddLivingplace"
-                                         id="userAddLivingplace" 
-                                        placeholder="Ville actuelle" 
+                                        id="userAddLivingplace"
+                                        placeholder="Ville actuelle"
                                         className={(this.state.livingplaceError) ? 'is-invalid' : ''}
-                                        onChange={(e) => this.setState({livingplace: e.target.value})}
+                                        onChange={(e) => this.setState({ livingplace: e.target.value })}
                                     />
                                     <FormFeedback>La ville actuelle doit contenir au moins 3 caractères</FormFeedback>
                                 </FormGroup>
@@ -379,11 +379,11 @@ export default class UserAddModal extends Component {
                     </Form>
                 </ModalBody>
                 <ModalFooter>
-                    <Button className="modal-choice" color="primary" onClick={this.checkForm}><FontAwesomeIcon icon={ faPlus } /></Button>{' '}
-                    <Button className="modal-choice" color="secondary" onClick={this.props.toggleUserAddModal}><FontAwesomeIcon icon={ faTimes }/></Button>
+                    <Button className="modal-choice" color="primary" onClick={this.checkForm}><FontAwesomeIcon icon={faPlus} /></Button>{' '}
+                    <Button className="modal-choice" color="secondary" onClick={this.props.toggleUserAddModal}><FontAwesomeIcon icon={faTimes} /></Button>
                 </ModalFooter>
             </Modal>
         )
     }
-  
+
 }

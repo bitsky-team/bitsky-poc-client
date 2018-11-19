@@ -1300,7 +1300,7 @@ body
   background: #FFF;
 }
 
-.user-add-modal
+.user-modal
 {
   max-width: none;
   margin: 0 auto;
@@ -1308,7 +1308,7 @@ body
   width: 80vw;  
 }
 
-.user-add-modal .modal-content
+.user-modal .modal-content
 {
   width: 80vw;
 }
