@@ -13,7 +13,7 @@ export default class UserTableEntry extends Component {
             <td>{this.props.firstname}</td>
             <td>{this.props.email}</td>
             <td><Rank id={this.props.rank} /></td>
-            <td><button className="btn btn-info"><FontAwesomeIcon icon={faEye}/></button>{' '}<button className="btn btn-info"><FontAwesomeIcon icon={faPencilAlt}/></button>{' '}<button className="btn btn-info"><FontAwesomeIcon icon={faTrash}/></button>{' '}</td>
+            <td><button className="btn btn-info"><FontAwesomeIcon icon={faEye}/></button>{' '}<button className="btn btn-info"><FontAwesomeIcon icon={faPencilAlt}/></button>{' '}<button className="btn btn-info" onClick={e => this.props.toggleUserDeleteModal(this.props.id, this.props.firstname, this.props.lastname)}><FontAwesomeIcon icon={faTrash}/></button>{' '}</td>
         </tr>
     )
   }
