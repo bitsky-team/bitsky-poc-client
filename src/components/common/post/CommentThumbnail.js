@@ -14,7 +14,7 @@ export default class CommentThumbnail extends Component {
         <div className="post-comment-thumbnail">
                 <img id={'post-comment-thumnail-'+this.props.id+'-image'} src={this.props.author.avatar} alt='avatar' />
                 <span className='author' ref={node => this.authorBox = node}>{this.props.author.firstname + ' ' + this.props.author.lastname}</span>
-                <p>{this.props.content}</p>
+                <p>{this.props.content}</p> 
         </div>
         )
     }
