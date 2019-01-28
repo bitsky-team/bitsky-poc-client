@@ -71,7 +71,7 @@ export default class Comments extends Component {
 
             if (translateY === reversedHeight) { // Down
                 if (this.closeBox) { this.closeBox.style.display = 'block' }
-                if(this.seeMoreButton) { this.seeMoreButton.style.display = 'flex' }
+                if (this.seeMoreButton) { this.seeMoreButton.style.display = 'flex' }
                 let id = setInterval(() => {
                     if (translateY === 0) {
                         clearInterval(id)
@@ -113,15 +113,17 @@ export default class Comments extends Component {
 
     render() {
         return (
-            <div className="post-comments" ref={node => this.postComments = node}>
-                {this.state.comments}
+            <div className="post-comments-container">
+                <div className="post-comments" ref={node => this.postComments = node}>
+                    {this.state.comments}
 
-                <div style={{ display: 'none', justifyContent: 'center', alignItems: 'center' }} ref={node => this.seeMoreButton = node}>
-                    <div className="buttonBox">
-                        <Button color="info" className="see-more-button">Voir plus</Button>
+                    <div style={{ display: 'none', justifyContent: 'center', alignItems: 'center' }} ref={node => this.seeMoreButton = node}>
+                        <div className="buttonBox">
+                            <Button color="info" className="see-more-button">Voir plus</Button>
+                        </div>
                     </div>
+                    <span className="closebox" ref={node => this.closeBox = node} onClick={this.toggle}><FontAwesomeIcon icon={faChevronUp} /></span>
                 </div>
-                <span className="closebox" ref={node => this.closeBox = node} onClick={this.toggle}><FontAwesomeIcon icon={faChevronUp} /></span>
             </div>
         )
     }
