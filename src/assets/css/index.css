@@ -212,12 +212,7 @@ body
 
 .single-form-subcontainer.left form .checkbox-container input:checked ~ .checkmark
 {
-  background: -moz-linear-gradient(135deg, #05B2AB 0, #9833DC 100%);/* FF3.6+ */
-  background: -webkit-gradient(linear, 135deg, color-stop(0, 05B2AB), color-stop(100%, 9833DC));/* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(135deg, #05B2AB 0, #9833DC 100%);/* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(135deg, #05B2AB 0, #9833DC 100%);/* Opera 11.10+ */
-  background: -ms-linear-gradient(135deg, #05B2AB 0, #9833DC 100%);/* IE10+ */
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1301FE', endColorstr='#F4F60C', GradientType='1'); /* for IE */
+  background: -webkit-linear-gradient(135deg, #05B2AB 0, #9833DC 100%);
   border-color: rgba(0,0,0,0);
   opacity: 0.5;
 }
@@ -375,8 +370,13 @@ body
 .single-form-subcontainer.right .container
 {
   z-index: 5;
-  position: fixed;
-  display: none;
+  position: sticky;
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
 }
 
 .single-form-subcontainer.right .container nav ul
@@ -408,13 +408,17 @@ body
   transform: translateY(5px);
 }
 
+.single-form-subcontainer.right .container .image
+{
+  display: flex;
+  align-items: center;
+  margin-top: -54px; /* nav height */
+  flex: 1;
+}
+
 .single-form-subcontainer.right .container img
 {
   width: 30vw;
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: none;
 }
 
 .login-error-modal
@@ -596,15 +600,26 @@ body
   margin-top: 30px;
 }
 
+.posts-container .post-container
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
 .posts-container .post
 {
   background-color: #FFF;
   padding: 15px;
   border-radius: 5px;
   position: relative;
+  width: 100%;
+  z-index: 2;
 }
 
-.posts-container .post:not(:first-child)
+.posts-container * div:not(:first-child) .post
 {
   margin-top: 25px;
 }
@@ -677,6 +692,110 @@ body
   cursor: pointer;
 }
 
+.posts-container .post + .post-comments
+{
+  transform: translateY(-100%);
+  position: relative;
+  height: 140px;
+  width: 90%;
+  background-color: #FFF;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  padding: 5px;
+  z-index: 1;
+}
+
+.posts-container .post + .post-comments .post-comment-thumbnail
+{
+  display: flex;
+  position: relative;
+}
+
+.posts-container .post + .post-comments .post-comment-thumbnail img
+{
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.posts-container .post + .post-comments .post-comment-thumbnail .author
+{
+  opacity: 0;
+  position: absolute;
+  background-color: rgba(0,0,0,0.7);
+  color: #FFF;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.posts-container .post + .post-comments .post-comment-thumbnail .author:after,
+.posts-container .post + .post-comments .post-comment-thumbnail .author:before {
+	left: 100%;
+	top: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.posts-container .post + .post-comments .post-comment-thumbnail .author:before {
+	border-color: rgba(194, 225, 245, 0);
+	border-left-color: rgba(0,0,0,0.7);
+	border-width: 7.75px;
+	margin-top: -7.75px;
+}
+
+.posts-container .post + .post-comments .post-comment-thumbnail img:hover  + .author {
+  opacity: 1;
+}
+
+.posts-container .post + .post-comments .post-comment-thumbnail p
+{
+  flex: 1;
+  background-color: #F5F7F8;
+  color: #949090;
+  padding: 5px;
+  margin-left: 10px;
+  margin-bottom: 7.5px;
+  border-radius: 5px;
+}
+
+.posts-container .post + .post-comments span.closebox
+{
+  display: none;
+  position: absolute;
+  bottom: -25px;
+  right: 5px;
+  height: 30px;
+  width: 30px;
+  padding: 5px;
+  background-color: #FFF;
+  color: #b7b7b7;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  font-size: 17px;
+  box-sizing: border-box;
+  text-align: center;
+  cursor: pointer;
+}
+
+.posts-container .post + .post-comments .buttonBox
+{
+  margin-top: -3px;
+  background-color: #FFF;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  padding: 5px;
+}
+
+span.comment-counter, span.fav-counter, .post-details .counter-container {
+  cursor: default;
+}
+
 .navbar-light .navbar-nav .nav-link 
 {
   color: rgb(171, 171, 171);
@@ -704,6 +823,13 @@ body
   border-radius: 5px;
   padding: 5px;
   font-size: 15px;
+  transition: 0.2s;
+}
+
+.user-container.right-container div.trend-content:hover
+{
+  transform: scale(1.05);
+  cursor: pointer;
 }
 
 .user-container.right-container div.trend-content p

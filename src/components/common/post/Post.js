@@ -10,6 +10,7 @@ import { Container, Row, Col } from 'reactstrap'
 import axios from 'axios'
 import qs from 'qs'
 import Rank from '../../common/Rank'
+import Comments from './Comments';
 
 class Post extends Component {
 
@@ -17,6 +18,11 @@ class Post extends Component {
         favoriteFilled: this.props.favoriteFilled,
         favorites: this.props.favorites,
         comments: this.props.comments
+    }
+
+    constructor(props) {
+        super(props)
+        this.postComments = React.createRef()
     }
 
     isOwner() {
@@ -59,35 +65,48 @@ class Post extends Component {
         return {__html: this.props.content}
     }
 
-    componentDidMount() {
+    handleCommentCounterClick = () => {
+        if (this.state.comments > 0) {
+            this.postComments.current.toggle()
+        }
+    }
+
+    componentDidMount() {
+        if (this.commentCounter && this.state.comments > 0) {
+            this.commentCounter.style.cursor = 'pointer'
+        }
+
         this.checkFavorite()
     }
 
     render() {
         return (
-            <div id={"post-"+this.props.id} className="post">
-                {this.isOwner()}
-                <img src={this.props.ownerAvatar} alt="Avatar" />
-                <div className="title">
-                    <h4>{this.props.ownerName}</h4>
-                    <small><Rank id={this.props.ownerRank} /></small>
+            <div className="post-container">
+                <div id={"post-"+this.props.id} className="post">
+                    {this.isOwner()}
+                    <img src={this.props.ownerAvatar} alt="Avatar" />
+                    <div className="title">
+                        <h4>{this.props.ownerName}</h4>
+                        <small><Rank id={this.props.ownerRank} /></small>
+                    </div>
+                    <p className="post-content" dangerouslySetInnerHTML={this.getContent()}></p>
+                    <Container className="post-details">
+                        <Row>
+                            <Col md="4" className="text-left">
+                                <span className="tag"><FontAwesomeIcon icon={faTag} /> {this.props.tag}</span>
+                            </Col>
+                            <Col md="4" className="text-center counter-container">
+                                <span className="fav-counter"><i><FontAwesomeIcon icon={this.state.favoriteFilled ? faFullStar : faEmptyStar} onClick={this.handleFavoriteButtonClick} /></i> {this.state.favorites}</span>
+                                {' '}
+                                <span className="comment-counter" onClick={this.handleCommentCounterClick} ref={node => this.commentCounter = node}><FontAwesomeIcon icon={faComments} /> {this.state.comments}</span>
+                            </Col>
+                            <Col md="4" className="text-right">
+                                <span className="date"><FontAwesomeIcon icon={faClock} /> {DateService.timeSince(this.props.date)}</span>
+                            </Col>
+                        </Row>
+                    </Container>                    
                 </div>
-                <p className="post-content" dangerouslySetInnerHTML={this.getContent()}></p>
-                <Container className="post-details">
-                    <Row>
-                        <Col md="4" className="text-left">
-                            <span className="tag"><FontAwesomeIcon icon={faTag} /> {this.props.tag}</span>
-                        </Col>
-                        <Col md="4" className="text-center">
-                            <span className="fav-counter"><i><FontAwesomeIcon icon={this.state.favoriteFilled ? faFullStar : faEmptyStar} onClick={this.handleFavoriteButtonClick} /></i> {this.state.favorites}</span>
-                            {' '}
-                            <span className="comment-counter"><FontAwesomeIcon icon={faComments} /> {this.state.comments}</span>
-                        </Col>
-                        <Col md="4" className="text-right">
-                            <span className="date"><FontAwesomeIcon icon={faClock} /> {DateService.timeSince(this.props.date)}</span>
-                        </Col>
-                    </Row>
-                </Container>                    
+                <Comments ref={this.postComments} />
             </div>
         )
     }

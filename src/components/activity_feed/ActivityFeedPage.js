@@ -72,6 +72,10 @@ export default class ActivityFeedPage extends Component {
     }
 
     resetTrends = () => {
+        if(this.trendsContainer) {
+            this.trendsContainer.childNodes[1].style.display = 'block'
+        }
+        
         this.setState({trends: []})
     }
 
