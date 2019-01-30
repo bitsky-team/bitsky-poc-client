@@ -151,7 +151,7 @@ export default class RegisterConfirmationPage extends Component {
       return (
           <div>
             <Modal isOpen={this.state.cropModal} toggle={this.toggleCropModal}>
-                <ModalBody>
+                <ModalBody style={{background: 'white'}}>
                     <Label for="avatar">Veuillez sélectionner votre avatar</Label>
                     <Input type="file" name="avatar" id="avatar" onChange={this.onAvatarChange} />
                     <Cropper
@@ -164,7 +164,7 @@ export default class RegisterConfirmationPage extends Component {
                     />
                     <div className="img-preview" style={{ width: '100%' }} />
                 </ModalBody>
-                <ModalFooter>
+                <ModalFooter  style={{background: 'white'}}>
                     <Button className="modal-choice" color="primary" onClick={this.cropImage}><FontAwesomeIcon icon={ faSave } /></Button>{' '}
                     <Button className="modal-choice" color="secondary" onClick={this.toggleCropModal}><FontAwesomeIcon icon={ faTimes }/></Button>
                 </ModalFooter>

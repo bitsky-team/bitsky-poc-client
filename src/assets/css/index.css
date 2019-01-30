@@ -600,7 +600,7 @@ body
   margin-top: 30px;
 }
 
-.posts-container .post-container
+.post-container
 {
   display: flex;
   flex-direction: column;
@@ -609,7 +609,7 @@ body
   position: relative;
 }
 
-.posts-container .post
+.post
 {
   background-color: #FFF;
   padding: 15px;
@@ -624,7 +624,7 @@ body
   margin-top: 25px;
 }
 
-.posts-container .post img
+.post-container .post img
 {
   height: 80px;
   border-radius: 50%;
@@ -634,7 +634,7 @@ body
   left: 10px;
 }
 
-.posts-container .post .delete
+.post-container .post .delete
 {
   position: absolute;
   top: 5px;
@@ -643,31 +643,31 @@ body
   transition: 0.2s;
 }
 
-.posts-container .post .delete:hover
+.post-container .post .delete:hover
 {
   cursor: pointer;
   transform: scale(1.1);
 }
 
-.posts-container .post .title
+.post-container .post .title
 {
   margin-left: 90px;
   color: rgb(97, 97, 97);
 }
 
-.posts-container .post .title h4
+.post-container .post .title h4
 {
   margin-bottom: 0;
   font-size: 1.1rem;
 }
 
-.posts-container .post .title small
+.post-container .post .title small
 {
   margin-top: -2px;
   display: block;
 }
 
-.posts-container .post p
+.post-container .post p
 {
   margin-top: 25px;
   background-color: #F5F7F8;
@@ -680,23 +680,22 @@ body
   line-height: 16px;
 }
 
-.posts-container .post * span
+.post-container .post * span
 {
   color: #b7b7b7;
   font-weight: 200;
   font-size: 15px;
 }
 
-.posts-container .post .fav-counter:hover
+.post-container .post .fav-counter:hover
 {
   cursor: pointer;
 }
 
-.posts-container .post + .post-comments
+.post-container .post + .post-comments
 {
   transform: translateY(-100%);
   position: relative;
-  height: 140px;
   width: 90%;
   background-color: #FFF;
   border-bottom-left-radius: 5px;
@@ -705,20 +704,20 @@ body
   z-index: 1;
 }
 
-.posts-container .post + .post-comments .post-comment-thumbnail
+.post-container .post + .post-comments .post-comment-thumbnail
 {
   display: flex;
   position: relative;
 }
 
-.posts-container .post + .post-comments .post-comment-thumbnail img
+.post-container .post + .post-comments .post-comment-thumbnail img
 {
   height: 30px;
   border-radius: 50%;
   cursor: pointer;
 }
 
-.posts-container .post + .post-comments .post-comment-thumbnail .author
+.post-container .post + .post-comments .post-comment-thumbnail .author
 {
   opacity: 0;
   position: absolute;
@@ -730,8 +729,8 @@ body
   transition: 0.2s;
 }
 
-.posts-container .post + .post-comments .post-comment-thumbnail .author:after,
-.posts-container .post + .post-comments .post-comment-thumbnail .author:before {
+.post-container .post + .post-comments .post-comment-thumbnail .author:after,
+.post-container .post + .post-comments .post-comment-thumbnail .author:before {
 	left: 100%;
 	top: 50%;
 	border: solid transparent;
@@ -742,18 +741,18 @@ body
 	pointer-events: none;
 }
 
-.posts-container .post + .post-comments .post-comment-thumbnail .author:before {
+.post-container .post + .post-comments .post-comment-thumbnail .author:before {
 	border-color: rgba(194, 225, 245, 0);
 	border-left-color: rgba(0,0,0,0.7);
 	border-width: 7.75px;
 	margin-top: -7.75px;
 }
 
-.posts-container .post + .post-comments .post-comment-thumbnail img:hover  + .author {
+.post-container .post + .post-comments .post-comment-thumbnail img:hover  + .author {
   opacity: 1;
 }
 
-.posts-container .post + .post-comments .post-comment-thumbnail p
+.post-container .post + .post-comments .post-comment-thumbnail p
 {
   flex: 1;
   background-color: #F5F7F8;
@@ -764,7 +763,7 @@ body
   border-radius: 5px;
 }
 
-.posts-container .post + .post-comments span.closebox
+.post-container .post + .post-comments span.closebox
 {
   display: none;
   position: absolute;
@@ -783,17 +782,97 @@ body
   cursor: pointer;
 }
 
-.posts-container .post + .post-comments .buttonBox
+.post-container .post + .post-comments .buttonBox
 {
-  margin-top: -3px;
+  position: absolute;
+  bottom: -28px;
   background-color: #FFF;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
   padding: 5px;
 }
 
+.modal.fade
+{
+  background-color: rgba(0,0,0,0.7);
+}
+
+.modal-content
+{
+  background: none;
+}
+
+.postViewer .postComment
+{
+  margin-top: 10px;
+  position: relative;
+}
+
+.postViewer .postComment #comment-content
+{
+  background-color: #FFF;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 40px 10px 30px;
+  min-width: 100%;
+  resize: none;
+  box-sizing: border-box;
+  min-height: 44px;
+}
+
+.postViewer .postComment .remove-box
+{
+  display: none;
+}
+
+.postViewer .postComment .icons, .postViewer .postComment .remove-box
+{
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;  
+  padding: 10px;
+}
+
+.postViewer .postComment .icons span, .postViewer .postComment .remove-box span
+{
+  padding: 7px;
+  font-size: 18px;
+  color: #DDDFDF;
+  transition: 0.2s;
+}
+
+.postViewer .postComment .icons span:hover, .postViewer .postComment .remove-box span:hover
+{
+  cursor: pointer;
+  color: rgb(206, 207, 207);
+  transform: scale(1.1);
+}
+
+.postViewer .postComment .publish-button
+{
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  color: #FFF;
+  background-color: rgb(131, 178, 224);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  padding-top: 5px;
+  padding-left: 7px;
+  display: none;
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+.postViewer .postComment .publish-button:hover
+{
+  transform: scale(1.1);
+}
+
 span.comment-counter, span.fav-counter, .post-details .counter-container {
-  cursor: default;
+  cursor: pointer;
 }
 
 .navbar-light .navbar-nav .nav-link 

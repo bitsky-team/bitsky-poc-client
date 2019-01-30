@@ -10,7 +10,7 @@ import { Container, Row, Col } from 'reactstrap'
 import axios from 'axios'
 import qs from 'qs'
 import Rank from '../../common/Rank'
-import Comments from './Comments';
+import BestComments from './BestComments'
 
 class Post extends Component {
 
@@ -36,10 +36,12 @@ class Post extends Component {
         if(this.state.favoriteFilled) {
             this.removeFavorite().then(() => {
                 this.setState({favorites: this.state.favorites - 1})
+                this.postComments.current.postViewer.current.toggleFavorite()
             })
         }else {
             this.addFavorite().then(() => {
                 this.setState({favorites: this.state.favorites + 1})
+                this.postComments.current.postViewer.current.toggleFavorite()
             })
         }
     }
@@ -52,6 +54,12 @@ class Post extends Component {
         await axios.post(`${config.API_ROOT}/post_remove_favorite`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }))
     }
 
+    toggleFavorite = () => {
+        this.setState({favoriteFilled: !this.state.favoriteFilled})
+        if(this.state.favoriteFilled) this.setState({favorites: this.state.favorites + 1})
+        if(!this.state.favoriteFilled) this.setState({favorites: this.state.favorites - 1})
+    }
+
     checkFavorite = async () => {
         const response = await axios.post(`${config.API_ROOT}/post_get_user_favorite`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }))
         const { success, favorite } = response.data
@@ -61,6 +69,14 @@ class Post extends Component {
         }
     }
 
+    increaseCommentCounter = () => {
+        this.setState({ comments: this.state.comments + 1 })
+    }
+
+    decreaseCommentCounter = () => {
+        this.setState({ comments: this.state.comments + 1 })
+    }
+
     getContent() {
         return {__html: this.props.content}
     }
@@ -68,14 +84,12 @@ class Post extends Component {
     handleCommentCounterClick = () => {
         if (this.state.comments > 0) {
             this.postComments.current.toggle()
+        } else {
+            this.postComments.current.postViewer.current.toggle()
         }
     }
 
-    componentDidMount() {
-        if (this.commentCounter && this.state.comments > 0) {
-            this.commentCounter.style.cursor = 'pointer'
-        }
-
+    componentDidMount = () => {
         this.checkFavorite()
     }
 
@@ -106,7 +120,13 @@ class Post extends Component {
                         </Row>
                     </Container>                    
                 </div>
-                <Comments ref={this.postComments} />
+                <BestComments 
+                    ref={this.postComments} 
+                    id={this.props.id} 
+                    toggleFavoriteFromActivityFeed={this.toggleFavorite} 
+                    increaseCommentCounterFromActivityFeed={this.increaseCommentCounter} 
+                    decreaseCommentCounterFromActivityFeed={this.decreaseCommentCounter}
+                />
             </div>
         )
     }

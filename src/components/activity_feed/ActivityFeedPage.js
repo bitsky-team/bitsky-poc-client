@@ -314,11 +314,11 @@ export default class ActivityFeedPage extends Component {
         return (
             <div>
                 <Modal isOpen={this.state.postModal} toggle={this.togglePostModal} className={this.props.className}>
-                    <ModalBody>
+                    <ModalBody style={{background: 'white'}}>
                         <Label for="post-tag">Veuillez indiquer le sujet de votre publication</Label>
                         <Input type="text" name="post-tag" id="post-tag" onChange={(e) => this.setState({ tagValue: `${e.target.value}` })} placeholder="Sujet de la publication" />
                     </ModalBody>
-                    <ModalFooter>
+                    <ModalFooter style={{background: 'white'}}>
                         <Button className="modal-choice" color="primary" onClick={this.handlePublishButtonClick}><FontAwesomeIcon icon={ faPaperPlane } /></Button>{' '}
                         <Button className="modal-choice" color="secondary" onClick={this.togglePostModal}><FontAwesomeIcon icon={ faTimes }/></Button>
                     </ModalFooter>
