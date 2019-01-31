@@ -16,10 +16,14 @@ import {config} from '../../config'
 import Rank from '../common/Rank'
 
 export default class AdministrationPage extends Component {
+
+    _isMounted = false
+    interval = null
+
     state = {
         session: (localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null),
         temperature: '?',
-        cpuPercentage: 30,
+        cpuPercentage: '?',
         diskStorage: {
             disque1: 13.5, 
             disque2: 13.5, 
@@ -37,11 +41,30 @@ export default class AdministrationPage extends Component {
     getTemp = async () => {
         const response = await axios.post(`${config.API_ROOT}/get_temp`, qs.stringify({ token: localStorage.getItem('token'), uniq_id: localStorage.getItem('id')}))
         const temperature = (response.data.success) ? response.data.temperature : '?'
-        this.setState({temperature})
+        if(this._isMounted) this.setState({temperature})
     }
 
-    componentWillMount() {
+    getCpu = async () => {
+        const response = await axios.post(`${config.API_ROOT}/get_cpu`, qs.stringify({ token: localStorage.getItem('token'), uniq_id: localStorage.getItem('id')}))
+        const cpuPercentage = (response.data.success) ? Math.round(response.data.cpu_usage, 2) : '?'
+        if(this._isMounted) this.setState({cpuPercentage})
+    }
+
+    componentDidMount() {
+        this._isMounted = true
+
         this.getTemp()
+        this.getCpu()
+
+        this.interval = setInterval(() => {
+            this.getTemp()
+            this.getCpu()
+        }, 5000)
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false
+        clearInterval(this.interval)
     }
 
     render() {
@@ -55,8 +78,9 @@ export default class AdministrationPage extends Component {
                                 <img src={localStorage.getItem('avatar')} alt="Avatar" />
                                 <h5>{this.state.session.firstname + ' ' + this.state.session.lastname}</h5>
                                 <p className="rank"><Rank id={ this.state.session.rank } /></p>
-                                <AdministrationSideMenu />
                             </div>
+                            
+                            <AdministrationSideMenu />
                         </Col>
                         <Col md="9" className="no-margin-left no-margin-right">
                             <div className="user-container no-center admin-dashboard">
@@ -70,12 +94,12 @@ export default class AdministrationPage extends Component {
                                         </Col>
                                         <Col md="4">
                                             <Col md="12">
-                                                <AdministrationInfos measureTitle="Température" measuredValue={this.state.temperature + '°C'} measuredValueState="Optimale"/>
+                                                <AdministrationInfos measureTitle="Température" measuredValue={this.state.temperature + '°C'} measuredValueState={this.state.temperature < 60 ? 'Optimale' : 'Élevée'}/>
                                             </Col>
                                         </Col>
                                         <Col md="4">
                                             <Col md="12">
-                                                <AdministrationInfos measureTitle="Utilisation du CPU" measuredValue={this.state.cpuPercentage + '%'} measuredValueState="Optimale"/>
+                                                <AdministrationInfos measureTitle="Utilisation du CPU" measuredValue={this.state.cpuPercentage + '%'} measuredValueState={this.state.cpuPercentage < 70 ? 'Optimale' : 'Élevée'} />
                                             </Col>
                                         </Col>
                                     </Row>

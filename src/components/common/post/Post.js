@@ -14,6 +14,8 @@ import BestComments from './BestComments'
 
 class Post extends Component {
 
+    _isMounted = false
+
     state = {
         favoriteFilled: this.props.favoriteFilled,
         favorites: this.props.favorites,
@@ -33,6 +35,7 @@ class Post extends Component {
 
     handleFavoriteButtonClick = (e) => {
         this.setState({favoriteFilled: !this.state.favoriteFilled})
+        
         if(this.state.favoriteFilled) {
             this.removeFavorite().then(() => {
                 this.setState({favorites: this.state.favorites - 1})
@@ -55,26 +58,28 @@ class Post extends Component {
     }
 
     toggleFavorite = () => {
-        this.setState({favoriteFilled: !this.state.favoriteFilled})
-        if(this.state.favoriteFilled) this.setState({favorites: this.state.favorites + 1})
-        if(!this.state.favoriteFilled) this.setState({favorites: this.state.favorites - 1})
+        if(this._isMounted) {
+            this.setState({favoriteFilled: !this.state.favoriteFilled})
+            if(this.state.favoriteFilled) this.setState({favorites: this.state.favorites + 1})
+            if(!this.state.favoriteFilled) this.setState({favorites: this.state.favorites - 1})
+        }
     }
 
     checkFavorite = async () => {
         const response = await axios.post(`${config.API_ROOT}/post_get_user_favorite`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }))
         const { success, favorite } = response.data
        
-        if (success && favorite) {
+        if (success && favorite && this._isMounted) {
             this.setState({ favoriteFilled: true })
         }
     }
 
     increaseCommentCounter = () => {
-        this.setState({ comments: this.state.comments + 1 })
+        if(this._isMounted) this.setState({ comments: this.state.comments + 1 })
     }
 
     decreaseCommentCounter = () => {
-        this.setState({ comments: this.state.comments + 1 })
+        if(this._isMounted) this.setState({ comments: this.state.comments - 1 })
     }
 
     getContent() {
@@ -90,7 +95,12 @@ class Post extends Component {
     }
 
     componentDidMount = () => {
+        this._isMounted = true
         this.checkFavorite()
+    }
+
+    componentWillUnmount = () => {
+        this._isMounted = false
     }
 
     render() {
@@ -120,6 +130,7 @@ class Post extends Component {
                         </Row>
                     </Container>                    
                 </div>
+                
                 <BestComments 
                     ref={this.postComments} 
                     id={this.props.id} 

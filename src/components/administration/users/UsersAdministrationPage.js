@@ -26,6 +26,9 @@ import UserDeleteModal from './UserDeleteModal'
 import Rank from '../../common/Rank'
 
 export default class UsersAdministrationPage extends Component {
+
+    _isMounted = false
+
     state = {
         session: (localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null),
         users: [],
@@ -88,29 +91,31 @@ export default class UsersAdministrationPage extends Component {
         
         let usersList = []
         
-        switch(displayType) {
-            case 'thumbnails':
-                this.setState({displayType: displayType})
-                let i = 0
-                usersData.forEach(user => {
-                    i++
-                    usersList.push(<UserThumbnail margin={(i > 3 ? 'margin-top-10' : null)} key={'user-'+user.id} avatar={user.avatar} id={user.id} firstname={user.firstname} lastname={user.lastname} uniq_id={user.uniq_id} rank={user.rank} toggleUserDeleteModal={this.toggleUserDeleteModal}/>)
-                })
-            break
-
-            case 'list':
-                this.setState({displayType: displayType})
-                usersData.forEach(user => {
-                    usersList.push(<UserTableEntry key={'user-'+user.id} id={user.id} uid={_.truncate(user.uniq_id, {'length': 8,'separator': /,? +/})} lastname={user.lastname} firstname={user.firstname} email={user.email} rank={user.rank} toggleUserDeleteModal={this.toggleUserDeleteModal}/>)
-                })
-            break
-
-            default:
-                console.log('Erreur lors de l\'affichage des utilisateurs: ', displayType)
-            break
+        if(this._isMounted) {
+            switch(displayType) {
+                case 'thumbnails':
+                    this.setState({displayType: displayType})
+                    let i = 0
+                    usersData.forEach(user => {
+                        i++
+                        usersList.push(<UserThumbnail margin={(i > 3 ? 'margin-top-10' : null)} key={'user-'+user.id} avatar={user.avatar} id={user.id} firstname={user.firstname} lastname={user.lastname} uniq_id={user.uniq_id} rank={user.rank} toggleUserDeleteModal={this.toggleUserDeleteModal}/>)
+                    })
+                break
+    
+                case 'list':
+                    this.setState({displayType: displayType})
+                    usersData.forEach(user => {
+                        usersList.push(<UserTableEntry key={'user-'+user.id} id={user.id} uid={_.truncate(user.uniq_id, {'length': 8,'separator': /,? +/})} lastname={user.lastname} firstname={user.firstname} email={user.email} rank={user.rank} toggleUserDeleteModal={this.toggleUserDeleteModal}/>)
+                    })
+                break
+    
+                default:
+                    console.log('Erreur lors de l\'affichage des utilisateurs: ', displayType)
+                break
+            }
+    
+            this.setState({users: usersList})
         }
-
-        this.setState({users: usersList})
         
         if(this.usersLoading) {
             let usersLoading = this.usersLoading.firstChild
@@ -118,8 +123,13 @@ export default class UsersAdministrationPage extends Component {
         }
     }
 
-    componentWillMount() {
+    componentDidMount = () => {
+        this._isMounted = true
         this.getUsers('thumbnails')
+    }
+
+    componentWillUnmount = () => {
+        this._isMounted = false
     }
 
     render() {
@@ -137,6 +147,7 @@ export default class UsersAdministrationPage extends Component {
                         <Button className="modal-choice" color="secondary" onClick={this.toggleUserSearchModal}><FontAwesomeIcon icon={ faTimes }/></Button>
                     </ModalFooter>
                 </Modal>
+
                 <Container className="main-container">
                     <Row>
                         <Col md="3" className="no-margin-left no-margin-right">
@@ -144,8 +155,9 @@ export default class UsersAdministrationPage extends Component {
                                 <img src={localStorage.getItem('avatar')} alt="Avatar" />
                                 <h5>{ this.state.session.firstname + ' ' + this.state.session.lastname }</h5>
                                 <p className="rank"><Rank id={ this.state.session.rank } /></p>
-                                <AdministrationSideMenu />
                             </div>
+
+                            <AdministrationSideMenu />                            
                         </Col>
                         <Col md="9" className="no-margin-left no-margin-right">
                             <div className="user-container no-center admin-top-bar">
