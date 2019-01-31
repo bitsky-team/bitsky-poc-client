@@ -3,6 +3,9 @@ import axios from 'axios'
 import { config } from '../../config'
 
 export default class Rank extends Component {
+
+    _isMounted = false
+
     state = {
         rank: '?'
     }
@@ -14,22 +17,29 @@ export default class Rank extends Component {
     setRank = () => {
         this.getRank().then((response) => {
             const { success, ranks } = response.data
-            if(success) {
-                let rank = ranks.filter(rank => rank.id === parseInt(this.props.id))
-                
-                if(rank.length) {
-                    this.setState({ rank: rank[0].name })
+            if(this._isMounted) {
+                if(success) {
+                    let rank = ranks.filter(rank => rank.id === parseInt(this.props.id))
+                    
+                    if(rank.length) {
+                        this.setState({ rank: rank[0].name })
+                    }else {
+                        this.setState({ rank: "?"})
+                    }
                 }else {
-                    this.setState({ rank: "?"})
+                    this.setState({rank: "?"})
                 }
-            }else {
-                this.setState({rank: "?"})
             }
         })
     }
 
-    componentWillMount() {
+    componentDidMount = () => {
+        this._isMounted = true
         this.setRank()
+    }
+
+    componentWillUnmount = () => {
+        this._isMounted = false
     }
 
     render() {

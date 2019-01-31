@@ -806,6 +806,8 @@ body
 {
   margin-top: 10px;
   position: relative;
+  height: 44px;
+  min-height: 44px;
 }
 
 .postViewer .postComment #comment-content
@@ -869,6 +871,86 @@ body
 .postViewer .postComment .publish-button:hover
 {
   transform: scale(1.1);
+}
+
+.postViewer .postComments
+{
+  background-color: #FFF;
+  padding: 15px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.postViewer .postComments .comment
+{
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.postViewer .postComments .comment:not(:first-child)
+{
+  margin-top: 10px;
+}
+
+.postViewer .postComments img
+{
+  height: 40px;
+  border-radius: 100%;
+}
+
+.postViewer .postComments .content
+{
+  position: relative;
+  background-color: #F5F7F8;
+  color: #949090;
+  text-align: justify;
+  font-size: 14px;
+  padding: 10px;
+  border-radius: 5px;
+  font-weight: 200;
+  margin-left: 10px;
+  flex: 1;
+}
+
+.postViewer .postComments p
+{
+  margin-bottom: 0;
+}
+
+.postViewer .postComments .content .remove
+{
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  display: none;
+  cursor: pointer;
+}
+
+.postViewer .postComments .content:hover .remove
+{
+  display: block;
+}
+
+.postViewer .postComments .comment .comment-infos
+{
+  display: flex;
+  flex: 1 1 100%;
+  font-size: 14px;
+  color: #b7b7b7;
+  font-weight: 200;
+}
+
+.postViewer .postComments .comment .comment-infos .favorites
+{
+  flex: 1;
+  text-align: left;
+  margin-left: 50px;
+}
+
+.postViewer .postComments .comment .comment-infos .date
+{
+  flex: 1;
+  text-align: right;
 }
 
 span.comment-counter, span.fav-counter, .post-details .counter-container {
@@ -1130,8 +1212,8 @@ span.comment-counter, span.fav-counter, .post-details .counter-container {
 
 .side-menu ul
 {
+  padding: 0px 30px 10px 30px;
   margin: 10px 0 0 0;
-  padding: 0;
   list-style-type: none;
   text-align: left;
   width: calc(100% + 60px);
@@ -1145,11 +1227,13 @@ span.comment-counter, span.fav-counter, .post-details .counter-container {
 
 .side-menu ul li a
 {
+  margin-top: 10px;
+  background-color: #FFF;
+  border-radius: 5px;
   color: rgb(97, 97, 97);
   text-decoration: none;
   display: block;
   padding: 5px;
-  padding-left: 30px;
   width: 100%;
   transition: 0.2s;
   border-left: 2px solid #FFF;
@@ -1159,8 +1243,9 @@ span.comment-counter, span.fav-counter, .post-details .counter-container {
 {
   background-color: rgba(131, 178, 224, .15);
   border-left: 2px solid rgb(207, 148, 202);
+  border-right: 2px solid rgb(207, 148, 202);
   color: rgb(76, 134, 191) !important;
-  padding-left: 35px;
+  padding-left: 10px;
   cursor: pointer;
 }
 

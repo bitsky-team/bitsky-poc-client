@@ -69,14 +69,14 @@ export default class LoginPage extends Component {
     return (
       <div className="App">
         <Modal isOpen={this.state.modal} toggle={this.toggleError} className={this.props.className + ' login-error-modal'}>
-          <ModalHeader toggle={this.toggleError}>Erreur lors de la connexion</ModalHeader>
-          <ModalBody>
+          <ModalHeader style={{background: 'white'}} toggle={this.toggleError}>Erreur lors de la connexion</ModalHeader>
+          <ModalBody style={{background: 'white'}}>
             <div>
               <p id="errorMessage" ref={node => this.errorMessage = node}></p>
               <ul id="errorsList" style={{display: 'none'}} ref={node => this.errorsList = node}></ul>
             </div>
           </ModalBody>
-          <ModalFooter>
+          <ModalFooter style={{background: 'white'}}>
             <button className="secondary" onClick={this.toggleError}>J'ai compris</button>
           </ModalFooter>
         </Modal>

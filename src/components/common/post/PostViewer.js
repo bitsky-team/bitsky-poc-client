@@ -12,23 +12,32 @@ import axios from 'axios'
 import qs from 'qs'
 import TextareaAutosize from 'react-autosize-textarea'
 import { toast } from 'react-toastify'
+import Comment from './Comment'
 
 export default class PostViewer extends React.Component  {
+
+    _isMounted = false
+
     state = {
         session: (localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null),
         open: false,
         post: null,
         favoriteFilled: false,
         favorites: 0,
-        comments: 0
+        commentsCount: 0,
+        comments: []
     }
 
     toggle = () => {
-        if(!this.state.open) {
-            this.props.toggleBestComments()
+        if(this._isMounted) {
+            if(!this.state.open) {
+                this.resetComments()
+                this.setComments()
+                this.props.toggleBestComments()
+            }
+    
+            this.setState({open: !this.state.open})
         }
-
-        this.setState({open: !this.state.open})
     }
 
     isOwner() {
@@ -53,14 +62,17 @@ export default class PostViewer extends React.Component  {
         .then((response) => {
             const { success, post } = response.data
 
-            if(success) {
-                this.setState({ post, favorites: post.favorites, comments: post.comments })
+            if(success && this._isMounted) {
+                this.setState({ post, favorites: post.favorites, commentsCount: post.comments })
+                this.setComments()
+                this.checkFavorite()
             }
         })
     }
 
     handleFavoriteButtonClick = (e) => {
         this.setState({favoriteFilled: !this.state.favoriteFilled})
+
         if(this.state.favoriteFilled) {
             this.removeFavorite().then(() => {
                 this.setState({favorites: this.state.favorites - 1})
@@ -86,7 +98,7 @@ export default class PostViewer extends React.Component  {
         const response = await axios.post(`${config.API_ROOT}/post_get_user_favorite`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }))
         const { success, favorite } = response.data
        
-        if (success && favorite) {
+        if (success && favorite && this._isMounted) {
             this.setState({ favoriteFilled: true })
         }
     }
@@ -98,12 +110,12 @@ export default class PostViewer extends React.Component  {
     }
 
     increaseCommentCounter = () => {
-        this.setState({ comments: this.state.comments + 1 })
+        this.setState({ commentsCount: this.state.commentsCount + 1 })
         this.props.increaseCommentCounterFromActivityFeed()
     }
 
     decreaseCommentCounter = () => {
-        this.setState({ comments: this.state.comments + 1 })
+        this.setState({ commentsCount: this.state.commentsCount - 1 })
         this.props.decreaseCommentCounterFromActivityFeed()
     }
 
@@ -167,12 +179,73 @@ export default class PostViewer extends React.Component  {
         }
     }
 
-    componentWillMount = () => {
-        this.setPost()
+    removeComment = async (id) => {
+        const response = await axios.post(`${config.API_ROOT}/post_remove_comment`, qs.stringify({ 
+            uniq_id: localStorage.getItem('id'), 
+            token: localStorage.getItem('token'), 
+            comment_id: id
+        }))
+
+        if(response.data.success && this._isMounted) {
+            this.decreaseCommentCounter()
+            this.props.refreshBestComments()
+            this.props.adjustBestComments()
+        }
+    }
+
+    getComments = async () => {
+        const response = await axios.post(`${config.API_ROOT}/post_get_comments`, qs.stringify({ 
+            uniq_id: localStorage.getItem('id'), 
+            token: localStorage.getItem('token'), 
+            post_id: this.props.id,
+        }))
+
+        return await response
+    }
+
+    resetComments = () => {
+        if(this._isMounted) {
+            this.setState({comments:[]})
+        }
+    }
+
+    setComments = () => {
+        this.getComments().then((response) => {
+            const { success, comments } = response.data
+
+            if(success && this._isMounted) {
+                let stateComments = this.state.comments
+
+                comments.forEach(comment => {
+                    stateComments.push(
+                        <Comment
+                            key={'post-' + this.props.id + '.comment-' + comment.id}
+                            id={comment.id}
+                            owner={comment.owner}
+                            content={comment.content}
+                            favorites={comment.favorites}
+                            date={comment.created_at}
+                            remove={this.removeComment}
+                        />
+                    )
+                });
+
+                this.setState({ comments: stateComments })
+            }
+        })
+    }
+
+    checkCommentCount = () => {
+        return 
     }
 
     componentDidMount = () => {
-        this.checkFavorite()
+        this._isMounted = true
+        this.setPost()
+    }
+
+    componentWillUnmount = () => {
+        this._isMounted = false
     }
 
     render() {
@@ -198,7 +271,7 @@ export default class PostViewer extends React.Component  {
                                             <Col md="4" className="text-center counter-container">
                                                 <span className="fav-counter"><i><FontAwesomeIcon icon={this.state.favoriteFilled ? faFullStar : faEmptyStar} onClick={this.handleFavoriteButtonClick} /></i> {this.state.favorites}</span>
                                                 {' '}
-                                                <span className="comment-counter" onClick={this.handleCommentCounterClick} ref={node => this.commentCounter = node}><FontAwesomeIcon icon={faComments} /> {this.state.comments}</span>
+                                                <span className="comment-counter" onClick={this.handleCommentCounterClick} ref={node => this.commentCounter = node}><FontAwesomeIcon icon={faComments} /> {this.state.commentsCount}</span>
                                             </Col>
                                             <Col md="4" className="text-right">
                                                 <span className="date"><FontAwesomeIcon icon={faClock} /> {DateService.timeSince(this.state.post.created_at)}</span>
@@ -221,10 +294,15 @@ export default class PostViewer extends React.Component  {
 
                                 <span ref={publishButton => this.publishButton = publishButton} className="publish-button" onClick={this.addComment}><FontAwesomeIcon icon={faPaperPlane} /></span>
                             </div>
+
+                            <div className="postComments" style={{display: (this.state.comments.length > 0) ? 'block' : 'none'}}>
+                                {this.state.comments}
+                            </div>
                         </ModalBody>
                     </Modal>
                 : ''}
             </div>
         )
     }
+
 }

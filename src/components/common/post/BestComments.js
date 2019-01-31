@@ -10,6 +10,8 @@ import qs from 'qs'
 
 export default class BestComments extends Component {
 
+    _isMounted = false
+
     state = {
         comments: []
     }
@@ -28,7 +30,7 @@ export default class BestComments extends Component {
         this.getBestComments().then((response) => {
             const { success, comments } = response.data
 
-            if (success) {
+            if (success && this._isMounted) {
                 let stateComments = []
 
                 comments.forEach((comment) => {
@@ -48,12 +50,13 @@ export default class BestComments extends Component {
         })
     }
 
-    componentWillMount = () => {
+    componentDidMount = () => {
+        this._isMounted = true
         this.setBestComments()
     }
 
-    componentDidMount = () => {
-        this.adjustMargin()
+    componentWillUnmount = () => {
+        this._isMounted = false
     }
 
     adjustMargin = () => {
@@ -82,10 +85,12 @@ export default class BestComments extends Component {
                         translateY = translateY + 1
                         marginBottom = marginBottom + 1
 
-                        this.postComments.style.transform = 'translateY('+ translateY +'px)'
-                        this.postComments.style.marginBottom = marginBottom + 'px'
+                        if(this.postComments) {
+                            this.postComments.style.transform = 'translateY('+ translateY +'px)'
+                            this.postComments.style.marginBottom = marginBottom + 'px'
+                        }
                     }
-                }, 2.5)
+                }, 1)
             } else if (translateY === 0) { // Up
                 let id = setInterval(() => {
                     if (translateY === reversedHeight) {
@@ -96,10 +101,12 @@ export default class BestComments extends Component {
                         translateY = translateY - 1
                         marginBottom = marginBottom - 1
 
-                        this.postComments.style.transform = 'translateY('+ translateY +'px)'
-                        this.postComments.style.marginBottom = marginBottom + 'px'
+                        if(this.postComments) {
+                            this.postComments.style.transform = 'translateY('+ translateY +'px)'
+                            this.postComments.style.marginBottom = marginBottom + 'px'
+                        }
                     }
-                }, 2.5)
+                }, 1)
             }
         }
     }
