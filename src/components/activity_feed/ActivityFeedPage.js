@@ -38,6 +38,8 @@ import Trend from './Trend'
 
 export default class ActivityFeedPage extends Component {
 
+    _isMounted = false
+
     state = {
         session: (localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null),
         postModal: false,
@@ -72,7 +74,11 @@ export default class ActivityFeedPage extends Component {
     }
 
     resetTrends = () => {
-        this.setState({trends: []})
+        if(this.trendsContainer) {
+            this.trendsContainer.childNodes[1].style.display = 'block'
+        }
+        
+        if(this._isMounted) this.setState({trends: []})
     }
 
     openTextArea = () => {
@@ -121,7 +127,7 @@ export default class ActivityFeedPage extends Component {
             .then((response) => {
                 const {success, postId, ownerRank} = response.data
 
-                if(success) {
+                if(success && this._isMounted) {
                     let posts = this.state.posts
                     let newPost = (
                         <Post 
@@ -142,7 +148,7 @@ export default class ActivityFeedPage extends Component {
                     )
 
                     posts.unshift(newPost)
-                    this.setState({posts: posts})
+                    this.setState({posts: posts, tagValue: null})
                     this.setTrends()
                     this.closeTextArea()
                     this.adjustPublishContainer()
@@ -232,7 +238,7 @@ export default class ActivityFeedPage extends Component {
         this.getPosts()
         .then((response) => {
             const { success, posts } = response.data
-            if(success) {
+            if(success && this._isMounted) {
                 let statePosts = this.state.posts
                 
                 posts.forEach((post) => {
@@ -256,18 +262,19 @@ export default class ActivityFeedPage extends Component {
                 this.setState({posts: statePosts})
                 this.removeLoading('posts')
                 this.checkEmpty()
-            }else {
+            }else if(this._isMounted) {
                 console.log("Failed loading posts: " + response.message)
             }
         })
     }
 
     setTrends = () => {
-        this.resetTrends()
+        if(this._isMounted) this.resetTrends()
+
         this.getTrends()
         .then((response) => {
             const { success, trends } = response.data
-            if(success) {
+            if(success && this._isMounted) {
                 let stateTrends = this.state.trends
                 
                 trends.forEach((trend) => {
@@ -282,13 +289,15 @@ export default class ActivityFeedPage extends Component {
                 this.setState({trends: stateTrends})
                 this.removeLoading('trends')
                 this.checkEmpty()
-            }else {
-                console.log("Failed loading trends: " + response.message)
+            }else if(this._isMounted) {
+                console.log("Failed loading trends: ",response)
             }
         })
     }
 
-    componentWillMount = () => {
+    componentDidMount = () => {
+        this._isMounted = true
+
         // Checking firsttime
         this.getFirstTime()
         .then((response) => {
@@ -306,15 +315,19 @@ export default class ActivityFeedPage extends Component {
         })
     }
 
+    componentWillUnmount = () => {
+        this._isMounted = false
+    }
+
     render() {
         return (
             <div>
                 <Modal isOpen={this.state.postModal} toggle={this.togglePostModal} className={this.props.className}>
-                    <ModalBody>
+                    <ModalBody style={{background: 'white'}}>
                         <Label for="post-tag">Veuillez indiquer le sujet de votre publication</Label>
                         <Input type="text" name="post-tag" id="post-tag" onChange={(e) => this.setState({ tagValue: `${e.target.value}` })} placeholder="Sujet de la publication" />
                     </ModalBody>
-                    <ModalFooter>
+                    <ModalFooter style={{background: 'white'}}>
                         <Button className="modal-choice" color="primary" onClick={this.handlePublishButtonClick}><FontAwesomeIcon icon={ faPaperPlane } /></Button>{' '}
                         <Button className="modal-choice" color="secondary" onClick={this.togglePostModal}><FontAwesomeIcon icon={ faTimes }/></Button>
                     </ModalFooter>
@@ -323,50 +336,51 @@ export default class ActivityFeedPage extends Component {
                 <Navbar/>
 
                 <Container className="main-container">
-                <Row>
-                    <Col md="3" className="no-margin-left no-margin-right">
-                        <div className="user-container">
-                            <img src={localStorage.getItem('avatar')} alt="Avatar" />
-                            <h5>{ this.state.session.firstname + ' ' + this.state.session.lastname }</h5>
-                            <p className="rank"><Rank id={ this.state.session.rank } /></p>
+                    <Row>
+                        <Col md="3" className="no-margin-left no-margin-right">
+                            <div className="user-container">
+                                <img src={localStorage.getItem('avatar')} alt="Avatar" />
+                                <h5>{ this.state.session.firstname + ' ' + this.state.session.lastname }</h5>
+                                <p className="rank"><Rank id={ this.state.session.rank } /></p>
+                            </div>
+                            
                             <SideMenu />
-                        </div>
-                    </Col>
-                    <Col md="5" className="no-margin-left no-margin-right">
-                        <div className="publish-container" ref="publishContainer">
-                            <input type="file" id="file" ref="fileUploader" style={{display: "none"}}/>
-                            <TextareaAutosize id="post-content" ref={postContent => this.postContent = postContent} placeholder="Poster une publication" onKeyUp={this.adjustPublishContainer} disabled></TextareaAutosize>
-                            <div className="icons" ref={iconsBox => this.iconsBox = iconsBox}>
-                                <span><FontAwesomeIcon icon={faClipboardList} /></span>
-                                <span onClick={this.handlePictureButtonClick}><FontAwesomeIcon icon={faCamera} /></span>
-                                <span onClick={this.openTextArea}><FontAwesomeIcon icon={faPencilAlt} /></span>
+                        </Col>
+                        <Col md="5" className="no-margin-left no-margin-right">
+                            <div className="publish-container" ref="publishContainer">
+                                <input type="file" id="file" ref="fileUploader" style={{display: "none"}}/>
+                                <TextareaAutosize id="post-content" ref={postContent => this.postContent = postContent} placeholder="Poster une publication" onKeyUp={this.adjustPublishContainer} disabled></TextareaAutosize>
+                                <div className="icons" ref={iconsBox => this.iconsBox = iconsBox}>
+                                    <span><FontAwesomeIcon icon={faClipboardList} /></span>
+                                    <span onClick={this.handlePictureButtonClick}><FontAwesomeIcon icon={faCamera} /></span>
+                                    <span onClick={this.openTextArea}><FontAwesomeIcon icon={faPencilAlt} /></span>
+                                </div>
+                                <div className="remove-box" ref={removeBox => this.removeBox = removeBox}>
+                                    <span onClick={this.closeTextArea}><FontAwesomeIcon icon={ faTimes }  /></span>
+                                </div>
+                                <span ref='publishButton' className="publish-button" onClick={this.togglePostModal}><FontAwesomeIcon icon={faPaperPlane} /></span>
                             </div>
-                            <div className="remove-box" ref={removeBox => this.removeBox = removeBox}>
-                                <span onClick={this.closeTextArea}><FontAwesomeIcon icon={ faTimes }  /></span>
+                            <div className="posts-container" ref={postsContainer => this.postsContainer = postsContainer}>
+                                <Alert id="posts-message" color="info" className="info-message">Il n'y a aucune publication pour le moment</Alert>
+                                <Alert id="posts-loading" color="info" className="info-message" style={{display:'block'}}>Chargement...</Alert>
+                                <div>{ this.state.posts }</div>
                             </div>
-                            <span ref='publishButton' className="publish-button" onClick={this.togglePostModal}><FontAwesomeIcon icon={faPaperPlane} /></span>
-                        </div>
-                        <div className="posts-container" ref={postsContainer => this.postsContainer = postsContainer}>
-                            <Alert id="posts-message" color="info" className="info-message">Il n'y a aucune publication pour le moment</Alert>
-                            <Alert id="posts-loading" color="info" className="info-message" style={{display:'block'}}>Chargement...</Alert>
-                            <div>{ this.state.posts }</div>
-                        </div>
-                    </Col>
-                    <Col md="4" className="no-margin-left no-margin-right">
-                        <div className="user-container right-container">
-                            <div className="right-container-header">
-                                <h5>Sujets du moment</h5>
-                                <Button color="info" className="refresh-trends" onClick={this.setTrends}><FontAwesomeIcon icon={faSync} /></Button>
+                        </Col>
+                        <Col md="4" className="no-margin-left no-margin-right">
+                            <div className="user-container right-container">
+                                <div className="right-container-header">
+                                    <h5>Sujets du moment</h5>
+                                    <Button color="info" className="refresh-trends" onClick={this.setTrends}><FontAwesomeIcon icon={faSync} /></Button>
+                                </div>
+                                <hr/>
+                                <div ref={trendsContainer => this.trendsContainer = trendsContainer}>
+                                    <Alert id="trends-message" color="info" className="info-message">Aucune tendances pour le moment</Alert>
+                                    <Alert id="trends-loading" color="info" className="info-message" style={{display:'block'}}>Chargement...</Alert>
+                                    <div>{ this.state.trends }</div>
+                                </div>
                             </div>
-                            <hr/>
-                            <div ref={trendsContainer => this.trendsContainer = trendsContainer}>
-                                <Alert id="trends-message" color="info" className="info-message">Aucune tendances pour le moment</Alert>
-                                <Alert id="trends-loading" color="info" className="info-message" style={{display:'block'}}>Chargement...</Alert>
-                                <div>{ this.state.trends }</div>
-                            </div>
-                        </div>
-                    </Col>
-                </Row>
+                        </Col>
+                    </Row>
                 </Container>
             </div>
         )

@@ -166,10 +166,10 @@ export default class UserAddModal extends Component {
     render() {
         return (
             <Modal isOpen={this.props.open} toggle={this.props.toggleUserAddModal} className="user-modal">
-                <ModalHeader>
+                <ModalHeader style={{background: 'white'}}>
                     Ajouter un utilisateur
                 </ModalHeader>
-                <ModalBody>
+                <ModalBody style={{background: 'white'}}>
                     <div ref={node => this.error = node}>
                         <Alert color="danger" style={{ display: 'none' }}></Alert>
                     </div>
@@ -378,7 +378,7 @@ export default class UserAddModal extends Component {
                         </Row>
                     </Form>
                 </ModalBody>
-                <ModalFooter>
+                <ModalFooter style={{background:'white'}}>
                     <Button className="modal-choice" color="primary" onClick={this.checkForm}><FontAwesomeIcon icon={faPlus} /></Button>{' '}
                     <Button className="modal-choice" color="secondary" onClick={this.props.toggleUserAddModal}><FontAwesomeIcon icon={faTimes} /></Button>
                 </ModalFooter>

@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import logo from '../../assets/img/logo.png'
 import logo_small from '../../assets/img/logo-small.png'
 import { config } from '../../config'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
-import { Link } from 'react-router-dom'
+import SingleFormRightContainer from '../common/single-form/RightContainer'
+
 import axios from 'axios'
 import qs from 'qs'
 
@@ -11,22 +11,6 @@ export default class RegisterPage extends Component {
   state = {
     errorModal: false,
     confirmModal: false
-  }
-
-  componentDidMount() {
-    setInterval(() => {
-      let container = this.container
-      let img = this.img
-      let subcontainer = this.subcontainerRight
-
-      if(container && img && subcontainer) {
-        container.style.width = subcontainer.clientWidth
-        img.style.top = ((subcontainer.clientHeight - img.clientHeight)/2) + 'px'
-        img.style.left = ((subcontainer.clientWidth - img.clientWidth)/2) + 'px'
-        img.style.display = 'block'
-        container.style.display = 'flex'
-      }
-    }, 50)
   }
 
   toggleError = (e) => {
@@ -43,14 +27,14 @@ export default class RegisterPage extends Component {
     })
   }
 
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     this.toggleConfirm(e)
     let email = this.emailInput.value
     let password =  this.passwordInput.value
     let repeatPassword = this.repeatPasswordInput.value
     let lastname = this.lastnameInput.value
     let firstname = this.firstnameInput.value
-    let emailReg = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,4}$/
+    let emailReg = /^[a-zA-Z]\w+(?:\.[a-zA-Z]\w+){0,3}@[a-zA-Z]\w+(?:\.[a-zA-Z]\w+){1,3}$/
     let emailCheck = emailReg.test(email)
     let passwordCheckLength = password.length >= 8
     let repeatPasswordCheckLength = repeatPassword.length >= 8
@@ -59,7 +43,7 @@ export default class RegisterPage extends Component {
     let firstnameCheck = firstname.length >= 2
 
     if(emailCheck && passwordCheckLength && repeatPasswordCheckLength && passwordCheckEquality && lastnameCheck && firstnameCheck) {
-      const response = axios.post(`${config.API_ROOT}/register`, qs.stringify({ email: this.emailInput.value, password: this.passwordInput.value, repeatPassword: this.repeatPasswordInput.value, lastname: this.lastnameInput.value, firstname: this.firstnameInput.value}))
+      const response = await axios.post(`${config.API_ROOT}/register`, qs.stringify({ email: this.emailInput.value, password: this.passwordInput.value, repeatPassword: this.repeatPasswordInput.value, lastname: this.lastnameInput.value, firstname: this.firstnameInput.value}))
       const { success, uniq_id, message } = response.data
 
       if(success) {
@@ -100,23 +84,23 @@ export default class RegisterPage extends Component {
     return (
       <div className="App">
         <Modal isOpen={this.state.errorModal} toggle={this.toggleError} className={this.props.className + ' login-error-modal'}>
-          <ModalHeader toggle={this.toggleError}>Erreur lors de l'inscription</ModalHeader>
-          <ModalBody>
+          <ModalHeader style={{background: 'white'}} toggle={this.toggleError}>Erreur lors de l'inscription</ModalHeader>
+          <ModalBody style={{background: 'white'}}>
             <div>
               <p id="errorMessage" ref={node => this.errorMessage = node}></p>
               <ul id="errorsList" style={{display: 'none'}} ref={node => this.errorsList = node}></ul>
             </div>
           </ModalBody>
-          <ModalFooter>
+          <ModalFooter style={{background: 'white'}}>
             <button className="secondary" onClick={this.toggleError}>J'ai compris</button>
           </ModalFooter>
         </Modal>
         <Modal isOpen={this.state.confirmModal} toggle={this.toggleConfirm} className={this.props.className + ' login-error-modal'}>
-          <ModalHeader toggle={this.toggleConfirm}>Conditions d'utilisation</ModalHeader>
-          <ModalBody>
+          <ModalHeader toggle={this.toggleConfirm} style={{background:'white'}}>Conditions d'utilisation</ModalHeader>
+          <ModalBody style={{background:'white'}}>
             <p>En vous inscrivant, vous acceptez nos <a href>conditions d'utilisation</a> et notre <a href>politique de confidentialité</a>.</p>
           </ModalBody>
-          <ModalFooter>
+          <ModalFooter style={{background:'white'}}>
             <button className="secondary" onClick={this.handleSubmit}>Continuer</button>
           </ModalFooter>
         </Modal>
@@ -141,20 +125,7 @@ export default class RegisterPage extends Component {
             </div>
           </form>
           </div>
-          <div className="single-form-subcontainer right" ref={node => this.subcontainerRight = node}>
-            <div className="overlay"></div>
-            <div className="container" ref={node => this.container = node}>
-              <nav>
-                <ul>
-                  <li><Link to='/'>À propos</Link></li>
-                  <li><Link to='/'>Support</Link></li>
-                  <li><Link to='/'>Mises à jour</Link></li>
-                  <li><Link to='/docs'>Documentation</Link></li>
-                </ul>
-              </nav>
-              <img src={logo} alt="logo" ref={node => this.img = node} />
-            </div>
-          </div>
+          <SingleFormRightContainer />
         </div>
       </div>
     )

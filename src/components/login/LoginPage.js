@@ -1,31 +1,15 @@
 import React, { Component } from 'react'
-import logo from '../../assets/img/logo.png'
 import logo_small from '../../assets/img/logo-small.png'
 import { config } from '../../config'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 import qs from 'qs'
+import SingleFormRightContainer from '../common/single-form/RightContainer'
 
 export default class LoginPage extends Component {
   state = {
     modal: false
-  }
-
-  componentDidMount() {
-    setInterval(() => {
-      let container = this.container
-      let img = this.img
-      let subcontainer = this.subcontainerRight
-
-      if(container && img && subcontainer) {
-        container.style.width = subcontainer.clientWidth
-        img.style.top = ((subcontainer.clientHeight - img.clientHeight)/2) + 'px'
-        img.style.left = ((subcontainer.clientWidth - img.clientWidth)/2) + 'px'
-        img.style.display = 'block'
-        container.style.display = 'flex'
-      }
-    }, 50)
   }
 
   toggleError = (e) => {
@@ -85,14 +69,14 @@ export default class LoginPage extends Component {
     return (
       <div className="App">
         <Modal isOpen={this.state.modal} toggle={this.toggleError} className={this.props.className + ' login-error-modal'}>
-          <ModalHeader toggle={this.toggleError}>Erreur lors de la connexion</ModalHeader>
-          <ModalBody>
+          <ModalHeader style={{background: 'white'}} toggle={this.toggleError}>Erreur lors de la connexion</ModalHeader>
+          <ModalBody style={{background: 'white'}}>
             <div>
               <p id="errorMessage" ref={node => this.errorMessage = node}></p>
               <ul id="errorsList" style={{display: 'none'}} ref={node => this.errorsList = node}></ul>
             </div>
           </ModalBody>
-          <ModalFooter>
+          <ModalFooter style={{background: 'white'}}>
             <button className="secondary" onClick={this.toggleError}>J'ai compris</button>
           </ModalFooter>
         </Modal>
@@ -122,20 +106,7 @@ export default class LoginPage extends Component {
             </div>
            </form>
           </div>
-          <div className="single-form-subcontainer right" ref={node => this.subcontainerRight = node}>
-            <div className="overlay"></div>
-            <div className="container" ref={node => this.container = node}>
-              <nav>
-                <ul>
-                  <li><Link to='/'>À propos</Link></li>
-                  <li><Link to='/'>Support</Link></li>
-                  <li><Link to='/'>Mises à jour</Link></li>
-                  <li><Link to='/docs'>Documentation</Link></li>
-                </ul>
-              </nav>
-              <img src={logo} alt="logo" ref={node => this.img = node} />
-            </div>
-          </div>
+          <SingleFormRightContainer />
         </div>
       </div>
     )

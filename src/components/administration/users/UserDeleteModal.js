@@ -30,10 +30,10 @@ export default class UserDeleteModal extends Component {
     render() {
         return (
             <Modal isOpen={this.props.open} toggle={this.props.toggleUserDeleteModal} className="user-modal">
-                <ModalHeader>
+                <ModalHeader style={{background: 'white'}}>
                     Suppression d'un utilisateur
                 </ModalHeader>
-                <ModalBody>
+                <ModalBody style={{background: 'white'}}>
                     {!this.state.error ?
                         <div>
                             Êtes-vous sûr de vouloir supprimer {this.props.user ? this.props.user.firstname + ' ' + this.props.user.lastname : null} 
@@ -41,7 +41,7 @@ export default class UserDeleteModal extends Component {
                         : <Alert color='danger'>Impossible d'effectuer cette opération</Alert>
                     }
                 </ModalBody>
-                <ModalFooter>
+                <ModalFooter style={{background: 'white'}}>
                     <Button className="modal-choice" color="primary" onClick={this.deleteUser}><FontAwesomeIcon icon={faCheck} /></Button>{' '}
                     <Button className="modal-choice" color="secondary" onClick={e => this.props.toggleUserDeleteModal(null, null, null)}><FontAwesomeIcon icon={faTimes} /></Button>
                 </ModalFooter>

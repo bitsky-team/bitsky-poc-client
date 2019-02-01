@@ -1,17 +1,17 @@
 import React, { Component } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHome, faArchive } from '@fortawesome/free-solid-svg-icons'
-import { faStickyNote, faCalendarAlt } from '@fortawesome/free-regular-svg-icons'
+import { faStickyNote } from '@fortawesome/free-regular-svg-icons'
+import { Link } from 'react-router-dom'
 
 export default class SideMenu extends Component {
   render() {
     return (
       <div className="side-menu">
         <ul>
-            <li><a href="/"><FontAwesomeIcon icon={faHome} /> Accueil</a></li>
-            <li><a href="/"><FontAwesomeIcon icon={faArchive} /> Fichiers</a></li>
-            <li><a href="/"><FontAwesomeIcon icon={faStickyNote} /> Mémos</a></li>
-            <li><a href="/"><FontAwesomeIcon icon={faCalendarAlt} /> Calendrier</a></li>
+            <li><Link to="/"><FontAwesomeIcon icon={faHome} /> Accueil</Link></li>
+            <li><Link to="/"><FontAwesomeIcon icon={faArchive} /> Fichiers</Link></li>
+            <li><Link to="/"><FontAwesomeIcon icon={faStickyNote} /> Mémos</Link></li>
         </ul>
       </div>
     )
