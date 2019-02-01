@@ -158,8 +158,6 @@ export default class PostViewer extends React.Component  {
                 className: 'notification-success'
             })
 
-            console.log(comment)
-
             this.closeTextArea()
             this.adjustPublishContainer()
 
@@ -174,6 +172,7 @@ export default class PostViewer extends React.Component  {
                     favorites={0}
                     date={comment.created_at}
                     remove={this.removeComment}
+                    refreshBestComments={this.props.refreshBestComments}
                 />
             )
 
@@ -250,6 +249,7 @@ export default class PostViewer extends React.Component  {
                             favorites={comment.favorites}
                             date={comment.created_at}
                             remove={this.removeComment}
+                            refreshBestComments={this.props.refreshBestComments}
                         />
                     )
                 });

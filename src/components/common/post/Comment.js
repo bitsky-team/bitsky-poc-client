@@ -40,6 +40,7 @@ export default class Comment extends Component {
         }))
 
         if(response.data.success) {
+            this.props.refreshBestComments();
             this.setState({favorites: this.state.favorites + 1, favoriteFilled: true})            
         } else {
             console.error(response.data)
@@ -54,6 +55,7 @@ export default class Comment extends Component {
         }))
 
         if(response.data.success) {
+            this.props.refreshBestComments();
             this.setState({favorites: this.state.favorites - 1, favoriteFilled: false})            
         }
     }
