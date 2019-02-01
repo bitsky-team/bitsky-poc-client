@@ -40,14 +40,6 @@ export default class PostViewer extends React.Component  {
         }
     }
 
-    isOwner() {
-        if(this.state.post) {
-            if((this.state.post.owner.firstname + " " + this.state.post.owner.lastname) === (this.state.session.firstname + " " + this.state.session.lastname) || this.state.session.rank === 2) {
-                return <span><FontAwesomeIcon icon={faTimes} className="delete" onClick={this.props.handleDeleteButtonClick}/></span>
-            }
-        }
-    }
-
     getContent() {
         return {__html: this.state.post.content}
     }
@@ -157,25 +149,50 @@ export default class PostViewer extends React.Component  {
             content: this.commentContent.textarea.value
         }))
 
-        const { success, message } = response.data
+        const { success, comment, message } = response.data
 
-        if(success) {
+        if(success && this._isMounted) {
             toast.success('Votre commentaire a été posté !', {
                 autoClose: 5000,
                 position: toast.POSITION.BOTTOM_RIGHT,
                 className: 'notification-success'
             })
 
+            console.log(comment)
+
             this.closeTextArea()
             this.adjustPublishContainer()
+
+            let stateComments = this.state.comments
+            
+            stateComments.push(
+                <Comment
+                    key={'post-' + this.props.id + '.comment-' + comment.id}
+                    id={comment.id}
+                    owner={comment.owner}
+                    content={comment.content}
+                    favorites={0}
+                    date={comment.created_at}
+                    remove={this.removeComment}
+                />
+            )
+
+            this.setState({ comments: stateComments })
             this.increaseCommentCounter()
             this.props.refreshBestComments()
             this.props.adjustBestComments()
         } else {
-            toast.error('Votre commentaire n\'a pas pu être posté: ' + message + ' !', {
-                autoClose: 5000,
-                position: toast.POSITION.BOTTOM_RIGHT,
-            })
+            if(message === 'notFilled' || message === 'contentEmpty') {
+                toast.error('Veuillez écrire quelque chose !', {
+                    autoClose: 5000,
+                    position: toast.POSITION.BOTTOM_RIGHT,
+                })
+            } else {
+                toast.error('Votre commentaire n\'a pas pu être posté: ' + message + ' !', {
+                    autoClose: 5000,
+                    position: toast.POSITION.BOTTOM_RIGHT,
+                })
+            }
         }
     }
 
@@ -187,7 +204,14 @@ export default class PostViewer extends React.Component  {
         }))
 
         if(response.data.success && this._isMounted) {
+            toast.success('Le commentaire a été supprimé !', {
+                autoClose: 5000,
+                position: toast.POSITION.BOTTOM_RIGHT,
+                className: 'notification-success'
+            })
+
             this.decreaseCommentCounter()
+            this.setState({ comments: this.state.comments.filter(comment => comment.props.id !== id)})
             this.props.refreshBestComments()
             this.props.adjustBestComments()
         }
@@ -235,10 +259,6 @@ export default class PostViewer extends React.Component  {
         })
     }
 
-    checkCommentCount = () => {
-        return 
-    }
-
     componentDidMount = () => {
         this._isMounted = true
         this.setPost()
@@ -256,7 +276,6 @@ export default class PostViewer extends React.Component  {
                         <ModalBody style={{ background:'none', border:0, padding: 0 }} className="postViewer">
                             <div className="post-container">
                                 <div id={"post-"+this.props.id} className="post">
-                                    {this.isOwner()}
                                     <img src={this.state.post.owner.avatar} alt="Avatar" />
                                     <div className="title">
                                         <h4>{this.state.post.owner.firstname + " " + this.state.post.owner.lastname}</h4>

@@ -717,7 +717,8 @@ body
   cursor: pointer;
 }
 
-.post-container .post + .post-comments .post-comment-thumbnail .author
+.post-container .post + .post-comments .post-comment-thumbnail .author,
+.postViewer .postComments .comment .author
 {
   opacity: 0;
   position: absolute;
@@ -730,7 +731,9 @@ body
 }
 
 .post-container .post + .post-comments .post-comment-thumbnail .author:after,
-.post-container .post + .post-comments .post-comment-thumbnail .author:before {
+.post-container .post + .post-comments .post-comment-thumbnail .author:before,
+.postViewer .postComments .comment .author:after,
+.postViewer .postComments .comment .author:before {
 	left: 100%;
 	top: 50%;
 	border: solid transparent;
@@ -741,14 +744,16 @@ body
 	pointer-events: none;
 }
 
-.post-container .post + .post-comments .post-comment-thumbnail .author:before {
+.post-container .post + .post-comments .post-comment-thumbnail .author:before,
+.postViewer .postComments .comment .author:before {
 	border-color: rgba(194, 225, 245, 0);
 	border-left-color: rgba(0,0,0,0.7);
 	border-width: 7.75px;
 	margin-top: -7.75px;
 }
 
-.post-container .post + .post-comments .post-comment-thumbnail img:hover  + .author {
+.post-container .post + .post-comments .post-comment-thumbnail img:hover  + .author,
+.postViewer .postComments .comment img:hover + .author {
   opacity: 1;
 }
 
@@ -761,6 +766,9 @@ body
   margin-left: 10px;
   margin-bottom: 7.5px;
   border-radius: 5px;
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .post-container .post + .post-comments span.closebox
@@ -885,6 +893,7 @@ body
 {
   display: flex;
   flex-wrap: wrap;
+  position: relative;
 }
 
 .postViewer .postComments .comment:not(:first-child)
@@ -892,13 +901,14 @@ body
   margin-top: 10px;
 }
 
-.postViewer .postComments img
+.postViewer .postComments .comment img
 {
   height: 40px;
   border-radius: 100%;
+  cursor: pointer;
 }
 
-.postViewer .postComments .content
+.postViewer .postComments .comment .content
 {
   position: relative;
   background-color: #F5F7F8;
@@ -912,12 +922,13 @@ body
   flex: 1;
 }
 
-.postViewer .postComments p
+.postViewer .postComments .comment p
 {
   margin-bottom: 0;
+  padding-right: 15px;
 }
 
-.postViewer .postComments .content .remove
+.postViewer .postComments .comment .content .remove
 {
   position: absolute;
   right: 10px;
@@ -926,7 +937,7 @@ body
   cursor: pointer;
 }
 
-.postViewer .postComments .content:hover .remove
+.postViewer .postComments .comment .content:hover .remove
 {
   display: block;
 }
