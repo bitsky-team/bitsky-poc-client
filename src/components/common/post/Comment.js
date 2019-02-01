@@ -13,7 +13,6 @@ export default class Comment extends Component {
     _isMounted = false
 
     state = {
-        visible: true,
         session: (localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null),
         favorites: this.props.favorites,
         favoriteFilled: false
@@ -25,10 +24,8 @@ export default class Comment extends Component {
         }
     }
 
-    remove = async () => {
-        this.props.remove(this.props.id).then(() => {
-            this.setState({ visible: false })
-        })
+    remove = () => {
+        this.props.remove(this.props.id)
     }
 
     getContent = () => {
@@ -87,6 +84,12 @@ export default class Comment extends Component {
 
     componentDidMount = () => {
         this._isMounted = true
+
+        if (this.authorBox) {
+            let left = parseFloat(getComputedStyle(this.authorBox).width.replace('px', '')) + 12
+            this.authorBox.style.left = '-' + left + 'px'
+        }
+
         this.checkFavorite()
     }
 
@@ -96,8 +99,9 @@ export default class Comment extends Component {
 
     render = () => {
         return (
-            <div className="comment" style={{display: (this.state.visible) ? 'flex' : 'none'}}>
+            <div className="comment">
                 <img src={this.props.owner.avatar} alt="avatar" />
+                <span className='author' ref={node => this.authorBox = node}>{this.props.owner.firstname + ' ' + this.props.owner.lastname}</span>
                 <div className="content">
                     <p dangerouslySetInnerHTML={this.getContent()} />
                     {this.isOwner()}
