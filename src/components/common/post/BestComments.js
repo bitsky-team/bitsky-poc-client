@@ -73,7 +73,7 @@ export default class BestComments extends Component {
         if (postComments && this.state.comments.length > 0) {
             let marginBottom = parseFloat(getComputedStyle(this.postComments).marginBottom.replace('px', ''))
             let translateY = this.getComputedTranslateY(this.postComments)
-            let reversedHeight = parseInt('-' + Math.round(parseFloat(getComputedStyle(this.postComments).height)))
+            let reversedHeight = parseInt('-' + Math.round(parseFloat(getComputedStyle(this.postComments).height.replace('px', '').replace(',', '.'))))
 
             if (translateY === reversedHeight) { // Down
                 if (this.closeBox) { this.closeBox.style.display = 'block' }
