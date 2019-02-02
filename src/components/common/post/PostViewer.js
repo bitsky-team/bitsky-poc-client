@@ -102,12 +102,14 @@ export default class PostViewer extends React.Component  {
         if(this.state.favoriteFilled) {
             this.removeFavorite().then(() => {
                 this.setState({favorites: this.state.favorites - 1})
+                this.setScore()
                 this.props.refreshTrends()
                 this.props.toggleFavoriteFromActivityFeed()
             })
         }else {
             this.addFavorite().then(() => {
                 this.setState({favorites: this.state.favorites + 1})
+                this.setScore()
                 this.props.refreshTrends()
                 this.props.toggleFavoriteFromActivityFeed()
             })
@@ -210,11 +212,13 @@ export default class PostViewer extends React.Component  {
                     remove={this.removeComment}
                     refreshBestComments={this.props.refreshBestComments}
                     refreshTrends={this.props.refreshTrends}
+                    refreshPostScore={this.setScore}
                 />
             )
 
             this.setState({ comments: stateComments })
             this.props.refreshTrends()
+            this.setScore()
             this.increaseCommentCounter()
             this.props.refreshBestComments()
             this.props.adjustBestComments()
@@ -249,6 +253,7 @@ export default class PostViewer extends React.Component  {
 
             this.decreaseCommentCounter()
             this.setState({ comments: this.state.comments.filter(comment => comment.props.id !== id)})
+            this.setScore()
             this.props.refreshTrends()
             this.props.refreshBestComments()
             this.props.adjustBestComments()
@@ -290,6 +295,7 @@ export default class PostViewer extends React.Component  {
                             remove={this.removeComment}
                             refreshBestComments={this.props.refreshBestComments}
                             refreshTrends={this.props.refreshTrends}
+                            refreshPostScore={this.setScore}
                         />
                     )
                 });
