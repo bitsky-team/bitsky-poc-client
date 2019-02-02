@@ -82,6 +82,21 @@ class Post extends Component {
         if(this._isMounted) this.setState({ comments: this.state.comments - 1 })
     }
 
+    getCommentsCount = async () => {
+        const response = await axios.post(`${config.API_ROOT}/get_commentscount`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }))
+        return await response
+    }
+
+    setCommentsCount = () => {
+        this.getCommentsCount().then((response) => {
+            const { success, commentsCount} = response.data
+
+            if(success && this._isMounted) {
+                this.setState({ comments: commentsCount })
+            }
+        })
+    }
+
     getContent() {
         return {__html: this.props.content}
     }
@@ -137,6 +152,7 @@ class Post extends Component {
                     toggleFavoriteFromActivityFeed={this.toggleFavorite} 
                     increaseCommentCounterFromActivityFeed={this.increaseCommentCounter} 
                     decreaseCommentCounterFromActivityFeed={this.decreaseCommentCounter}
+                    setCommentsCount={this.setCommentsCount}
                 />
             </div>
         )
