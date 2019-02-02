@@ -144,6 +144,7 @@ export default class ActivityFeedPage extends Component {
                             date={new Date()}
                             isOwner={true}
                             handleDeleteButtonClick={this.handleDeleteButtonClick}
+                            refreshTrends={this.setTrends}
                         />
                     )
 
@@ -256,6 +257,7 @@ export default class ActivityFeedPage extends Component {
                         date={post.created_at}
                         isOwner={(post.owner.firstname + " " + post.owner.lastname) === (this.state.session.firstname + " " + this.state.session.lastname) || this.state.session.rank === 2}
                         handleDeleteButtonClick={this.handleDeleteButtonClick}
+                        refreshTrends={this.setTrends}
                     />)
                 })
 
@@ -283,6 +285,7 @@ export default class ActivityFeedPage extends Component {
                         name={trend.name}
                         content={trend.post.content}
                         author={trend.post.owner}
+                        score={trend.score}
                     />)
                 })
 

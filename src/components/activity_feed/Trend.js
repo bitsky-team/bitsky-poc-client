@@ -15,7 +15,12 @@ export default class Trend extends Component {
     render() {
         return (
             <div>
-                <p>{this.props.name}</p>
+                <div className="trend-title">
+                    <p>{this.props.name}</p>
+                    <div className="score">
+                        <span>{ this.props.score }</span>
+                    </div>
+                </div>
                 <div className="trend-content">
                     <p dangerouslySetInnerHTML={this.getContent()}></p>
                     <small>Par <a href="/profile/USER">{this.props.author}</a></small>

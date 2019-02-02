@@ -649,6 +649,21 @@ body
   transform: scale(1.1);
 }
 
+.post-container .post .score
+{
+  position: absolute;
+  right: 20px;
+}
+
+.post-container .post .score span
+{
+  background-color: rgb(131, 178, 224);
+  padding: 5px;
+  border-radius: 50%;
+  color: #FFF;
+  font-weight: bold;
+}
+
 .post-container .post .title
 {
   margin-left: 90px;
@@ -983,10 +998,32 @@ span.comment-counter, span.fav-counter, .post-details .counter-container {
   color: rgb(97, 97, 97);
 }
 
-.user-container.right-container p
+.user-container.right-container div.trend-title
+{
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.user-container.right-container div.trend-title p
 {
   color: rgb(97, 97, 97);
   font-weight: 500;
+  flex: 1;
+}
+
+.user-container.right-container div.trend-title div.score
+{
+  flex: 1;
+  text-align: right;
+}
+
+.user-container.right-container div.trend-title div.score span
+{
+  background-color: rgb(131, 178, 224);
+  padding: 5px;
+  border-radius: 50%;
+  color: #FFF;
+  font-weight: bold;
 }
 
 .user-container.right-container div.trend-content

@@ -40,8 +40,9 @@ export default class Comment extends Component {
         }))
 
         if(response.data.success) {
-            this.props.refreshBestComments();
-            this.setState({favorites: this.state.favorites + 1, favoriteFilled: true})            
+            this.props.refreshBestComments()
+            this.setState({favorites: this.state.favorites + 1, favoriteFilled: true})  
+            this.props.refreshTrends()          
         } else {
             console.error(response.data)
         }
@@ -55,8 +56,9 @@ export default class Comment extends Component {
         }))
 
         if(response.data.success) {
-            this.props.refreshBestComments();
-            this.setState({favorites: this.state.favorites - 1, favoriteFilled: false})            
+            this.props.refreshBestComments()
+            this.setState({favorites: this.state.favorites - 1, favoriteFilled: false})  
+            this.props.refreshTrends()          
         }
     }
 

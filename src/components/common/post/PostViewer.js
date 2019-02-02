@@ -25,7 +25,8 @@ export default class PostViewer extends React.Component  {
         favoriteFilled: false,
         favorites: 0,
         commentsCount: 0,
-        comments: []
+        comments: [],
+        score: '?'
     }
 
     toggle = () => {
@@ -34,6 +35,8 @@ export default class PostViewer extends React.Component  {
                 this.resetComments()
                 this.setComments()
                 this.setCommentsCount()
+                this.setScore()
+                this.props.refreshTrends()
                 this.props.toggleBestComments()
             }
     
@@ -63,6 +66,20 @@ export default class PostViewer extends React.Component  {
         })
     }
 
+    getScore = async () => {
+        return await axios.post(`${config.API_ROOT}/get_post_score`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }))
+    }
+
+    setScore = () => {
+        this.getScore().then((response) => {
+            const {success, score} = response.data
+
+            if(success && this._isMounted) {
+                this.setState({ score })
+            }
+        })
+    }
+
     getCommentsCount = async () => {
         const response = await axios.post(`${config.API_ROOT}/get_commentscount`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }))
         return await response
@@ -85,11 +102,13 @@ export default class PostViewer extends React.Component  {
         if(this.state.favoriteFilled) {
             this.removeFavorite().then(() => {
                 this.setState({favorites: this.state.favorites - 1})
+                this.props.refreshTrends()
                 this.props.toggleFavoriteFromActivityFeed()
             })
         }else {
             this.addFavorite().then(() => {
                 this.setState({favorites: this.state.favorites + 1})
+                this.props.refreshTrends()
                 this.props.toggleFavoriteFromActivityFeed()
             })
         }
@@ -190,10 +209,12 @@ export default class PostViewer extends React.Component  {
                     date={comment.created_at}
                     remove={this.removeComment}
                     refreshBestComments={this.props.refreshBestComments}
+                    refreshTrends={this.props.refreshTrends}
                 />
             )
 
             this.setState({ comments: stateComments })
+            this.props.refreshTrends()
             this.increaseCommentCounter()
             this.props.refreshBestComments()
             this.props.adjustBestComments()
@@ -228,6 +249,7 @@ export default class PostViewer extends React.Component  {
 
             this.decreaseCommentCounter()
             this.setState({ comments: this.state.comments.filter(comment => comment.props.id !== id)})
+            this.props.refreshTrends()
             this.props.refreshBestComments()
             this.props.adjustBestComments()
         }
@@ -267,6 +289,7 @@ export default class PostViewer extends React.Component  {
                             date={comment.created_at}
                             remove={this.removeComment}
                             refreshBestComments={this.props.refreshBestComments}
+                            refreshTrends={this.props.refreshTrends}
                         />
                     )
                 });
@@ -293,6 +316,9 @@ export default class PostViewer extends React.Component  {
                         <ModalBody style={{ background:'none', border:0, padding: 0 }} className="postViewer">
                             <div className="post-container">
                                 <div id={"post-"+this.props.id} className="post">
+                                    <div className="score">
+                                        <span>{ this.state.score }</span>
+                                    </div>
                                     <img src={this.state.post.owner.avatar} alt="Avatar" />
                                     <div className="title">
                                         <h4>{this.state.post.owner.firstname + " " + this.state.post.owner.lastname}</h4>
