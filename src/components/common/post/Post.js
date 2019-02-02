@@ -39,11 +39,13 @@ class Post extends Component {
         if(this.state.favoriteFilled) {
             this.removeFavorite().then(() => {
                 this.setState({favorites: this.state.favorites - 1})
+                this.props.refreshTrends()
                 this.postComments.current.postViewer.current.toggleFavorite()
             })
         }else {
             this.addFavorite().then(() => {
                 this.setState({favorites: this.state.favorites + 1})
+                this.props.refreshTrends()
                 this.postComments.current.postViewer.current.toggleFavorite()
             })
         }
@@ -153,6 +155,7 @@ class Post extends Component {
                     increaseCommentCounterFromActivityFeed={this.increaseCommentCounter} 
                     decreaseCommentCounterFromActivityFeed={this.decreaseCommentCounter}
                     setCommentsCount={this.setCommentsCount}
+                    refreshTrends={this.props.refreshTrends}
                 />
             </div>
         )

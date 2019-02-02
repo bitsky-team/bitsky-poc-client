@@ -147,6 +147,7 @@ export default class BestComments extends Component {
                     refreshBestComments={this.setBestComments} 
                     adjustBestComments={this.adjustMargin}
                     setCommentsCount={this.props.setCommentsCount}
+                    refreshTrends={this.props.refreshTrends}
                 />
             </div>
         )
