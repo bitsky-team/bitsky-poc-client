@@ -91,7 +91,7 @@ export default class UsersAdministrationPage extends Component {
         
         let usersList = []
         
-        if(this._isMounted) {
+        if(this._isMounted && usersData) {
             switch(displayType) {
                 case 'thumbnails':
                     this.setState({displayType: displayType})

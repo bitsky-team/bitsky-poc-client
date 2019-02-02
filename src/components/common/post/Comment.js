@@ -41,6 +41,7 @@ export default class Comment extends Component {
 
         if(response.data.success) {
             this.props.refreshBestComments()
+            this.props.refreshPostScore()
             this.setState({favorites: this.state.favorites + 1, favoriteFilled: true})  
             this.props.refreshTrends()          
         } else {
@@ -57,6 +58,7 @@ export default class Comment extends Component {
 
         if(response.data.success) {
             this.props.refreshBestComments()
+            this.props.refreshPostScore()
             this.setState({favorites: this.state.favorites - 1, favoriteFilled: false})  
             this.props.refreshTrends()          
         }
