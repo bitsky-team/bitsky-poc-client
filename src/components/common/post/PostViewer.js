@@ -33,6 +33,7 @@ export default class PostViewer extends React.Component  {
             if(!this.state.open) {
                 this.resetComments()
                 this.setComments()
+                this.setCommentsCount()
                 this.props.toggleBestComments()
             }
     
@@ -58,6 +59,22 @@ export default class PostViewer extends React.Component  {
                 this.setState({ post, favorites: post.favorites, commentsCount: post.comments })
                 this.setComments()
                 this.checkFavorite()
+            }
+        })
+    }
+
+    getCommentsCount = async () => {
+        const response = await axios.post(`${config.API_ROOT}/get_commentscount`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), post_id: this.props.id }))
+        return await response
+    }
+
+    setCommentsCount = () => {
+        this.getCommentsCount().then((response) => {
+            const { success, commentsCount} = response.data
+
+            if(success && this._isMounted) {
+                this.props.setCommentsCount()
+                this.setState({ commentsCount })
             }
         })
     }
