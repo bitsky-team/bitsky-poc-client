@@ -169,18 +169,14 @@ export default class RegisterConfirmationPage extends Component {
                     <Button className="modal-choice" color="secondary" onClick={this.toggleCropModal}><FontAwesomeIcon icon={ faTimes }/></Button>
                 </ModalFooter>
             </Modal>
-            <Container className="main-container cloudsBackground" style={{ minHeight: '100vh' }}>
-              <Row style={{ justifyContent: 'center' }}>
-                <Col sm="12" md="8" className="headerLogo">
-                  <img src={logo} alt="logo" height="128" />
-                </Col>
+            <Container className="main-container register-confirmation cloudsBackground" style={{ minHeight: '100vh', padding: '0' }}>
+              <Row style={{ justifyContent: 'center', alignItems: 'center', background: 'rgba(255,255,255,0.6)', padding: '20px 0', margin: '0', minHeight: '100vh', minWidth: '100vw' }}>
                 <Col sm="12" md="8" className="infos-container">
-                  <h4>Parlez-nous de vous, {this.state.session.firstname} !</h4>
-                  <hr/>
                   <Container>
                     <Row>
                       <Col md="12">
                         <div className="register-title">
+                          <img className="logo" src={logo} alt="logo" height="128" />
                           <div className="register-confirmation-image">
                             <img src={this.state.cropResult} alt="avatar" height="128" />
                             <span onClick={this.toggleCropModal}>Modifier</span>
@@ -222,7 +218,6 @@ export default class RegisterConfirmationPage extends Component {
                             name="birthdate" 
                             id="birthdate" 
                             className={(this.state.birthdateError) ? 'is-invalid' : ''}
-                            placeholder="Date de naissance" 
                             onChange={e => this.setState({birthdate: e.target.value})}
                           />
                           <FormFeedback>Veuillez indiquer votre date de naissance</FormFeedback>
@@ -255,7 +250,6 @@ export default class RegisterConfirmationPage extends Component {
                             name="job" 
                             id="job" 
                             className={(this.state.jobError) ? 'is-invalid' : ''}
-                            placeholder="Emploi" 
                             onChange={e => this.setState({job: e.target.value})}
                           />
                           <FormFeedback>Votre emploi doit au moins compter 3 caractères</FormFeedback>
@@ -268,7 +262,6 @@ export default class RegisterConfirmationPage extends Component {
                             name="birthplace" 
                             id="birthplace" 
                             className={(this.state.birthplaceError) ? 'is-invalid' : ''}
-                            placeholder="Ville d'origine"
                             onChange={e => this.setState({birthplace: e.target.value})} 
                           />
                           <FormFeedback>Votre ville d'origine doit au moins compter 3 caractères</FormFeedback>
@@ -281,7 +274,6 @@ export default class RegisterConfirmationPage extends Component {
                             name="livingplace" 
                             id="livingplace" 
                             className={(this.state.livingplaceError) ? 'is-invalid' : ''}
-                            placeholder="Ville actuelle" 
                             onChange={e => this.setState({livingplace: e.target.value})}
                           />
                           <FormFeedback>Votre ville actuelle doit au moins compter 3 caractères</FormFeedback>
