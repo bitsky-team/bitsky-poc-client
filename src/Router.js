@@ -74,7 +74,6 @@ class Router extends Component {
 
           <PrivateRoute exact authed={this.state.authenticated} path='/activity_feed' component={ActivityFeedPage} />
           <PrivateRoute exact authed={this.state.authenticated} path='/register_confirmation' component={RegisterConfirmationPage} />
-          
           <PrivateRoute exact authed={this.state.authenticated} path='/administration' component={AdministrationPage} />
           <PrivateRoute exact authed={this.state.authenticated} path='/admin_manage_users' component={UsersAdministrationPage} />
       </div>

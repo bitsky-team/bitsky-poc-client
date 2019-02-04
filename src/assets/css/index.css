@@ -1070,7 +1070,12 @@ span.comment-counter, span.fav-counter, .post-details .counter-container {
   margin-bottom: 30px;
 }
 
-.user-container.right-container .see-more-button:hover, .user-container.right-container .see-more-button:focus
+.user-container.right-container .see-more-button:active
+{
+  color: #FFF !important;
+}
+
+.user-container.right-container .see-more-button:hover
 {
   color: rgb(131, 178, 224);
   background-color: #FFF;
