@@ -2,8 +2,14 @@ import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import { Button } from 'reactstrap'
 import _ from 'lodash'
+import PostViewer from '../common/post/PostViewer'
 
 class Trend extends Component {
+    constructor(props) {
+        super(props)
+        this.postViewer = React.createRef()
+    }
+
     getContent() {
         return {
             __html: _.truncate(this.props.content, {
@@ -17,20 +23,38 @@ class Trend extends Component {
         this.props.updateFilter(this.props.name)
     }
 
+    doNothing = () => {}
+
     render() {
+        const {name, score, author, post_id} = this.props
+
         return (
             <div>
                 <div className="trend-title">
-                    <p>{this.props.name}</p>
+                    <p>{name}</p>
                     <div className="score">
-                        <span>{ this.props.score }</span>
+                        <span>{ score }</span>
                     </div>
                 </div>
-                <div className="trend-content">
+
+                <div className="trend-content" onClick={() => this.postViewer.current.toggle()}>
                     <p dangerouslySetInnerHTML={this.getContent()} />
-                    <small>Par <a href="/profile/USER">{this.props.author}</a></small>
+                    <small>Par <a href="/profile/USER">{author}</a></small>
                 </div>
                 <Button color="info" className="see-more-button" onClick={this.filterActivityFeed}>Voir plus</Button>{' '}
+
+                <PostViewer
+                    ref={this.postViewer}
+                    id={post_id}
+                    toggleFavoriteFromActivityFeed={this.doNothing}
+                    increaseCommentCounterFromActivityFeed={this.doNothing}
+                    decreaseCommentCounterFromActivityFeed={this.doNothing}
+                    toggleBestComments={this.doNothing}
+                    refreshBestComments={this.doNothing}
+                    adjustBestComments={this.doNothing}
+                    setCommentsCount={this.doNothing}
+                    refreshTrends={this.doNothing}
+                />
             </div>
         )
     }

@@ -1,14 +1,14 @@
-import React, { Component } from "react"
-import { toast } from "react-toastify"
-import { config } from "../../config"
-import TextareaAutosize from "react-autosize-textarea"
-import _ from "lodash"
-import jwtDecode from "jwt-decode"
-import Post from "../common/post/Post"
-import Navbar from "../common/template/Navbar"
-import axios from "axios"
-import qs from "qs"
-import Rank from "../common/Rank"
+import React, { Component } from "react";
+import { toast } from "react-toastify";
+import { config } from "../../config";
+import TextareaAutosize from "react-autosize-textarea";
+import _ from "lodash";
+import jwtDecode from "jwt-decode";
+import Post from "../common/post/Post";
+import Navbar from "../common/template/Navbar";
+import axios from "axios";
+import qs from "qs";
+import Rank from "../common/Rank";
 
 import {
   Container,
@@ -21,9 +21,9 @@ import {
   Label,
   Input,
   Alert
-} from "reactstrap"
+} from "reactstrap";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import {
   faClipboardList,
@@ -31,13 +31,14 @@ import {
   faPencilAlt,
   faTimes,
   faPaperPlane,
-  faSync
-} from "@fortawesome/free-solid-svg-icons"
-import SideMenu from "./SideMenu"
-import Trend from "./Trend"
+  faSync,
+  faArrowCircleLeft
+} from "@fortawesome/free-solid-svg-icons";
+import SideMenu from "./SideMenu";
+import Trend from "./Trend";
 
 export default class ActivityFeedPage extends Component {
-  _isMounted = false
+  _isMounted = false;
 
   state = {
     session: localStorage.getItem("token")
@@ -48,7 +49,7 @@ export default class ActivityFeedPage extends Component {
     posts: [],
     trends: [],
     trend: null
-  }
+  };
 
   getFirstTime = async () => {
     const response = await axios.post(
@@ -57,11 +58,11 @@ export default class ActivityFeedPage extends Component {
         uniq_id: localStorage.getItem("id"),
         token: localStorage.getItem("token")
       })
-    )
-    return await response
-  }
+    );
+    return await response;
+  };
 
-  getPosts = async (trend) => {
+  getPosts = async trend => {
     const response = await axios.post(
       `${config.API_ROOT}/get_allposts`,
       qs.stringify({
@@ -69,9 +70,9 @@ export default class ActivityFeedPage extends Component {
         token: localStorage.getItem("token"),
         trend: trend
       })
-    )
-    return await response
-  }
+    );
+    return await response;
+  };
 
   getTrends = async () => {
     const response = await axios.post(
@@ -80,9 +81,9 @@ export default class ActivityFeedPage extends Component {
         uniq_id: localStorage.getItem("id"),
         token: localStorage.getItem("token")
       })
-    )
-    return await response
-  }
+    );
+    return await response;
+  };
 
   storePost = async content => {
     const response = await axios.post(
@@ -93,9 +94,9 @@ export default class ActivityFeedPage extends Component {
         content: content.value,
         tag: this.state.tagValue
       })
-    )
-    return await response
-  }
+    );
+    return await response;
+  };
 
   deletePost = async id => {
     const response = await axios.post(
@@ -105,59 +106,59 @@ export default class ActivityFeedPage extends Component {
         token: localStorage.getItem("token"),
         post_id: id
       })
-    )
-    return await response
-  }
+    );
+    return await response;
+  };
 
   resetTrends = () => {
-    if (this._isMounted) this.setState({ trends: [] })
-  }
+    if (this._isMounted) this.setState({ trends: [] });
+  };
 
   openTextArea = () => {
-    this.postContent.textarea.disabled = false
-    this.removeBox.style.display = "block"
-    this.iconsBox.style.display = "none"
-    this.postContent.textarea.focus()
-  }
+    this.postContent.textarea.disabled = false;
+    this.removeBox.style.display = "block";
+    this.iconsBox.style.display = "none";
+    this.postContent.textarea.focus();
+  };
 
   closeTextArea = () => {
-    this.postContent.textarea.value = ""
-    this.postContent.textarea.height = ""
-    this.postContent.textarea.disabled = true
-    this.removeBox.style.display = "none"
-    this.iconsBox.style.display = "block"
-  }
+    this.postContent.textarea.value = "";
+    this.postContent.textarea.height = "";
+    this.postContent.textarea.disabled = true;
+    this.removeBox.style.display = "none";
+    this.iconsBox.style.display = "block";
+  };
 
   adjustPublishContainer = () => {
-    let postContent = this.postContent.textarea
-    let postContentValue = postContent.value
+    let postContent = this.postContent.textarea;
+    let postContentValue = postContent.value;
 
     if (!postContentValue) {
-      postContent.style.height = "24px"
-      this.refs.publishButton.style.display = "none"
+      postContent.style.height = "24px";
+      this.refs.publishButton.style.display = "none";
     } else {
-      this.refs.publishButton.style.display = "block"
+      this.refs.publishButton.style.display = "block";
     }
 
-    this.refs.publishContainer.style.height = postContent.style.height
-  }
+    this.refs.publishContainer.style.height = postContent.style.height;
+  };
 
   handlePictureButtonClick = () => {
-    this.refs.fileUploader.click()
-  }
+    this.refs.fileUploader.click();
+  };
 
   handlePublishButtonClick = () => {
-    let content = this.postContent.textarea
+    let content = this.postContent.textarea;
 
-    let isContentFilled = _.trim(content.value).length > 0
-    let isTagFilled = _.trim(this.state.tagValue).length > 0
+    let isContentFilled = _.trim(content.value).length > 0;
+    let isTagFilled = _.trim(this.state.tagValue).length > 0;
 
     if (isContentFilled && isTagFilled) {
       this.storePost(content).then(response => {
-        const { success, postId, ownerRank } = response.data
+        const { success, postId, ownerRank } = response.data;
 
         if (success && this._isMounted) {
-          let posts = this.state.posts
+          let posts = this.state.posts;
           let newPost = (
             <Post
               id={postId}
@@ -180,90 +181,90 @@ export default class ActivityFeedPage extends Component {
               handleDeleteButtonClick={this.handleDeleteButtonClick}
               refreshTrends={this.setTrends}
             />
-          )
+          );
 
-          posts.unshift(newPost)
-          this.setState({ posts: posts, tagValue: null })
-          this.setTrends()
-          this.closeTextArea()
-          this.adjustPublishContainer()
-          this.togglePostModal()
+          posts.unshift(newPost);
+          this.setState({ posts: posts, tagValue: null });
+          this.setTrends();
+          this.closeTextArea();
+          this.adjustPublishContainer();
+          this.togglePostModal();
 
           if (this.postsContainer && this.trendsContainer) {
-            this.postsContainer.childNodes[0].style.display = "none"
-            this.trendsContainer.childNodes[0].style.display = "none"
+            this.postsContainer.childNodes[0].style.display = "none";
+            this.trendsContainer.childNodes[0].style.display = "none";
           }
 
           toast.success("Votre publication a été postée !", {
             autoClose: 5000,
             position: toast.POSITION.BOTTOM_RIGHT,
             className: "notification-success"
-          })
+          });
         }
-      })
+      });
     }
-  }
+  };
 
   handleDeleteButtonClick = e => {
-    e.preventDefault()
-    let element = e.target.parentElement.parentElement
-    let str_id = element.id
-    let id = str_id.split("-")[1]
-    let posts = this.state.posts
+    e.preventDefault();
+    let element = e.target.parentElement.parentElement;
+    let str_id = element.id;
+    let id = str_id.split("-")[1];
+    let posts = this.state.posts;
     posts = posts.filter(p => {
-      return p.key !== str_id
-    })
+      return p.key !== str_id;
+    });
 
     this.deletePost(id).then(response => {
-      const { success } = response.data
+      const { success } = response.data;
       if (success) {
-        this.setState({ posts })
-        this.setTrends()
-        this.checkEmpty()
+        this.setState({ posts });
+        this.setTrends();
+        this.checkEmpty();
         toast.success("La publication a été supprimée !", {
           autoClose: 5000,
           position: toast.POSITION.BOTTOM_RIGHT,
           className: "notification-success"
-        })
+        });
       }
-    })
-  }
+    });
+  };
 
   togglePostModal = () => {
     // Checking if textarea's content is not empty
     if (this.state.postModal || /\S/.test(this.postContent.textarea.value)) {
       this.setState({
         postModal: !this.state.postModal
-      })
+      });
     }
-  }
+  };
 
   checkEmpty = () => {
     setTimeout(() => {
       if (this.postsContainer && this.trendsContainer) {
         if (this.state.posts.length === 0) {
-          this.postsContainer.childNodes[0].style.display = "block"
-          this.postsContainer.childNodes[1].style.display = "none"
+          this.postsContainer.childNodes[0].style.display = "block";
+          this.postsContainer.childNodes[1].style.display = "none";
         } else {
-          this.postsContainer.childNodes[0].style.display = "none"
+          this.postsContainer.childNodes[0].style.display = "none";
         }
       }
-    }, 1000)
-  }
+    }, 1000);
+  };
 
   removeLoading = element => {
     if (element === "posts") {
       if (this.postsContainer) {
-        this.postsContainer.childNodes[1].style.display = "none"
+        this.postsContainer.childNodes[1].style.display = "none";
       }
     }
-  }
+  };
 
-  setPosts = (trend) => {
+  setPosts = trend => {
     this.getPosts(trend).then(response => {
-      const { success, posts } = response.data
+      const { success, posts } = response.data;
       if (success && this._isMounted) {
-        let statePosts = this.state.posts
+        let statePosts = this.state.posts;
 
         posts.forEach(post => {
           statePosts.push(
@@ -288,74 +289,74 @@ export default class ActivityFeedPage extends Component {
               handleDeleteButtonClick={this.handleDeleteButtonClick}
               refreshTrends={this.setTrends}
             />
-          )
-        })
+          );
+        });
 
-        this.setState({ posts: statePosts })
-        this.removeLoading("posts")
-        this.checkEmpty()
+        this.setState({ posts: statePosts });
+        this.removeLoading("posts");
+        this.checkEmpty();
       } else if (this._isMounted) {
-        console.log("Failed loading posts: " + response.message)
+        console.log("Failed loading posts: " + response.message);
       }
-    })
-  }
+    });
+  };
 
   setTrends = () => {
-    if (this._isMounted) this.resetTrends()
+    if (this._isMounted) this.resetTrends();
 
     this.getTrends().then(response => {
-      const { success, trends } = response.data
+      const { success, trends } = response.data;
       if (success && this._isMounted) {
-        let stateTrends = this.state.trends
+        let stateTrends = this.state.trends;
 
         trends.forEach(trend => {
           stateTrends.push(
             <Trend
               key={"trend-" + trend.name}
               name={trend.name}
+              post_id={trend.post.id}
               content={trend.post.content}
               author={trend.post.owner}
               score={trend.score}
               updateFilter={this.updateFilter}
             />
-          )
-        })
+          );
+        });
 
-        this.setState({ trends: stateTrends })
+        this.setState({ trends: stateTrends });
       } else if (this._isMounted) {
-        console.log("Failed loading trends: ", response)
+        console.log("Failed loading trends: ", response);
       }
-    })
-  }
+    });
+  };
 
-  updateFilter = (trend) => {
-    this.setState({ posts:[], trend })
-    this.setPosts(trend)
-    console.log(trend)
-  }
+  updateFilter = trend => {
+    this.setState({ posts: [], trend });
+    this.setPosts(trend);
+  };
 
   componentDidMount = () => {
-    this._isMounted = true
+    this._isMounted = true;
 
     // Checking first time
     this.getFirstTime().then(response => {
-      const { success, message } = response.data
+      const { success, message } = response.data;
       if (success) {
-        let firstTime = Boolean(parseInt(message, 10))
-        localStorage.setItem("firsttime", firstTime)
-        if (firstTime) this.props.history.push("/register_confirmation")
+        let firstTime = Boolean(parseInt(message, 10));
+        localStorage.setItem("firsttime", firstTime);
+        if (firstTime) this.props.history.push("/register_confirmation");
         else {
           // Retrieving posts & trends
-          this.setPosts()
-          this.setTrends()
+          this.setPosts();
+          this.setTrends();
         }
       }
-    })
-  }
+    });
+  };
 
   componentWillUnmount = () => {
-    this._isMounted = false
-  }
+    this._isMounted = false;
+  };
 
   render() {
     return (
@@ -415,6 +416,23 @@ export default class ActivityFeedPage extends Component {
               <SideMenu />
             </Col>
             <Col md="5" className="no-margin-left no-margin-right">
+              {this.state.trend && (
+                <div
+                  className="activity-feed-trend-title"
+                  style={{ marginBottom: "15px" }}
+                >
+                  <Button
+                      color="info"
+                      className="see-more-button"
+                      onClick={e => this.updateFilter(null)}
+                  >
+                    <FontAwesomeIcon icon={faArrowCircleLeft} />
+                  </Button>{" "}
+                  <p>
+                    Publications du sujet <span>{this.state.trend}</span>
+                  </p>
+                </div>
+              )}
               <div className="publish-container" ref="publishContainer">
                 <input
                   type="file"
@@ -502,6 +520,6 @@ export default class ActivityFeedPage extends Component {
           </Row>
         </Container>
       </div>
-    )
+    );
   }
 }
