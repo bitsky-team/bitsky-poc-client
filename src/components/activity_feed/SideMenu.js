@@ -5,7 +5,7 @@ import { faStickyNote } from "@fortawesome/free-regular-svg-icons";
 import { Link } from "react-router-dom";
 
 export default class SideMenu extends Component {
-  render() {
+    render() {
     return (
       <div className="side-menu">
         <ul>
