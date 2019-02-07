@@ -21,7 +21,7 @@ import {config} from '../../../config'
 import UserThumbnail from './UserThumbnail'
 import UserTableEntry from './UserTableEntry'
 import _ from 'lodash'
-import UserAddModal from './UserAddModal'
+import UserManageModal from './UserManageModal'
 import UserDeleteModal from './UserDeleteModal'
 import Rank from '../../common/Rank'
 
@@ -33,14 +33,20 @@ export default class UsersAdministrationPage extends Component {
         session: (localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null),
         users: [],
         displayType: 'thumbnails',
-        userAddModal: false,
+        userManageModal: {
+            toggle: false,
+            type: null
+        },
         userDeleteModal: false,
         deletedUser: null,
         userSearchModal: false
     }
 
-    toggleUserAddModal = () => {
-        this.setState({userAddModal: !this.state.userAddModal})
+    toggleUserManageModal = (type) => {
+        this.setState({
+            userManageModal: !this.state.userManageModal.toggle,
+            type        
+        })
     }
 
     toggleUserDeleteModal = (id, firstname, lastname) => {
@@ -98,14 +104,14 @@ export default class UsersAdministrationPage extends Component {
                     let i = 0
                     usersData.forEach(user => {
                         i++
-                        usersList.push(<UserThumbnail margin={(i > 3 ? 'margin-top-10' : null)} key={'user-'+user.id} avatar={user.avatar} id={user.id} firstname={user.firstname} lastname={user.lastname} uniq_id={user.uniq_id} rank={user.rank} toggleUserDeleteModal={this.toggleUserDeleteModal}/>)
+                        usersList.push(<UserThumbnail margin={(i > 3 ? 'margin-top-10' : null)} key={'user-'+user.id} avatar={user.avatar} id={user.id} firstname={user.firstname} lastname={user.lastname} uniq_id={user.uniq_id} rank={user.rank} toggleUserDeleteModal={this.toggleUserDeleteModal} toggleUserManageModal={() => this.toggleUserManageModal('UPDATE')} type={this.state.userManageModal.type}/>)
                     })
                 break
     
                 case 'list':
                     this.setState({displayType: displayType})
                     usersData.forEach(user => {
-                        usersList.push(<UserTableEntry key={'user-'+user.id} id={user.id} uid={_.truncate(user.uniq_id, {'length': 8,'separator': /,? +/})} lastname={user.lastname} firstname={user.firstname} email={user.email} rank={user.rank} toggleUserDeleteModal={this.toggleUserDeleteModal}/>)
+                        usersList.push(<UserTableEntry key={'user-'+user.id} id={user.id} uid={_.truncate(user.uniq_id, {'length': 8,'separator': /,? +/})} lastname={user.lastname} firstname={user.firstname} email={user.email} rank={user.rank} toggleUserDeleteModal={this.toggleUserDeleteModal} toggleUserManageModal={() => this.toggleUserManageModal('UPDATE')} type={this.state.userManageModal.type}/>)
                     })
                 break
     
@@ -136,7 +142,7 @@ export default class UsersAdministrationPage extends Component {
         return (
             <div>
                 <Navbar />
-                <UserAddModal open={this.state.userAddModal} toggleUserAddModal={this.toggleUserAddModal} refreshUsers={(e) => this.getUsers(this.state.displayType)}/>
+                <UserManageModal open={this.state.userManageModal.toggle} toggleUserManageModal={this.toggleUserManageModal} refreshUsers={(e) => this.getUsers(this.state.displayType)}/>
                 <UserDeleteModal open={this.state.userDeleteModal} user={this.state.deletedUser} toggleUserDeleteModal={this.toggleUserDeleteModal} refreshUsers={(e) => this.getUsers(this.state.displayType)}/>
             
                 <Modal isOpen={this.state.userSearchModal} toggle={this.toggleUserSearchModal}>
@@ -167,7 +173,7 @@ export default class UsersAdministrationPage extends Component {
                                             <h4>Utilisateurs</h4>
                                         </Col>
                                         <Col className="text-center">
-                                            <button type="button" className="btn btn-info" onClick={this.toggleUserAddModal}><FontAwesomeIcon icon={faPlus} /> Ajouter</button>{' '}
+                                            <button type="button" className="btn btn-info" onClick={() => this.toggleUserManageModal('ADD')}><FontAwesomeIcon icon={faPlus} /> Ajouter</button>{' '}
                                             <button type="button" className="btn btn-info" onClick={this.toggleUserSearchModal}><FontAwesomeIcon icon={faSearch} /> Rechercher</button>
                                         </Col>
                                         <Col className="text-right">

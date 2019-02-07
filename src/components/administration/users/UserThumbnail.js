@@ -19,7 +19,7 @@ export default class UserThumbnail extends Component {
                 <Container>
                     <Row>
                         <Col md="4" className="action"><FontAwesomeIcon icon={faEye} /></Col>
-                        <Col md="4" className="action"><FontAwesomeIcon icon={faPencilAlt} /></Col>
+                        <Col md="4" className="action"><FontAwesomeIcon icon={faPencilAlt} onClick={this.props.toggleUserManageModal} /></Col>
                         <Col md="4" className="action" onClick={e => this.props.toggleUserDeleteModal(this.props.id, this.props.firstname, this.props.lastname)}><FontAwesomeIcon icon={faTrash} /></Col>
                     </Row>
                 </Container>

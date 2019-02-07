@@ -8,7 +8,7 @@ import axios from 'axios'
 import qs from 'qs'
 import avatar_default from '../../../assets/img/avatar_default'
 
-export default class UserAddModal extends Component {
+export default class UserManageModal extends Component {
 
     state = {
         lastname: null,
@@ -132,7 +132,7 @@ export default class UserAddModal extends Component {
                 })
 
                 this.props.refreshUsers();
-                this.props.toggleUserAddModal();
+                this.props.toggleUserManageModal();
             } else {
                 if (this.error) {
                     this.error.firstChild.innerHTML = response.data.message
@@ -165,9 +165,9 @@ export default class UserAddModal extends Component {
 
     render() {
         return (
-            <Modal isOpen={this.props.open} toggle={this.props.toggleUserAddModal} className="user-modal">
+            <Modal isOpen={this.props.open} toggle={this.props.toggleUserManageModal} className="user-modal">
                 <ModalHeader style={{background: 'white'}}>
-                    Ajouter un utilisateur
+                   {this.props.type === 'ADD' ? 'Ajouter' : 'Modifier'} un utilisateur
                 </ModalHeader>
                 <ModalBody style={{background: 'white'}}>
                     <div ref={node => this.error = node}>
@@ -380,10 +380,9 @@ export default class UserAddModal extends Component {
                 </ModalBody>
                 <ModalFooter style={{background:'white'}}>
                     <Button className="modal-choice" color="primary" onClick={this.checkForm}><FontAwesomeIcon icon={faPlus} /></Button>{' '}
-                    <Button className="modal-choice" color="secondary" onClick={this.props.toggleUserAddModal}><FontAwesomeIcon icon={faTimes} /></Button>
+                    <Button className="modal-choice" color="secondary" onClick={this.props.toggleUserManageModal}><FontAwesomeIcon icon={faTimes} /></Button>
                 </ModalFooter>
             </Modal>
         )
     }
-
 }
