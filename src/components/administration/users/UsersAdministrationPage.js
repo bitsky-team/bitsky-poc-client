@@ -59,16 +59,21 @@ export default class UsersAdministrationPage extends Component {
         type
       };
     } else {
-      //const user = await ... user.id
-      const user = null
-      userManageModal = {
-        toggle: !this.state.userManageModal.toggle,
-        type,
-        user
-      };
+      await axios.post(`${config.API_ROOT}/get_user`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token'), user_id: id }))
+        .then(response => {
+          const { success, user } = response.data
+
+          if (success && this._isMounted) {
+            userManageModal = {
+              toggle: !this.state.userManageModal.toggle,
+              type,
+              user
+            };
+          }
+        })
     }
 
-    this.setState(userManageModal);
+    this.setState({ userManageModal });
   };
 
   toggleUserDeleteModal = (id, firstname, lastname) => {
