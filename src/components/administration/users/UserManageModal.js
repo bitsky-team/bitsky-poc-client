@@ -170,7 +170,7 @@ export default class UserManageModal extends Component {
           email: this.state.email,
           password: this.state.password,
           repeatPassword: this.state.repeatPassword,
-          rank: this.getRankNumber(),
+          rank: (this.props.type === 'ADD') ? this.getRankNumber() : this.state.rank,
           biography: this.state.biography,
           sex: this.state.sex,
           job: this.state.job,
@@ -179,6 +179,7 @@ export default class UserManageModal extends Component {
           relationshipstatus: this.state.relationshipstatus,
           livingplace: this.state.livingplace,
           avatar: avatar_default,
+          type: this.props.type
         })
       )
 
@@ -188,7 +189,7 @@ export default class UserManageModal extends Component {
         toast.success(
           `L'utilisateur ${this.state.firstname} ${
             this.state.lastname
-          } a bien été ajouté !`,
+          } a bien été ${this.props.type === 'ADD' ? 'ajouté' : 'modifié'} !`,
           {
             autoClose: 5000,
             position: toast.POSITION.BOTTOM_RIGHT,
