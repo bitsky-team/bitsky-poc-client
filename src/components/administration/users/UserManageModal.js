@@ -1,26 +1,26 @@
-import React, { Component } from "react";
+import React, {Component} from 'react'
 import {
-  Row,
+  Alert,
+  Button,
+  Col,
+  Form,
+  FormFeedback,
+  FormGroup,
+  Input,
+  Label,
   Modal,
-  ModalHeader,
   ModalBody,
   ModalFooter,
-  Col,
-  Button,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  FormFeedback,
-  Alert
-} from "reactstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { config } from "../../../config";
-import axios from "axios";
-import qs from "qs";
-import avatar_default from "../../../assets/img/avatar_default";
+  ModalHeader,
+  Row,
+} from 'reactstrap'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faPencilAlt, faPlus, faTimes} from '@fortawesome/free-solid-svg-icons'
+import {toast} from 'react-toastify'
+import {config} from '../../../config'
+import axios from 'axios'
+import qs from 'qs'
+import avatar_default from '../../../assets/img/avatar_default'
 
 export default class UserManageModal extends Component {
   state = {
@@ -34,7 +34,7 @@ export default class UserManageModal extends Component {
     emailError: false,
 
     ranks: [],
-    rank: "Utilisateur",
+    rank: 'Utilisateur',
     rankError: false,
 
     password: null,
@@ -46,7 +46,7 @@ export default class UserManageModal extends Component {
     biography: null,
     biographyError: false,
 
-    sex: "Homme",
+    sex: 'Homme',
     sexError: false,
 
     job: null,
@@ -58,51 +58,55 @@ export default class UserManageModal extends Component {
     birthplace: null,
     birthplaceError: false,
 
-    relationshipstatus: "Célibataire",
+    relationshipstatus: 'Célibataire',
     relationshipstatusError: false,
 
     livingplace: null,
-    livingplaceError: false
-  };
+    livingplaceError: false,
+  }
 
   getRanks = async () => {
-    const response = await axios.get(`${config.API_ROOT}/get_ranks`);
-    const { success, ranks } = response.data;
+    const response = await axios.get(`${config.API_ROOT}/get_ranks`)
+    const {success, ranks} = response.data
     if (success) {
-      let stateRanks = this.state.ranks;
+      let stateRanks = this.state.ranks
 
       ranks.forEach(rank => {
-        stateRanks.push(rank.name);
-      });
+        stateRanks.push(rank.name)
+      })
 
-      this.setState({ ranks: stateRanks });
+      this.setState({ranks: stateRanks})
     }
-  };
+  }
 
-  checkRank = () => {
-    return this.state.ranks.includes(this.state.rank);
-  };
+  checkRank = async () => {
+    if(typeof this.state.rank === 'number') {
+      const ranks = await this.getRanks()
+    }
+
+    return this.state.ranks.includes(this.state.rank)
+  }
 
   getRankNumber = () => {
-    return this.state.ranks.findIndex(rank => rank === this.state.rank) + 1;
-  };
+    return this.state.ranks.findIndex(rank => rank === this.state.rank) + 1
+  }
 
   checkSex = () => {
-    return ["Homme", "Femme", "Autre"].includes(this.state.sex);
-  };
+    return ['Homme', 'Femme', 'Autre'].includes(this.state.sex)
+  }
 
   checkRelationshipstatus = () => {
     return [
-      "Célibataire",
-      "En couple",
-      "Marié(e)",
-      "Veuf(ve)",
-      "Non précisé"
-    ].includes(this.state.relationshipstatus);
-  };
+      'Célibataire',
+      'En couple',
+      'Marié(e)',
+      'Veuf(ve)',
+      'Non précisé',
+    ].includes(this.state.relationshipstatus)
+  }
 
   checkForm = async () => {
-    if (this.error) this.error.firstChild.style.display = "none";
+    if (this.error) this.error.firstChild.style.display = 'none'
     this.setState({
       lastnameError: false,
       firstnameError: false,
@@ -116,8 +120,8 @@ export default class UserManageModal extends Component {
       birthdateError: false,
       birthplaceError: false,
       relationshipstatusError: false,
-      livingplaceError: false
-    });
+      livingplaceError: false,
+    })
 
     let isLastnameOk = this.state.lastname && this.state.lastname.length >= 2,
       isFirstnameOk = this.state.firstname && this.state.firstname.length >= 2,
@@ -125,10 +129,10 @@ export default class UserManageModal extends Component {
         this.state.email &&
         this.state.email.match(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,4}$/),
       isRankOk = this.checkRank(),
-      isPasswordOk = this.state.password && this.state.password.length >= 8,
+      isPasswordOk = (this.state.password && this.state.password.length >= 8) || this.props.type === 'UPDATE',
       isRepeatPasswordOk =
-        this.state.repeatPassword && this.state.repeatPassword.length >= 8,
-      arePasswordsOk = this.state.password === this.state.repeatPassword,
+        (this.state.repeatPassword && this.state.repeatPassword.length >= 8) || this.props.type === 'UPDATE',
+      arePasswordsOk = (this.state.password === this.state.repeatPassword) || this.props.type === 'UPDATE',
       isBiographyOk = this.state.biography && this.state.biography.length >= 10,
       isSexOk = this.checkSex(),
       isJobOk = this.state.job && this.state.job.length >= 3,
@@ -153,20 +157,20 @@ export default class UserManageModal extends Component {
         isBirthdateOk &&
         isBirthplaceOk &&
         isRelationshipstatusOk &&
-        isLivingplaceOk;
+        isLivingplaceOk
 
     if (isFormOk) {
       const response = await axios.post(
         `${config.API_ROOT}/create_user`,
         qs.stringify({
-          uniq_id: localStorage.getItem("id"),
-          token: localStorage.getItem("token"),
+          uniq_id: localStorage.getItem('id'),
+          token: localStorage.getItem('token'),
           lastname: this.state.lastname,
           firstname: this.state.firstname,
           email: this.state.email,
           password: this.state.password,
           repeatPassword: this.state.repeatPassword,
-          rank: this.getRankNumber(),
+          rank: (this.props.type === 'ADD') ? this.getRankNumber() : this.state.rank,
           biography: this.state.biography,
           sex: this.state.sex,
           job: this.state.job,
@@ -174,30 +178,31 @@ export default class UserManageModal extends Component {
           birthplace: this.state.birthplace,
           relationshipstatus: this.state.relationshipstatus,
           livingplace: this.state.livingplace,
-          avatar: avatar_default
+          avatar: avatar_default,
+          type: this.props.type
         })
-      );
+      )
 
-      const { success } = response.data;
+      const {success} = response.data
 
       if (success) {
         toast.success(
           `L'utilisateur ${this.state.firstname} ${
             this.state.lastname
-          } a bien été ajouté !`,
+          } a bien été ${this.props.type === 'ADD' ? 'ajouté' : 'modifié'} !`,
           {
             autoClose: 5000,
             position: toast.POSITION.BOTTOM_RIGHT,
-            className: "notification-success"
+            className: 'notification-success',
           }
-        );
+        )
 
-        this.props.refreshUsers();
-        this.props.toggleUserManageModal();
+        this.props.refreshUsers()
+        this.props.toggleUserManageModal()
       } else {
         if (this.error) {
-          this.error.firstChild.innerHTML = response.data.message;
-          this.error.firstChild.style.display = "block";
+          this.error.firstChild.innerHTML = response.data.message
+          this.error.firstChild.style.display = 'block'
         }
       }
     } else {
@@ -214,13 +219,71 @@ export default class UserManageModal extends Component {
         birthdateError: !isBirthdateOk,
         birthplaceError: !isBirthplaceOk,
         relationshipstatusError: !isRelationshipstatusOk,
-        livingplaceError: !isLivingplaceOk
-      });
+        livingplaceError: !isLivingplaceOk,
+      })
     }
-  };
+  }
+
+  resetUser = () => {
+    this.setState({
+      lastname: null,
+      lastnameError: false,
+
+      firstname: null,
+      firstnameError: false,
+
+      email: null,
+      emailError: false,
+
+      ranks: [],
+      rank: 'Utilisateur',
+      rankError: false,
+
+      password: null,
+      passwordError: false,
+
+      repeatPassword: null,
+      repeatPasswordError: false,
+
+      biography: null,
+      biographyError: false,
+
+      sex: 'Homme',
+      sexError: false,
+
+      job: null,
+      jobError: false,
+
+      birthdate: null,
+      birthdateError: false,
+
+      birthplace: null,
+      birthplaceError: false,
+
+      relationshipstatus: 'Célibataire',
+      relationshipstatusError: false,
+
+      livingplace: null,
+      livingplaceError: false,
+    })
+  }
+
+  setUser = () => {
+    const {user} = this.props
+
+    if (user) {
+      this.setState({...user})
+    }
+  }
+
+  getBirthdate = () => {
+    if (this.state.birthdate) {
+      return this.state.birthdate.replace(' 00:00:00', '')
+    }
+  }
 
   componentWillMount = () => {
-    this.getRanks();
+    this.getRanks()
   }
 
   render() {
@@ -230,15 +293,15 @@ export default class UserManageModal extends Component {
         toggle={this.props.toggleUserManageModal}
         className="user-modal"
       >
-        <ModalHeader style={{ background: "white" }}>
-          {this.props.type === "ADD" ? "Ajouter" : "Modifier"} un utilisateur
+        <ModalHeader style={{background: 'white'}}>
+          {this.props.type === 'ADD' ? 'Ajouter' : 'Modifier'} un utilisateur
         </ModalHeader>
-        <ModalBody style={{ background: "white" }}>
+        <ModalBody style={{background: 'white'}}>
           <div ref={node => (this.error = node)}>
-            <Alert color="danger" style={{ display: "none" }} />
+            <Alert color="danger" style={{display: 'none'}} />
           </div>
           <Form>
-            <Row form>
+            <Row>
               <Col md={6}>
                 <FormGroup>
                   <Label for="userAddLastname">Nom</Label>
@@ -247,8 +310,9 @@ export default class UserManageModal extends Component {
                     name="userAddLastname"
                     id="userAddLastname"
                     placeholder="Nom"
-                    className={this.state.lastnameError ? "is-invalid" : ""}
-                    onChange={e => this.setState({ lastname: e.target.value })}
+                    className={this.state.lastnameError ? 'is-invalid' : ''}
+                    onChange={e => this.setState({lastname: e.target.value})}
+                    defaultValue={this.state.lastname || ''}
                   />
                   <FormFeedback>
                     Le nom doit contenir au moins 2 caractères
@@ -263,8 +327,9 @@ export default class UserManageModal extends Component {
                     name="userAddFirstname"
                     id="userAddFirstname"
                     placeholder="Prénom"
-                    className={this.state.firstnameError ? "is-invalid" : ""}
-                    onChange={e => this.setState({ firstname: e.target.value })}
+                    className={this.state.firstnameError ? 'is-invalid' : ''}
+                    onChange={e => this.setState({firstname: e.target.value})}
+                    defaultValue={this.state.firstname || ''}
                   />
                   <FormFeedback>
                     Le prénom doit contenir au moins 2 caractères
@@ -272,7 +337,7 @@ export default class UserManageModal extends Component {
                 </FormGroup>
               </Col>
             </Row>
-            <Row form>
+            <Row>
               <Col md={6}>
                 <FormGroup>
                   <Label for="userAddEmail">Adresse email</Label>
@@ -281,8 +346,9 @@ export default class UserManageModal extends Component {
                     name="userAddEmail"
                     id="userAddEmail"
                     placeholder="Adresse email"
-                    className={this.state.emailError ? "is-invalid" : ""}
-                    onChange={e => this.setState({ email: e.target.value })}
+                    className={this.state.emailError ? 'is-invalid' : ''}
+                    onChange={e => this.setState({email: e.target.value})}
+                    defaultValue={this.state.email || ''}
                   />
                   <FormFeedback>L'adresse email est incorrecte</FormFeedback>
                 </FormGroup>
@@ -291,20 +357,27 @@ export default class UserManageModal extends Component {
                 <FormGroup>
                   <Label for="userAddRank">Rang</Label>
                   <Input
+                    ref={node => (this.rankSelect = node)}
                     type="select"
                     name="select"
                     id="userAddRank"
-                    className={this.state.rankError ? "is-invalid" : ""}
-                    onChange={e => this.setState({ rank: e.target.value })}
+                    className={this.state.rankError ? 'is-invalid' : ''}
+                    onChange={e => {
+                      this.setState({rank: e.target.value})
+                    }}
                   >
-                    <option>Utilisateur</option>
-                    <option>Administrateur</option>
+                    <option selected={this.state.rank === 1}>
+                      Utilisateur
+                    </option>
+                    <option selected={this.state.rank === 2}>
+                      Administrateur
+                    </option>
                   </Input>
                   <FormFeedback>Le rang est incorrect</FormFeedback>
                 </FormGroup>
               </Col>
             </Row>
-            <Row form>
+            <Row>
               <Col md={6}>
                 <FormGroup>
                   <Label for="userAddPassword">Mot de passe</Label>
@@ -313,8 +386,8 @@ export default class UserManageModal extends Component {
                     name="userAddPassword"
                     id="userAddPassword"
                     placeholder="Mot de passe"
-                    className={this.state.passwordError ? "is-invalid" : ""}
-                    onChange={e => this.setState({ password: e.target.value })}
+                    className={this.state.passwordError ? 'is-invalid' : ''}
+                    onChange={e => this.setState({password: e.target.value})}
                   />
                   <FormFeedback>
                     Le mot de passe est trop court ou ne correspond pas
@@ -330,10 +403,10 @@ export default class UserManageModal extends Component {
                     id="userAddRepeatPassword"
                     placeholder="Répétez le mot de passe"
                     className={
-                      this.state.repeatPasswordError ? "is-invalid" : ""
+                      this.state.repeatPasswordError ? 'is-invalid' : ''
                     }
                     onChange={e =>
-                      this.setState({ repeatPassword: e.target.value })
+                      this.setState({repeatPassword: e.target.value})
                     }
                   />
                   <FormFeedback>
@@ -351,15 +424,16 @@ export default class UserManageModal extends Component {
                   type="textarea"
                   name="userAddBiography"
                   id="userAddBiography"
-                  className={this.state.biographyError ? "is-invalid" : ""}
-                  onChange={e => this.setState({ biography: e.target.value })}
+                  className={this.state.biographyError ? 'is-invalid' : ''}
+                  onChange={e => this.setState({biography: e.target.value})}
+                  value={this.state.biography || ''}
                 />
                 <FormFeedback>
                   La biographie doit contenir au moins 10 caractères
                 </FormFeedback>
               </Col>
             </FormGroup>
-            <Row form>
+            <Row>
               <Col md={6}>
                 <FormGroup>
                   <Label for="userAddSex">Genre</Label>
@@ -367,12 +441,12 @@ export default class UserManageModal extends Component {
                     type="select"
                     name="userAddSex"
                     id="userAddSex"
-                    className={this.state.sexError ? "is-invalid" : ""}
-                    onChange={e => this.setState({ sex: e.target.value })}
+                    className={this.state.sexError ? 'is-invalid' : ''}
+                    onChange={e => this.setState({sex: e.target.value})}
                   >
-                    <option>Homme</option>
-                    <option>Femme</option>
-                    <option>Autre</option>
+                    <option selected={this.state.sex === 'Homme'}>Homme</option>
+                    <option selected={this.state.sex === 'Femme'}>Femme</option>
+                    <option selected={this.state.sex === 'Autre'}>Autre</option>
                   </Input>
                   <FormFeedback>Le genre est invalide</FormFeedback>
                 </FormGroup>
@@ -385,8 +459,9 @@ export default class UserManageModal extends Component {
                     name="userAddJob"
                     id="userAddJob"
                     placeholder="Emploi"
-                    className={this.state.jobError ? "is-invalid" : ""}
-                    onChange={e => this.setState({ job: e.target.value })}
+                    className={this.state.jobError ? 'is-invalid' : ''}
+                    onChange={e => this.setState({job: e.target.value})}
+                    defaultValue={this.state.job || ''}
                   />
                   <FormFeedback>
                     L'emploi doit contenir au moins 3 caractères
@@ -394,7 +469,7 @@ export default class UserManageModal extends Component {
                 </FormGroup>
               </Col>
             </Row>
-            <Row form>
+            <Row>
               <Col md={6}>
                 <FormGroup>
                   <Label for="userAddBirthdate">Date de naissance</Label>
@@ -402,8 +477,9 @@ export default class UserManageModal extends Component {
                     type="date"
                     name="userAddBirthdate"
                     id="userAddBirthdate"
-                    className={this.state.birthdateError ? "is-invalid" : ""}
-                    onChange={e => this.setState({ birthdate: e.target.value })}
+                    className={this.state.birthdateError ? 'is-invalid' : ''}
+                    onChange={e => this.setState({birthdate: e.target.value})}
+                    defaultValue={this.getBirthdate() || ''}
                   />
                   <FormFeedback>
                     La date de naissance est incorrecte
@@ -418,10 +494,9 @@ export default class UserManageModal extends Component {
                     name="userAddBirthplace"
                     id="userAddBirthplace"
                     placeholder="Ville d'origine"
-                    className={this.state.birthplaceError ? "is-invalid" : ""}
-                    onChange={e =>
-                      this.setState({ birthplace: e.target.value })
-                    }
+                    className={this.state.birthplaceError ? 'is-invalid' : ''}
+                    onChange={e => this.setState({birthplace: e.target.value})}
+                    defaultValue={this.state.birthplace || ''}
                   />
                   <FormFeedback>
                     La ville d'origine doit contenir au moins 3 caractères
@@ -429,7 +504,7 @@ export default class UserManageModal extends Component {
                 </FormGroup>
               </Col>
             </Row>
-            <Row form>
+            <Row>
               <Col md={6}>
                 <FormGroup>
                   <Label for="userAddRelationshipstatus">
@@ -440,17 +515,37 @@ export default class UserManageModal extends Component {
                     name="userAddRelationshipstatus"
                     id="userAddRelationshipstatus"
                     className={
-                      this.state.relationshipstatusError ? "is-invalid" : ""
+                      this.state.relationshipstatusError ? 'is-invalid' : ''
                     }
                     onChange={e =>
-                      this.setState({ relationshipstatus: e.target.value })
+                      this.setState({relationshipstatus: e.target.value})
                     }
                   >
-                    <option>Célibataire</option>
-                    <option>En couple</option>
-                    <option>Marié(e)</option>
-                    <option>Veuf(ve)</option>
-                    <option>Non précisé</option>
+                    <option
+                      selected={this.state.relationshipstatus === 'Célibataire'}
+                    >
+                      Célibataire
+                    </option>
+                    <option
+                      selected={this.state.relationshipstatus === 'En couple'}
+                    >
+                      En couple
+                    </option>
+                    <option
+                      selected={this.state.relationshipstatus === 'Marié(e)'}
+                    >
+                      Marié(e)
+                    </option>
+                    <option
+                      selected={this.state.relationshipstatus === 'Veuf(ve)'}
+                    >
+                      Veuf(ve)
+                    </option>
+                    <option
+                      selected={this.state.relationshipstatus === 'Non précisé'}
+                    >
+                      Non précisé
+                    </option>
                   </Input>
                   <FormFeedback>
                     La situation amoureuse est incorrecte
@@ -465,10 +560,9 @@ export default class UserManageModal extends Component {
                     name="userAddLivingplace"
                     id="userAddLivingplace"
                     placeholder="Ville actuelle"
-                    className={this.state.livingplaceError ? "is-invalid" : ""}
-                    onChange={e =>
-                      this.setState({ livingplace: e.target.value })
-                    }
+                    className={this.state.livingplaceError ? 'is-invalid' : ''}
+                    onChange={e => this.setState({livingplace: e.target.value})}
+                    defaultValue={this.state.livingplace || ''}
                   />
                   <FormFeedback>
                     La ville actuelle doit contenir au moins 3 caractères
@@ -478,14 +572,18 @@ export default class UserManageModal extends Component {
             </Row>
           </Form>
         </ModalBody>
-        <ModalFooter style={{ background: "white" }}>
+        <ModalFooter style={{background: 'white'}}>
           <Button
             className="modal-choice"
             color="primary"
             onClick={this.checkForm}
           >
-            <FontAwesomeIcon icon={faPlus} />
-          </Button>{" "}
+            {this.state.type === 'ADD' ? (
+              <FontAwesomeIcon icon={faPlus} />
+            ) : (
+              <FontAwesomeIcon icon={faPencilAlt} />
+            )}
+          </Button>{' '}
           <Button
             className="modal-choice"
             color="secondary"
@@ -495,6 +593,6 @@ export default class UserManageModal extends Component {
           </Button>
         </ModalFooter>
       </Modal>
-    );
+    )
   }
 }
