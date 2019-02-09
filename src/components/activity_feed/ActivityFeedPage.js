@@ -92,7 +92,7 @@ export default class ActivityFeedPage extends Component {
         token: localStorage.getItem("token"),
         owner_uniq_id: localStorage.getItem("id"),
         content: content.value,
-        tag: this.state.tagValue
+        tag: this.state.trend ? this.state.trend : this.state.tagValue 
       })
     );
     return await response;
@@ -151,7 +151,7 @@ export default class ActivityFeedPage extends Component {
     let content = this.postContent.textarea;
 
     let isContentFilled = _.trim(content.value).length > 0;
-    let isTagFilled = _.trim(this.state.tagValue).length > 0;
+    let isTagFilled = _.trim(this.state.tagValue).length > 0 || this.state.trend;
 
     if (isContentFilled && isTagFilled) {
       this.storePost(content).then(response => {
@@ -159,6 +159,8 @@ export default class ActivityFeedPage extends Component {
 
         if (success && this._isMounted) {
           let posts = this.state.posts;
+          const tag = this.state.tagValue.charAt(0).toUpperCase() + this.state.tagValue.slice(1)
+          const tagTrend = this.state.trend.charAt(0).toUpperCase() + this.state.trend.slice(1)
           let newPost = (
             <Post
               id={postId}
@@ -170,8 +172,7 @@ export default class ActivityFeedPage extends Component {
               ownerRank={ownerRank}
               content={content.value}
               tag={
-                this.state.tagValue.charAt(0).toUpperCase() +
-                this.state.tagValue.slice(1)
+                tagTrend ? tagTrend : tag
               }
               filled={false}
               favorites={0}
@@ -238,6 +239,10 @@ export default class ActivityFeedPage extends Component {
       });
     }
   };
+
+  handlePublishType = () => {
+    !this.state.trend ? this.togglePostModal() : this.handlePublishButtonClick()
+  }
 
   checkEmpty = () => {
     setTimeout(() => {
@@ -472,7 +477,7 @@ export default class ActivityFeedPage extends Component {
                 <span
                   ref="publishButton"
                   className="publish-button"
-                  onClick={this.togglePostModal}
+                  onClick={this.handlePublishType}
                 >
                   <FontAwesomeIcon icon={faPaperPlane} />
                 </span>
