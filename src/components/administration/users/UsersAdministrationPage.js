@@ -34,6 +34,11 @@ import Rank from '../../common/Rank'
 export default class UsersAdministrationPage extends Component {
   _isMounted = false
 
+  constructor(props) {
+    super(props)
+    this.userManageModal = React.createRef()
+  }
+
   state = {
     session: localStorage.getItem('token')
       ? jwtDecode(localStorage.getItem('token'))
@@ -54,7 +59,7 @@ export default class UsersAdministrationPage extends Component {
     let userManageModal = {
       toggle: false,
       type: null,
-      user: null
+      user: null,
     }
 
     if (type === 'ADD') {
@@ -63,29 +68,29 @@ export default class UsersAdministrationPage extends Component {
         type,
       }
     } else {
-      await axios
-        .post(
-          `${config.API_ROOT}/get_user`,
-          qs.stringify({
-            uniq_id: localStorage.getItem('id'),
-            token: localStorage.getItem('token'),
-            user_id: id,
-          })
-        )
-        .then(response => {
-          const {success, user} = response.data
-
-          if (success && this._isMounted) {
-            userManageModal = {
-              toggle: !this.state.userManageModal.toggle,
-              type,
-              user,
-            }
-          }
+      const response = await axios.post(
+        `${config.API_ROOT}/get_user`,
+        qs.stringify({
+          uniq_id: localStorage.getItem('id'),
+          token: localStorage.getItem('token'),
+          user_id: id,
         })
+      )
+
+      const {success, user} = response.data
+
+      if (success && this._isMounted) {
+        userManageModal = {
+          toggle: !this.state.userManageModal.toggle,
+          type,
+          user,
+        }
+      }
     }
 
     this.setState({userManageModal})
+    this.userManageModal.current.resetUser()
+    this.userManageModal.current.setUser()
   }
 
   toggleUserDeleteModal = (id, firstname, lastname) => {
@@ -224,11 +229,11 @@ export default class UsersAdministrationPage extends Component {
   }
 
   render() {
-    console.log(this.state.userManageModal)
     return (
       <div>
         <Navbar />
         <UserManageModal
+          ref={this.userManageModal}
           open={this.state.userManageModal.toggle}
           toggleUserManageModal={this.toggleUserManageModal}
           refreshUsers={e => this.getUsers(this.state.displayType)}
