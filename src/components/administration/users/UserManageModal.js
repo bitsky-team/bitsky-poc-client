@@ -167,7 +167,7 @@ export default class UserManageModal extends Component {
           email: this.state.email,
           password: this.state.password,
           repeatPassword: this.state.repeatPassword,
-          rank: (this.props.type === 'ADD') ? this.getRankNumber() : this.state.rank,
+          rank: (typeof this.state.rank !== 'number') ? this.getRankNumber() : this.state.rank,
           biography: this.state.biography,
           sex: this.state.sex,
           job: this.state.job,
