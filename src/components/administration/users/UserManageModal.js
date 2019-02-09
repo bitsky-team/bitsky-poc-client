@@ -80,10 +80,7 @@ export default class UserManageModal extends Component {
   }
 
   checkRank = async () => {
-    if(typeof this.state.rank === 'number') {
-      const ranks = await this.getRanks()
-    }
-
+    if(typeof this.state.rank === 'number') await this.getRanks()
     return this.state.ranks.includes(this.state.rank)
   }
 
@@ -129,10 +126,10 @@ export default class UserManageModal extends Component {
         this.state.email &&
         this.state.email.match(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,4}$/),
       isRankOk = this.checkRank(),
-      isPasswordOk = (this.state.password && this.state.password.length >= 8) || this.props.type === 'UPDATE',
+      isPasswordOk = (this.state.password && this.state.password.length >= 8) || (this.props.type === 'UPDATE' && !this.state.password),
       isRepeatPasswordOk =
-        (this.state.repeatPassword && this.state.repeatPassword.length >= 8) || this.props.type === 'UPDATE',
-      arePasswordsOk = (this.state.password === this.state.repeatPassword) || this.props.type === 'UPDATE',
+        (this.state.repeatPassword && this.state.repeatPassword.length >= 8) || (this.props.type === 'UPDATE' && !this.state.password),
+      arePasswordsOk = (this.state.password === this.state.repeatPassword) || (this.props.type === 'UPDATE' && !this.state.password),
       isBiographyOk = this.state.biography && this.state.biography.length >= 10,
       isSexOk = this.checkSex(),
       isJobOk = this.state.job && this.state.job.length >= 3,
@@ -235,7 +232,6 @@ export default class UserManageModal extends Component {
       email: null,
       emailError: false,
 
-      ranks: [],
       rank: 'Utilisateur',
       rankError: false,
 
@@ -272,6 +268,7 @@ export default class UserManageModal extends Component {
     const {user} = this.props
 
     if (user) {
+      user.birthdate = user.birthdate.replace(' 00:00:00', '')
       this.setState({...user})
     }
   }
