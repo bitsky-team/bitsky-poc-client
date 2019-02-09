@@ -80,6 +80,8 @@ export default class UsersAdministrationPage extends Component {
       const {success, user} = response.data
 
       if (success && this._isMounted) {
+        user.password = null
+
         userManageModal = {
           toggle: !this.state.userManageModal.toggle,
           type,
