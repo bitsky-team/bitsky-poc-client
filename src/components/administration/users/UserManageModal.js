@@ -162,6 +162,7 @@ export default class UserManageModal extends Component {
         qs.stringify({
           uniq_id: localStorage.getItem('id'),
           token: localStorage.getItem('token'),
+          id: this.props.id ? this.props.id : null,
           lastname: this.state.lastname,
           firstname: this.state.firstname,
           email: this.state.email,
