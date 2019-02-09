@@ -160,7 +160,7 @@ export default class ActivityFeedPage extends Component {
         if (success && this._isMounted) {
           let posts = this.state.posts;
           const tag = this.state.tagValue.charAt(0).toUpperCase() + this.state.tagValue.slice(1)
-          const tagTrend = this.state.trend.charAt(0).toUpperCase() + this.state.trend.slice(1)
+          const tagTrend = this.state.trend ? this.state.trend.charAt(0).toUpperCase() + this.state.trend.slice(1) : null
           let newPost = (
             <Post
               id={postId}
