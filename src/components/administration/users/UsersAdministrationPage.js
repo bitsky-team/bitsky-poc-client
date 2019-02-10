@@ -6,10 +6,6 @@ import {
   Col,
   Table,
   Alert,
-  Button,
-  Modal,
-  ModalBody,
-  ModalFooter,
 } from 'reactstrap'
 import jwtDecode from 'jwt-decode'
 import AdministrationSideMenu from '../common/AdministrationSideMenu'
@@ -18,8 +14,7 @@ import {
   faTh,
   faList,
   faPlus,
-  faSearch,
-  faTimes,
+  faSearch
 } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
 import qs from 'qs'
@@ -29,6 +24,7 @@ import UserTableEntry from './UserTableEntry'
 import _ from 'lodash'
 import UserManageModal from './UserManageModal'
 import UserDeleteModal from './UserDeleteModal'
+import UserSearchModal from './UserSearchModal'
 import Rank from '../../common/Rank'
 
 export default class UsersAdministrationPage extends Component {
@@ -44,6 +40,7 @@ export default class UsersAdministrationPage extends Component {
       ? jwtDecode(localStorage.getItem('token'))
       : null,
     users: [],
+    filteredUsers: [],
     displayType: 'thumbnails',
     userManageModal: {
       toggle: false,
@@ -140,8 +137,12 @@ export default class UsersAdministrationPage extends Component {
     }
   }
 
+  setFilteredUsers = (users) => {
+    this.setState({ filteredUsers: users })
+  }
+
   getUsers = async displayType => {
-    this.setState({users: []})
+    this.setState({users: [], filteredUsers: []})
 
     const response = await axios.post(
       `${config.API_ROOT}/get_allusers`,
@@ -151,7 +152,10 @@ export default class UsersAdministrationPage extends Component {
       })
     )
     const {success, users} = response.data
-    const usersData = success ? users : null
+
+    let usersData = success ? users : null
+
+    usersData.forEach(user => {if(user.password) user.password = null})
 
     let usersList = []
 
@@ -172,6 +176,7 @@ export default class UsersAdministrationPage extends Component {
                 lastname={user.lastname}
                 uniq_id={user.uniq_id}
                 rank={user.rank}
+                {...user}
                 toggleUserDeleteModal={this.toggleUserDeleteModal}
                 toggleUserManageModal={() =>
                   this.toggleUserManageModal('UPDATE', user.id)
@@ -194,6 +199,7 @@ export default class UsersAdministrationPage extends Component {
                 firstname={user.firstname}
                 email={user.email}
                 rank={user.rank}
+                {...user}
                 toggleUserDeleteModal={this.toggleUserDeleteModal}
                 toggleUserManageModal={() =>
                   this.toggleUserManageModal('UPDATE', user.id)
@@ -252,24 +258,12 @@ export default class UsersAdministrationPage extends Component {
           toggleUserDeleteModal={this.toggleUserDeleteModal}
           refreshUsers={e => this.getUsers(this.state.displayType)}
         />
-
-        <Modal
+        <UserSearchModal
           isOpen={this.state.userSearchModal}
           toggle={this.toggleUserSearchModal}
-        >
-          <ModalBody>
-            <p>User Search</p>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              className="modal-choice"
-              color="secondary"
-              onClick={this.toggleUserSearchModal}
-            >
-              <FontAwesomeIcon icon={faTimes} />
-            </Button>
-          </ModalFooter>
-        </Modal>
+          users={this.state.users}
+          setFilteredUsers={this.setFilteredUsers}
+        />
 
         <Container className="main-container">
           <Row>
@@ -347,8 +341,8 @@ export default class UsersAdministrationPage extends Component {
                     </Alert>
                   </div>
                   <Row>
-                    {this.state.displayType === 'list' &&
-                      this.state.users.length > 0 && (
+                    {this.state.displayType === 'list' ?
+                      (this.state.filteredUsers.length > 0 || this.state.users.length > 0) && (
                         <Table>
                           <thead>
                             <tr>
@@ -361,12 +355,10 @@ export default class UsersAdministrationPage extends Component {
                               <th>Action</th>
                             </tr>
                           </thead>
-                          <tbody>{this.state.users}</tbody>
+                          <tbody>{this.state.filteredUsers.length > 0 ? this.state.filteredUsers : this.state.users}</tbody>
                         </Table>
-                      )}
-
-                    {this.state.displayType === 'thumbnails' &&
-                      this.state.users}
+                      ) : this.state.filteredUsers.length > 0 ? this.state.filteredUsers : this.state.users
+                    }
                   </Row>
                 </Container>
               </div>
