@@ -98,7 +98,7 @@ export default class UserSearchModal extends Component {
             <Row>
               <Col>
                 <FormGroup>
-                  <Label for="search">Nom</Label>
+                  <Label for="search">Recherche</Label>
                   <Input
                     type="text"
                     name="search"
@@ -125,7 +125,7 @@ export default class UserSearchModal extends Component {
                     type="select"
                     name="type"
                     id="type"
-                    placeholder="Recherche"
+                    placeholder="Type"
                     className={this.state.typeError ? 'is-invalid' : ''}
                     onChange={e => {
                       this.setState({
