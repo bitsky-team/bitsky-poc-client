@@ -124,7 +124,7 @@ export default class UserManageModal extends Component {
       isFirstnameOk = this.state.firstname && this.state.firstname.length >= 2,
       isEmailOk =
         this.state.email &&
-        this.state.email.match(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,4}$/),
+        this.state.email.match(/^[a-zA-Z]\w+(?:\.[a-zA-Z]\w+){0,3}@[a-zA-Z]\w+(?:\.[a-zA-Z]\w+){1,3}$/),
       isRankOk = this.checkRank(),
       isPasswordOk = (this.state.password && this.state.password.length >= 8) || (this.props.type === 'UPDATE' && !this.state.password),
       isRepeatPasswordOk =
