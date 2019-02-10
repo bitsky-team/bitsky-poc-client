@@ -133,13 +133,16 @@ export default class UserManageModal extends Component {
       isBiographyOk = this.state.biography && this.state.biography.length >= 10,
       isSexOk = this.checkSex(),
       isJobOk = this.state.job && this.state.job.length >= 3,
-      isBirthdateOk =
-        this.state.birthdate && this.state.birthdate.length === 10,
-      isBirthplaceOk =
-        this.state.birthplace && this.state.birthplace.length >= 3,
+      isBirthdateFilled = this.state.birthdate && this.state.birthdate.length === 10,
+      splittedBirthdate = this.state.birthdate.split('-'),
+      isBirthdateCorrect =
+        Number(splittedBirthdate[0]) > 1899 && Number(splittedBirthdate[0]) <= new Date().getFullYear()
+      && Number(splittedBirthdate[1]) > 0 && Number(splittedBirthdate[1]) <= 12
+      && Number(splittedBirthdate[2]) > 0 && Number(splittedBirthdate[2]) <= 31,
+      isBirthdateOk = isBirthdateFilled && isBirthdateCorrect,
+      isBirthplaceOk = this.state.birthplace && this.state.birthplace.length >= 3,
       isRelationshipstatusOk = this.checkRelationshipstatus(),
-      isLivingplaceOk =
-        this.state.livingplace && this.state.livingplace.length >= 3,
+      isLivingplaceOk = this.state.livingplace && this.state.livingplace.length >= 3,
       isFormOk =
         isLastnameOk &&
         isFirstnameOk &&
