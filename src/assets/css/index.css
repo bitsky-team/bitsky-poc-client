@@ -656,6 +656,7 @@ body
   position: absolute;
   top: -15px;
   left: 10px;
+  cursor: pointer;
 }
 
 .post-container .post .delete

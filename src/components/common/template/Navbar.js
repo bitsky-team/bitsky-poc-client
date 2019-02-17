@@ -64,7 +64,7 @@ class Navbar extends Component {
                                 { this.state.session.firstname + ' ' + this.state.session.lastname } <FontAwesomeIcon icon={faCaretDown} />
                             </DropdownToggle>
                             <DropdownMenu right>
-                                <DropdownItem>
+                                <DropdownItem onClick={ () => this.props.history.push('/profile')}>
                                     <FontAwesomeIcon icon={faUser} /> Profil
                                 </DropdownItem>
                                 {AuthService.isAdmin() && 

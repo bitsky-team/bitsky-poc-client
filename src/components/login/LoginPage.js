@@ -37,7 +37,7 @@ export default class LoginPage extends Component {
         localStorage.setItem('avatar', avatar)          
         localStorage.setItem('token', message)
         localStorage.setItem('id', uniq_id)
-        this.props.history.push('/activity_feed')
+        window.location.href = '/activity_feed'
       }else {
         this.loginButton.innerHTML = 'Connexion';
         this.toggleError()

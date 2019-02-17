@@ -135,6 +135,8 @@ export default class RegisterConfirmationPage extends Component {
         if(success) {
           localStorage.setItem('avatar', this.state.cropResult)
           this.props.history.push('/activity_feed')
+        } else {
+          window.location.href='/'
         }
       }else {
         if(!isBiographyFilled) this.displayError('biography')

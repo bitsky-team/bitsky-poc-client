@@ -49,7 +49,7 @@ export default class RegisterPage extends Component {
       if(success) {
         localStorage.setItem('id', uniq_id)
         localStorage.setItem('token', message)
-        this.props.history.push('/register_confirmation')
+        window.location.href = '/register_confirmation'
       }else {
         this.toggleError()
         this.errorMessage.innerHTML = message

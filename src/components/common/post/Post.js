@@ -11,6 +11,7 @@ import axios from 'axios'
 import qs from 'qs'
 import Rank from '../../common/Rank'
 import BestComments from './BestComments'
+import {withRouter} from "react-router";
 
 class Post extends Component {
 
@@ -39,13 +40,13 @@ class Post extends Component {
         if(this.state.favoriteFilled) {
             this.removeFavorite().then(() => {
                 this.setState({favorites: this.state.favorites - 1})
-                this.props.refreshTrends()
+                if(this.props.refreshTrends) this.props.refreshTrends()
                 this.postComments.current.postViewer.current.toggleFavorite()
             })
         }else {
             this.addFavorite().then(() => {
                 this.setState({favorites: this.state.favorites + 1})
-                this.props.refreshTrends()
+                if(this.props.refreshTrends) this.props.refreshTrends()
                 this.postComments.current.postViewer.current.toggleFavorite()
             })
         }
@@ -125,7 +126,11 @@ class Post extends Component {
             <div className="post-container">
                 <div id={"post-"+this.props.id} className="post">
                     {this.isOwner()}
-                    <img src={this.props.ownerAvatar} alt="Avatar" />
+                    <img
+                      src={this.props.ownerAvatar}
+                      alt="Avatar"
+                      onClick={() => this.props.history.push(`/profile/${this.props.ownerId}`)}
+                    />
                     <div className="title">
                         <h4>{this.props.ownerName}</h4>
                         <small><Rank id={this.props.ownerRank} /></small>
@@ -163,4 +168,4 @@ class Post extends Component {
     
 }
 
-export default Post
+export default withRouter(Post)

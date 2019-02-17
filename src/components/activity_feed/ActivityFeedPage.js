@@ -172,8 +172,9 @@ export default class ActivityFeedPage extends Component {
           let newPost = (
             <Post
               id={postId}
-              key={'post-' + postId}
-              ownerAvatar={localStorage.getItem('avatar')}
+              key={"post-" + postId}
+              ownerId={this.state.session.id}
+              ownerAvatar={localStorage.getItem("avatar")}
               ownerName={
                 this.state.session.firstname + ' ' + this.state.session.lastname
               }
@@ -280,7 +281,8 @@ export default class ActivityFeedPage extends Component {
           statePosts.push(
             <Post
               id={post.id}
-              key={'post-' + post.id}
+              key={"post-" + post.id}
+              ownerId={post.owner.id}
               ownerAvatar={post.owner.avatar}
               ownerName={post.owner.firstname + ' ' + post.owner.lastname}
               ownerRank={post.owner.rank}
