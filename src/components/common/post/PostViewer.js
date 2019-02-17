@@ -36,7 +36,7 @@ export default class PostViewer extends React.Component  {
                 this.setComments()
                 this.setCommentsCount()
                 this.setScore()
-                this.props.refreshTrends()
+                if(this.props.refreshTrends) this.props.refreshTrends()
                 this.props.toggleBestComments()
             }
     
@@ -103,14 +103,14 @@ export default class PostViewer extends React.Component  {
             this.removeFavorite().then(() => {
                 this.setState({favorites: this.state.favorites - 1})
                 this.setScore()
-                this.props.refreshTrends()
+                if(this.props.refreshTrends) this.props.refreshTrends()
                 this.props.toggleFavoriteFromActivityFeed()
             })
         }else {
             this.addFavorite().then(() => {
                 this.setState({favorites: this.state.favorites + 1})
                 this.setScore()
-                this.props.refreshTrends()
+                if(this.props.refreshTrends) this.props.refreshTrends()
                 this.props.toggleFavoriteFromActivityFeed()
             })
         }
@@ -217,7 +217,7 @@ export default class PostViewer extends React.Component  {
             )
 
             this.setState({ comments: stateComments })
-            this.props.refreshTrends()
+            if(this.props.refreshTrends) this.props.refreshTrends()
             this.setScore()
             this.increaseCommentCounter()
             this.props.refreshBestComments()
@@ -254,7 +254,7 @@ export default class PostViewer extends React.Component  {
             this.decreaseCommentCounter()
             this.setState({ comments: this.state.comments.filter(comment => comment.props.id !== id)})
             this.setScore()
-            this.props.refreshTrends()
+            if(this.props.refreshTrends) this.props.refreshTrends()
             this.props.refreshBestComments()
             this.props.adjustBestComments()
         }
@@ -325,7 +325,11 @@ export default class PostViewer extends React.Component  {
                                     <div className="score">
                                         <span>{ this.state.score }</span>
                                     </div>
-                                    <img src={this.state.post.owner.avatar} alt="Avatar" />
+                                    <img
+                                      src={this.state.post.owner.avatar}
+                                      alt="Avatar"
+                                      onClick={() => this.props.history.push(`/profile/${this.state.post.owner.id}`)}
+                                    />
                                     <div className="title">
                                         <h4>{this.state.post.owner.firstname + " " + this.state.post.owner.lastname}</h4>
                                         <small><Rank id={this.state.post.owner.rank} /></small>
