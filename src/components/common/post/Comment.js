@@ -21,6 +21,8 @@ class Comment extends Component {
       : null,
     favorites: this.props.favorites,
     favoriteFilled: false,
+    date: this.props.date,
+    displayedDate: DateService.timeSince(this.props.date)
   }
 
   isOwner = () => {
@@ -113,6 +115,27 @@ class Comment extends Component {
     }
   }
 
+  getDate = () => {
+    this.interval = setInterval(() => {
+      let dateTime = new Date(this.state.date)
+      const date =
+        dateTime.getFullYear() +
+        '-' +
+        (dateTime.getMonth() + 1) +
+        '-' +
+        dateTime.getDate()
+      const time =
+        dateTime.getHours() +
+        ':' +
+        dateTime.getMinutes() +
+        ':' +
+        (dateTime.getSeconds() + 1)
+      dateTime = date + ' ' + time
+    
+      this.setState({dateTime, displayedDate: DateService.timeSince(dateTime)})
+    }, 1000)
+  }
+  
   componentDidMount = () => {
     this._isMounted = true
 
@@ -123,11 +146,13 @@ class Comment extends Component {
       this.authorBox.style.left = '-' + left + 'px'
     }
 
+    this.getDate()
     this.checkFavorite()
   }
 
   componentWillUnmount = () => {
     this._isMounted = false
+    clearInterval(this.interval)
   }
 
   render = () => {
@@ -158,7 +183,7 @@ class Comment extends Component {
           </span>
           <span className="date">
             <FontAwesomeIcon icon={faClock} />{' '}
-            {DateService.timeSince(this.props.date)}
+            {this.state.displayedDate}
           </span>
         </div>
       </div>

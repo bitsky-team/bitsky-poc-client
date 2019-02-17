@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { withRouter } from 'react-router-dom'
+import {Link, withRouter} from 'react-router-dom'
 import { Button } from 'reactstrap'
 import _ from 'lodash'
 import PostViewer from '../common/post/PostViewer'
@@ -27,7 +27,7 @@ class Trend extends Component {
 
     render() {
         const {name, score, author, post_id} = this.props
-
+      
         return (
             <div>
                 <div className="trend-title">
@@ -39,7 +39,7 @@ class Trend extends Component {
 
                 <div className="trend-content" onClick={() => this.postViewer.current.toggle()}>
                     <p dangerouslySetInnerHTML={this.getContent()} />
-                    <small>Par <a href="/profile/USER">{author}</a></small>
+                  <small>Par <Link to={`/profile/${author.id}`}>{author.name}</Link></small>
                 </div>
                 <Button color="info" className="see-more-button" onClick={this.filterActivityFeed}>Voir plus</Button>{' '}
 
