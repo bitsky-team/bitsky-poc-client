@@ -328,7 +328,7 @@ export default class PostViewer extends React.Component  {
                                     <img
                                       src={this.state.post.owner.avatar}
                                       alt="Avatar"
-                                      onClick={() => this.props.history.push(`/profile/${this.state.post.owner.id}`)}
+                                      onClick={() => window.location.href = `/profile/${this.state.post.owner.id}`}
                                     />
                                     <div className="title">
                                         <h4>{this.state.post.owner.firstname + " " + this.state.post.owner.lastname}</h4>

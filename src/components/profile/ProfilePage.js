@@ -25,6 +25,7 @@ import {config} from '../../config'
 import qs from 'qs'
 import {toast} from 'react-toastify'
 import Post from '../common/post/Post'
+import {withRouter} from 'react-router'
 
 const LoaderContainer = styled(Container)`
   display: flex;
@@ -99,120 +100,96 @@ const AboutContainer = styled.p`
   padding: 10px;
   background-color: #f5f7f8;
   border-radius: 5px;
-  margin: ${({margin}) => margin ? '0 0 0 30px' : 0};
-  width: ${({margin}) => margin ? '100%' : 'initial'};
+  margin: ${({margin}) => (margin ? '0 0 0 30px' : 0)};
+  width: ${({margin}) => (margin ? '100%' : 'initial')};
 `
 const AboutItem = styled.div`
   margin-top: 15px;
 `
-
 const FavoritesTrendsTitle = styled.div`
   display: flex;
   margin-top: 10px;
   align-items: center;
-  
+
   small {
     color: #b7b7b7;
     font-size: 14px;
   }
-  
+
   hr {
     flex: 1;
     margin-left: 10px;
   }
 `
-const FavoritesTrendsContainer = styled.div`
-  margin-top: 10px;
-`
+const FavoritesTrendsContainer = styled.div``
 const FavoriteTrend = styled.h5`
-    color: rgb(131,178,224);
-    font-size: 16px;
+  color: rgb(131, 178, 224);
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+
+  :hover {
+    transform: translateX(5px);
+  }
 `
 
 const ProfilePage = props => {
-  const [session] = useState(jwtDecode(localStorage.getItem('token')))
+  const [session] = (localStorage.getItem('token')) ? useState(jwtDecode(localStorage.getItem('token'))) : useState(null)
   const [user, setUser] = useState(null)
-  const [posts, setPosts] = useState(null)
+  const [userPosts, setPosts] = useState(null)
   const [favoritesTrends, setFavoritesTrends] = useState(null)
   const [tab, setTab] = useState(1)
 
   useEffect(() => {
-    getUser().then(response => {
-      const {success, user} = response.data
+    Promise.all([getUser(), getPosts(), getFavoritesTrends()]).then(
+      ([userResponse, postsResponse, favoritesTrendsResponse]) => {
+        const {success: userSuccess, user} = userResponse.data
+        const {success: postsSuccess, posts} = postsResponse.data
+        const {
+          success: favoritesTrendsSuccess,
+          favoritesTrends,
+        } = favoritesTrendsResponse.data
+        const sortArray = (a, b) => {
+          if (a.count > b.count) return -1
+          if (a.count < b.count) return 1
+          return 0
+        }
 
-      if (success) {
-        setUser(user)
-      } else {
-        toast.error('Utilisateur introuvable !', {
-          autoClose: 5000,
-          position: toast.POSITION.BOTTOM_RIGHT,
-        })
-      }
-    })
-    getPosts().then(response => {
-      const {success, posts} = response.data
+        if (userSuccess && postsSuccess && favoritesTrendsSuccess) {
+          // Setting user
+          setUser(user)
 
-      if (success) {
-        let statePosts = []
+          // Setting posts
+          setPosts(convertPosts(posts))
 
-        posts.forEach(post => {
-          statePosts.push(
-            <Post
-              id={post.id}
-              key={'post-' + post.id}
-              ownerId={post.owner.id}
-              ownerAvatar={post.owner.avatar}
-              ownerName={post.owner.firstname + ' ' + post.owner.lastname}
-              ownerRank={post.owner.rank}
-              content={post.content}
-              tag={post.tag}
-              filled={false}
-              favorites={post.favorites}
-              comments={post.comments}
-              date={post.created_at}
-              isOwner={
-                post.owner.firstname + ' ' + post.owner.lastname ===
-                  session.firstname + ' ' + session.lastname ||
-                session.rank === 2
-              }
-              handleDeleteButtonClick={handleDeleteButtonClick}
-            />
-          )
-        })
+          // Setting trends
+          const stateTrends = []
+          favoritesTrends.sort(sortArray)
+          favoritesTrends.slice(0, 3).forEach(favoriteTrend => {
+            stateTrends.push(
+              <FavoriteTrend
+                key={favoriteTrend.id}
+                onClick={() =>
+                  props.history.push('/activity_feed', {
+                    trend: favoriteTrend.name,
+                  })
+                }
+              >
+                {favoriteTrend.name}
+              </FavoriteTrend>
+            )
+          })
+          setFavoritesTrends(stateTrends)
+        } else {
+          console.log(userSuccess, postsSuccess, favoritesTrendsSuccess)
 
-        setPosts(statePosts)
-      } else {
-        toast.error('Impossible de charger les posts !', {
-          autoClose: 5000,
-          position: toast.POSITION.BOTTOM_RIGHT,
-        })
+          toast.error('Erreur lors du chargement du profil', {
+            autoClose: 5000,
+            position: toast.POSITION.BOTTOM_RIGHT,
+          })
+        }
       }
-    })
-    getFavoritestrends().then(response => {
-      const {success, favoritesTrends} = response.data
-      const sortArray = (a, b) => {
-        if (a.count > b.count) return -1;
-        if (a.count < b.count) return 1;
-        return 0;
-      }
-      
-      if (success) {
-        const stateTrends = []
-  
-        favoritesTrends.sort(sortArray)
-        
-        favoritesTrends.forEach(favoriteTrend => {
-          stateTrends.push(<FavoriteTrend key={favoriteTrend.id}>{favoriteTrend.name}</FavoriteTrend>)
-        })
-        
-        setFavoritesTrends(stateTrends)
-      } else {
-        toast.error('Impossible de charger les sujets préférés !', {
-          autoClose: 5000,
-          position: toast.POSITION.BOTTOM_RIGHT,
-        })
-      }
-    })
+    )
   }, [props.match.params.id])
 
   const getUser = async () => {
@@ -239,9 +216,36 @@ const ProfilePage = props => {
       })
     )
   }
-  const getFavoritestrends = async () => {
+  const convertPosts = posts => {
+    let statePosts = []
+    posts.forEach(post => {
+      statePosts.push(
+        <Post
+          id={post.id}
+          key={'post-' + post.id}
+          ownerId={post.owner.id}
+          ownerAvatar={post.owner.avatar}
+          ownerName={post.owner.firstname + ' ' + post.owner.lastname}
+          ownerRank={post.owner.rank}
+          content={post.content}
+          tag={post.tag}
+          filled={false}
+          favorites={post.favorites}
+          comments={post.comments}
+          date={post.created_at}
+          isOwner={
+            post.owner.firstname + ' ' + post.owner.lastname ===
+              session.firstname + ' ' + session.lastname || session.rank === 2
+          }
+          handleDeleteButtonClick={handleDeleteButtonClick}
+        />
+      )
+    })
+    return statePosts
+  }
+  const getFavoritesTrends = async () => {
     const userId = props.match.params.id || session.id
-  
+
     return axios.post(
       `${config.API_ROOT}/get_favoritestrends`,
       qs.stringify({
@@ -255,27 +259,28 @@ const ProfilePage = props => {
     const response = await axios.post(
       `${config.API_ROOT}/remove_post`,
       qs.stringify({
-        uniq_id: localStorage.getItem("id"),
-        token: localStorage.getItem("token"),
-        post_id: id
+        uniq_id: localStorage.getItem('id'),
+        token: localStorage.getItem('token'),
+        post_id: id,
       })
-    );
-    return await response;
+    )
+    return await response
   }
-  const handleDeleteButtonClick = e => {
-    e.preventDefault()
+  const handleDeleteButtonClick = async e => {
     let element = e.target.parentElement.parentElement
     let str_id = element.id
     let id = str_id.split('-')[1]
-    let statePosts = posts
-    statePosts = statePosts.filter(p => {
-      return p.key !== str_id
-    })
+    let posts = await getPosts()
+    posts = posts.data.posts
 
     deletePost(id).then(response => {
       const {success} = response.data
       if (success) {
-        setPosts(statePosts)
+        setPosts(
+          convertPosts(posts).filter(p => {
+            return p.key !== str_id
+          })
+        )
         toast.success('La publication a été supprimée !', {
           autoClose: 5000,
           position: toast.POSITION.BOTTOM_RIGHT,
@@ -286,7 +291,11 @@ const ProfilePage = props => {
   }
   const getDate = () => {
     const date = new Date(user.birthdate)
-    return `${date.getDate()}/${(date.getMonth() + 1 < 10) ? '0' + (date.getMonth() + 1) : date.getMonth() + 1}/${date.getFullYear()}`
+    return `${date.getDate()}/${
+      date.getMonth() + 1 < 10
+        ? '0' + (date.getMonth() + 1)
+        : date.getMonth() + 1
+    }/${date.getFullYear()}`
   }
   const toggle = nextTab => {
     if (tab !== nextTab) {
@@ -294,7 +303,7 @@ const ProfilePage = props => {
     }
   }
 
-  if (!user) {
+  if (!user || !userPosts || !favoritesTrends) {
     return (
       <Fragment>
         <Navbar />
@@ -337,10 +346,10 @@ const ProfilePage = props => {
                       </Button>
                     )}
                   </LeftColumnContainer>
-                  
+
                   <FavoritesTrendsTitle>
                     <small>Sujets préférés</small>
-                    <hr/>
+                    <hr />
                   </FavoritesTrendsTitle>
                   <FavoritesTrendsContainer>
                     {favoritesTrends}
@@ -384,8 +393,8 @@ const ProfilePage = props => {
                       <PostsRow>
                         <Col sm="12">
                           <PostsContainer className="posts-container">
-                            {posts && posts.length > 0 ? (
-                              <div>{posts}</div>
+                            {userPosts && userPosts.length > 0 ? (
+                              <div>{userPosts}</div>
                             ) : (
                               <NoPosts>
                                 {user.firstname} n'a jamais publié.
@@ -396,28 +405,20 @@ const ProfilePage = props => {
                       </PostsRow>
                     </TabPane>
                     <TabPane tabId={2}>
-                      <Row style={{ padding: '10px' }}>
+                      <Row style={{padding: '10px'}}>
                         <DescriptionContainer sm="12">
-                          <strong>
-                            Biographie
-                          </strong>
+                          <strong>Biographie</strong>
                           <AboutContainer margin>
                             {user.biography}
                           </AboutContainer>
                         </DescriptionContainer>
                         <Col sm="6">
                           <AboutItem>
-                            <strong>
-                              Lieu de naissance
-                            </strong>
-                            <AboutContainer>
-                              {user.birthplace}
-                            </AboutContainer>
+                            <strong>Lieu de naissance</strong>
+                            <AboutContainer>{user.birthplace}</AboutContainer>
                           </AboutItem>
                           <AboutItem>
-                            <strong>
-                              Situation amoureuse
-                            </strong>
+                            <strong>Situation amoureuse</strong>
                             <AboutContainer>
                               {user.relationshipstatus}
                             </AboutContainer>
@@ -425,20 +426,12 @@ const ProfilePage = props => {
                         </Col>
                         <Col sm="6">
                           <AboutItem>
-                            <strong>
-                              Genre
-                            </strong>
-                            <AboutContainer>
-                              {user.sex}
-                            </AboutContainer>
+                            <strong>Genre</strong>
+                            <AboutContainer>{user.sex}</AboutContainer>
                           </AboutItem>
                           <AboutItem>
-                            <strong>
-                              Date de naissance
-                            </strong>
-                            <AboutContainer>
-                              {getDate()}
-                            </AboutContainer>
+                            <strong>Date de naissance</strong>
+                            <AboutContainer>{getDate()}</AboutContainer>
                           </AboutItem>
                         </Col>
                       </Row>
@@ -454,4 +447,4 @@ const ProfilePage = props => {
   )
 }
 
-export default ProfilePage
+export default withRouter(ProfilePage)
