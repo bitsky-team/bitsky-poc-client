@@ -524,11 +524,7 @@ export default class ActivityFeedPage extends Component {
                   </Button>
                 </div>
                 <hr />
-                <div
-                  ref={trendsContainer =>
-                    (this.trendsContainer = trendsContainer)
-                  }
-                >
+                <div style={{display: "block !important"}}>
                   <div>{this.state.trends}</div>
                 </div>
               </div>
