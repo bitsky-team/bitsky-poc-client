@@ -72,7 +72,7 @@ class Navbar extends Component {
                                         <FontAwesomeIcon icon={faUnlockAlt} /> Administration
                                     </DropdownItem>
                                 }
-                                <DropdownItem>
+                                <DropdownItem onClick={ () => this.props.history.push('/user_preferences') }>
                                     <FontAwesomeIcon icon={faUserCog} /> Préférences
                                 </DropdownItem>
                                 <DropdownItem divider />

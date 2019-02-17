@@ -10,10 +10,15 @@ import RegisterConfirmationPage from './components/register/RegisterConfirmation
 import ProfilePage from './components/profile/ProfilePage'
 
 // Services
-import AuthService from './services/AuthService'
 import AdministrationPage from './components/administration/AdministrationPage'
 import UsersAdministrationPage from './components/administration/users/UsersAdministrationPage'
 import UserDocumentationPage from './components/docs/user/UserDocumentationPage'
+import UserPreferencesPage from './components/preferences/UserPreferencesPage'
+import UserPreferencesSecurityPage from './components/preferences/common/UserPreferencesSecurityPage'
+import UserPreferencesAccountPage from './components/preferences/common/UserPreferencesAccountPage'
+
+// Services
+import AuthService from './services/AuthService'
 
 const PrivateRoute = ({component: Component, authed, ...rest}) => {
   return (
@@ -32,8 +37,9 @@ const PrivateRoute = ({component: Component, authed, ...rest}) => {
 
 class Router extends Component {
   state = {
-    authenticated:
-      !!(localStorage.getItem('token') && localStorage.getItem('id')),
+    authenticated: !!(
+      localStorage.getItem('token') && localStorage.getItem('id')
+    ),
   }
 
   componentWillMount = async () => {
@@ -98,6 +104,25 @@ class Router extends Component {
           authed={this.state.authenticated}
           path="/admin_manage_users"
           component={UsersAdministrationPage}
+        />
+
+        <PrivateRoute
+          exact
+          authed={this.state.authenticated}
+          path="/user_preferences"
+          component={UserPreferencesPage}
+        />
+        <PrivateRoute
+          exact
+          authed={this.state.authenticated}
+          path="/user_security"
+          component={UserPreferencesSecurityPage}
+        />
+        <PrivateRoute
+          exact
+          authed={this.state.authenticated}
+          path="/user_account"
+          component={UserPreferencesAccountPage}
         />
       </div>
     )
