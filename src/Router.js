@@ -14,8 +14,8 @@ import AdministrationPage from './components/administration/AdministrationPage'
 import UsersAdministrationPage from './components/administration/users/UsersAdministrationPage'
 import UserDocumentationPage from './components/docs/user/UserDocumentationPage'
 import UserPreferencesPage from './components/preferences/UserPreferencesPage'
-import UserPreferencesSecurityPage from './components/preferences/common/UserPreferencesSecurityPage'
-import UserPreferencesAccountPage from './components/preferences/common/UserPreferencesAccountPage'
+import UserPreferencesSecurityPage from './components/preferences/UserPreferencesSecurityPage'
+import UserPreferencesAccountPage from './components/preferences/UserPreferencesAccountPage'
 
 // Services
 import AuthService from './services/AuthService'

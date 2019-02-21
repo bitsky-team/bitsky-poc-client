@@ -1,7 +1,7 @@
 import React, {Fragment} from 'react'
 import {Container, Row, Col} from 'reactstrap'
-import Navbar from '../../common/template/Navbar'
-import UserPreferencesSideMenu from '../common/UserPreferencesSideMenu'
+import Navbar from '../common/template/Navbar'
+import UserPreferencesSideMenu from './common/UserPreferencesSideMenu'
 
 const UserPreferencesAccountPage = () => {
   return (
