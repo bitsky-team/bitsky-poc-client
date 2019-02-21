@@ -1,4 +1,4 @@
-import React, {Fragment, useState, useEffect} from 'react'
+import React, {Fragment, Component} from 'react'
 import {
   Container,
   Row,
@@ -21,71 +21,65 @@ import qs from 'qs'
 import {toast} from 'react-toastify'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faPencilAlt} from '@fortawesome/free-solid-svg-icons'
+import AuthService from '../../services/AuthService'
+import {withRouter} from 'react-router'
 
-const UserPreferencesPage = () => {
-  const UserUpdateContainer = styled.div`
-    text-align: left !important;
-  `
+const UserUpdateContainer = styled.div`
+  &&& {
+    text-align: left;
+  }
+`
 
-  const LoaderContainer = styled(Container)`
-    display: flex;
-    justify-content: center;
-    width: 50vw !important;
-    * {
-      flex: 1;
-    }
-  `
+const LoaderContainer = styled(Container)`
+  display: flex;
+  justify-content: center;
+  width: 50vw !important;
+  * {
+    flex: 1;
+  }
+`
 
-  const UpdateButton = styled(Button)`
-    margin: 0px 15px;
-  `
+const UpdateButton = styled(Button)`
+  margin: 0px 15px;
+`
 
-  const [session] = useState(jwtDecode(localStorage.getItem('token')))
-  const [user, setUser] = useState(null)
+class UserPreferencesPage extends Component {
+  state = {
+    session: jwtDecode(localStorage.getItem('token')),
+    user: null,
+    ranks: [],
+    lastname: null,
+    lastnameError: false,
+    firstname: null,
+    firstnameError: false,
+    email: null,
+    emailError: false,
+    rank: 'Utilisateur',
+    rankError: false,
+    biography: null,
+    biographyError: false,
+    sex: 'Homme',
+    sexError: false,
+    job: null,
+    jobError: false,
+    birthdate: null,
+    birthdateError: false,
+    birthplace: null,
+    birthplaceError: false,
+    relationshipstatus: 'Célibataire',
+    relationshipstatusError: false,
+    livingplace: null,
+    livingplaceError: false,
+  }
 
-  const [ranks, setRanks] = useState([])
-
-  const [lastname, setLastname] = useState(null)
-  const [lastnameError, setLastnameError] = useState(false)
-
-  const [firstname, setFirstname] = useState(null)
-  const [firstnameError, setFirstnameError] = useState(false)
-
-  const [email, setEmail] = useState(null)
-  const [emailError, setEmailError] = useState(false)
-
-  const [rank, setRank] = useState('Utilisateur')
-  const [rankError, setRankError] = useState(false)
-
-  const [biography, setBiography] = useState(null)
-  const [biographyError, setBiographyError] = useState(false)
-
-  const [sex, setSex] = useState('Homme')
-  const [sexError, setSexError] = useState(false)
-
-  const [job, setJob] = useState(null)
-  const [jobError, setJobError] = useState(false)
-
-  const [birthdate, setBirthdate] = useState(null)
-  const [birthdateError, setBirthdateError] = useState(false)
-
-  const [birthplace, setBirthplace] = useState(null)
-  const [birthplaceError, setBirthplaceError] = useState(false)
-
-  const [relationshipstatus, setRelationshipStatus] = useState('Célibataire')
-  const [relationshipstatusError, setRelationshipStatusError] = useState(false)
-
-  const [livingplace, setLivingplace] = useState(null)
-  const [livingplaceError, setLivingplaceError] = useState(false)
-
-  const getBirthdate = () => {
-    if (birthdate) {
-      return birthdate.replace(' 00:00:00', '')
+  getBirthdate = () => {
+    if (this.state.birthdate) {
+      return this.state.birthdate.replace(' 00:00:00', '')
     }
   }
 
-  const getUser = () => {
-    const userId = session.id
+  getUser = () => {
+    const userId = this.state.session.id
 
     return axios.post(
       `${config.API_ROOT}/get_user`,
@@ -97,23 +91,25 @@ const UserPreferencesPage = () => {
     )
   }
 
-  const prepareUser = () => {
-    getUser().then(response => {
+  prepareUser = () => {
+    this.getUser().then(response => {
       const {success, user} = response.data
 
       if (success) {
-        setUser(user)
-        setLastname(user.lastname)
-        setFirstname(user.firstname)
-        setEmail(user.email)
-        setRank(user.rank)
-        setBiography(user.biography)
-        setSex(user.sex)
-        setJob(user.job)
-        setBirthdate(user.birthdate)
-        setBirthplace(user.birthplace)
-        setRelationshipStatus(user.relationshipstatus)
-        setLivingplace(user.livingplace)
+        this.setState({
+          user,
+          lastname: user.lastname,
+          firstname: user.firstname,
+          email: user.email,
+          rank: user.rank,
+          biography: user.biography,
+          sex: user.sex,
+          job: user.job,
+          birthdate: user.birthdate,
+          birthplace: user.birthplace,
+          relationshipstatus: user.relationshipstatus,
+          livingplace: user.livingplace,
+        })
       } else {
         toast.error('Erreur lors du chargement des informations du profil', {
           autoClose: 5000,
@@ -123,7 +119,7 @@ const UserPreferencesPage = () => {
     })
   }
 
-  const getRanks = async () => {
+  getRanks = async () => {
     const response = await axios.get(`${config.API_ROOT}/get_ranks`)
     const {success, ranks} = response.data
     if (success) {
@@ -133,59 +129,65 @@ const UserPreferencesPage = () => {
         stateRanks.push(rank.name)
       })
 
-      setRanks(stateRanks)
+      this.setState({ranks: stateRanks})
     }
   }
 
-  const getRankNumber = () => {
-    return ranks.findIndex(actualRank => actualRank === rank) + 1
+  getRankNumber = () => {
+    return (
+      this.state.ranks.findIndex(actualRank => actualRank === this.state.rank) +
+      1
+    )
   }
 
-  const checkRank = async () => {
-    if (typeof rank === 'number') await getRanks()
-    return ranks.includes(rank)
+  checkRank = async () => {
+    if (typeof this.state.rank === 'number') await this.getRanks()
+    return this.state.ranks.includes(this.state.rank)
   }
 
-  const checkSex = () => {
-    return ['Homme', 'Femme', 'Autre'].includes(sex)
+  checkSex = () => {
+    return ['Homme', 'Femme', 'Autre'].includes(this.state.sex)
   }
 
-  const checkRelationshipstatus = () => {
+  checkRelationshipstatus = () => {
     return [
       'Célibataire',
       'En couple',
       'Marié(e)',
       'Veuf(ve)',
       'Non précisé',
-    ].includes(relationshipstatus)
+    ].includes(this.state.relationshipstatus)
   }
 
-  const checkForm = () => {
-    setLastnameError(false)
-    setFirstnameError(false)
-    setEmailError(false)
-    setRankError(false)
-    setBiographyError(false)
-    setSexError(false)
-    setJobError(false)
-    setBirthdateError(false)
-    setBirthplaceError(false)
-    setRelationshipStatusError(false)
-    setLivingplaceError(false)
+  checkForm = () => {
+    this.setState({
+      lastnameError: false,
+      firstnameError: false,
+      emailError: false,
+      rankError: false,
+      biographyError: false,
+      sexError: false,
+      jobError: false,
+      birthdateError: false,
+      birthplaceError: false,
+      relationshipstatusERror: false,
+      livingplaceError: false,
+    })
 
-    let isLastnameOk = lastname && lastname.length >= 2,
-      isFirstnameOk = firstname && firstname.length >= 2,
+    let isLastnameOk = this.state.lastname && this.state.lastname.length >= 2,
+      isFirstnameOk = this.state.firstname && this.state.firstname.length >= 2,
       isEmailOk =
-        email &&
-        email.match(
+        this.state.email &&
+        this.state.email.match(
           /^[a-zA-Z]\w+(?:\.[a-zA-Z]\w+){0,3}@[a-zA-Z]\w+(?:\.[a-zA-Z]\w+){1,3}$/
         ),
-      isRankOk = checkRank(),
-      isBiographyOk = biography && biography.length >= 10,
-      isSexOk = checkSex(),
-      isJobOk = job && job.length >= 3,
-      isBirthdateFilled = birthdate && birthdate.length === 10,
-      splittedBirthdate = birthdate.split('-'),
+      isRankOk = this.checkRank(),
+      isBiographyOk = this.state.biography && this.state.biography.length >= 10,
+      isSexOk = this.checkSex(),
+      isJobOk = this.state.job && this.state.job.length >= 3,
+      isBirthdateFilled =
+        this.state.birthdate && this.state.birthdate.length === 10,
+      splittedBirthdate = this.state.birthdate.split('-'),
       isBirthdateCorrect =
         Number(splittedBirthdate[0]) > 1899 &&
         Number(splittedBirthdate[0]) <= new Date().getFullYear() &&
@@ -194,9 +196,11 @@ const UserPreferencesPage = () => {
         Number(splittedBirthdate[2]) > 0 &&
         Number(splittedBirthdate[2]) <= 31,
       isBirthdateOk = isBirthdateFilled && isBirthdateCorrect,
-      isBirthplaceOk = birthplace && birthplace.length >= 3,
-      isRelationshipstatusOk = checkRelationshipstatus(),
-      isLivingplaceOk = livingplace && livingplace.length >= 3,
+      isBirthplaceOk =
+        this.state.birthplace && this.state.birthplace.length >= 3,
+      isRelationshipstatusOk = this.checkRelationshipstatus(),
+      isLivingplaceOk =
+        this.state.livingplace && this.state.livingplace.length >= 3,
       isFormOk =
         isLastnameOk &&
         isFirstnameOk &&
@@ -211,374 +215,452 @@ const UserPreferencesPage = () => {
         isLivingplaceOk
 
     if (isFormOk) {
-      updateUser()
+      this.updateUser()
     }
   }
 
-  const updateUser = async () => {
+  updateUser = async () => {
     const response = await axios.post(
       `${config.API_ROOT}/create_user`,
       qs.stringify({
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
-        user_id: user.id ? user.id : null,
-        lastname,
-        firstname,
-        email,
-        rank: typeof rank !== 'number' ? getRankNumber() : rank,
-        biography,
-        sex,
-        job,
-        birthdate,
-        birthplace,
-        relationshipstatus,
-        livingplace,
+        user_id: this.state.user.id ? this.state.user.id : null,
+        lastname: this.state.lastname,
+        firstname: this.state.firstname,
+        email: this.state.email,
+        rank:
+          typeof this.state.rank !== 'number'
+            ? this.getRankNumber()
+            : this.state.rank,
+        biography: this.state.biography,
+        sex: this.state.sex,
+        job: this.state.job,
+        birthdate: this.state.birthdate,
+        birthplace: this.state.birthplace,
+        relationshipstatus: this.state.relationshipstatus,
+        livingplace: this.state.livingplace,
         type: 'UPDATE',
         password: null,
         repeatPassword: null,
-        avatar: user.avatar
+        avatar: this.state.user.avatar,
       })
     )
+
+    if (response.data.success) {
+      AuthService.clearStorage()
+      window.location.href = '/login'
+    } else {
+      toast.error('Impossible de modifier vos informations !', {
+        autoClose: 5000,
+        position: toast.POSITION.BOTTOM_RIGHT,
+      })
+    }
   }
 
-  useEffect(() => {
-    prepareUser()
-    console.log('slt')
-  }, [])
+  componentDidMount() {
+    this.prepareUser()
+  }
 
-  if (!user) {
+  render() {
+    if (!this.state.user) {
+      return (
+        <Fragment>
+          <Navbar />
+          <LoaderContainer className="main-container">
+            <Alert
+              color="info"
+              className="info-message"
+              style={{display: 'block', height: 'fit-content'}}
+            >
+              Chargement...
+            </Alert>
+          </LoaderContainer>
+        </Fragment>
+      )
+    }
+
     return (
       <Fragment>
         <Navbar />
-        <LoaderContainer className="main-container">
-          <Alert
-            color="info"
-            className="info-message"
-            style={{display: 'block', height: 'fit-content'}}
-          >
-            Chargement...
-          </Alert>
-        </LoaderContainer>
-      </Fragment>
-    )
-  }
-
-  return (
-    <Fragment>
-      <Navbar />
-      <Container>
-        <Row>
-          <Col>
-            <Container className="main-container">
-              <Row>
-                <Col md="3" className="no-margin-left no-margin-right">
-                  <UserPreferencesSideMenu />
-                </Col>
-                <Col md="9" className="no-margin-left no-margin-right">
-                  <Container>
-                    <Row>
-                      <Col>
-                        <UserUpdateContainer className="user-container margin-top-10">
-                          <h4 style={{marginBottom: '15px'}}>
-                            Modifier mes informations
-                          </h4>
-                          <Form>
-                            <Row>
-                              <Col md={6}>
-                                <FormGroup>
-                                  <Label for="userUpdateLastname">Nom</Label>
+        <Container>
+          <Row>
+            <Col>
+              <Container className="main-container">
+                <Row>
+                  <Col md="3" className="no-margin-left no-margin-right">
+                    <UserPreferencesSideMenu />
+                  </Col>
+                  <Col md="9" className="no-margin-left no-margin-right">
+                    <Container>
+                      <Row>
+                        <Col>
+                          <UserUpdateContainer className="user-container margin-top-10">
+                            <h4 style={{marginBottom: '15px'}}>
+                              Modifier vos informations
+                            </h4>
+                            <Form>
+                              <Row>
+                                <Col md={6}>
+                                  <FormGroup>
+                                    <Label for="userUpdateLastname">Nom</Label>
+                                    <Input
+                                      type="text"
+                                      name="userUpdateLastname"
+                                      id="userUpdateLastname"
+                                      className={
+                                        this.state.lastnameError
+                                          ? 'is-invalid'
+                                          : ''
+                                      }
+                                      onChange={e =>
+                                        this.setState({
+                                          lastname: e.target.value,
+                                        })
+                                      }
+                                      defaultValue={this.state.lastname || ''}
+                                    />
+                                    <FormFeedback>
+                                      Le nom doit contenir au moins 2 caractères
+                                    </FormFeedback>
+                                  </FormGroup>
+                                </Col>
+                                <Col md={6}>
+                                  <FormGroup>
+                                    <Label for="userUpdateFirstname">
+                                      Prénom
+                                    </Label>
+                                    <Input
+                                      type="text"
+                                      name="userUpdateFirstname"
+                                      id="userUpdateFirstname"
+                                      className={
+                                        this.state.firstnameError
+                                          ? 'is-invalid'
+                                          : ''
+                                      }
+                                      onChange={e =>
+                                        this.setState({
+                                          firstname: e.target.value,
+                                        })
+                                      }
+                                      defaultValue={this.state.firstname || ''}
+                                    />
+                                    <FormFeedback>
+                                      Le prénom doit contenir au moins 2
+                                      caractères
+                                    </FormFeedback>
+                                  </FormGroup>
+                                </Col>
+                              </Row>
+                              <Row>
+                                <Col md={6}>
+                                  <FormGroup>
+                                    <Label for="userUpdateEmail">
+                                      Adresse email
+                                    </Label>
+                                    <Input
+                                      type="email"
+                                      name="userUpdateEmail"
+                                      id="userUpdateEmail"
+                                      className={
+                                        this.state.emailError
+                                          ? 'is-invalid'
+                                          : ''
+                                      }
+                                      onChange={e =>
+                                        this.setState({email: e.target.value})
+                                      }
+                                      defaultValue={this.state.email || ''}
+                                    />
+                                    <FormFeedback>
+                                      L'adresse email est incorrecte
+                                    </FormFeedback>
+                                  </FormGroup>
+                                </Col>
+                                <Col md={6}>
+                                  <FormGroup>
+                                    <Label for="userUpdateRank">Rang</Label>
+                                    <Input
+                                      type="select"
+                                      name="select"
+                                      id="userUpdateRank"
+                                      className={
+                                        this.state.rankError ? 'is-invalid' : ''
+                                      }
+                                      onChange={e => {
+                                        this.setState({rank: e.target.value})
+                                      }}
+                                    >
+                                      <option selected={this.state.rank === 1}>
+                                        Utilisateur
+                                      </option>
+                                      <option selected={this.state.rank === 2}>
+                                        Administrateur
+                                      </option>
+                                    </Input>
+                                    <FormFeedback>
+                                      Le rang est incorrect
+                                    </FormFeedback>
+                                  </FormGroup>
+                                </Col>
+                              </Row>
+                              <FormGroup row>
+                                <Label for="userUpdateBiography" sm={2}>
+                                  Biographie
+                                </Label>
+                                <Col sm={10}>
                                   <Input
-                                    type="text"
-                                    name="userUpdateLastname"
-                                    id="userUpdateLastname"
+                                    type="textarea"
+                                    name="userUpdateBiography"
+                                    id="userUpdateBiography"
                                     className={
-                                      lastnameError ? 'is-invalid' : ''
-                                    }
-                                    onChange={e => setLastname(e.target.value)}
-                                    defaultValue={lastname || ''}
-                                  />
-                                  <FormFeedback>
-                                    Le nom doit contenir au moins 2 caractères
-                                  </FormFeedback>
-                                </FormGroup>
-                              </Col>
-                              <Col md={6}>
-                                <FormGroup>
-                                  <Label for="userUpdateFirstname">
-                                    Prénom
-                                  </Label>
-                                  <Input
-                                    type="text"
-                                    name="userUpdateFirstname"
-                                    id="userUpdateFirstname"
-                                    className={
-                                      firstnameError ? 'is-invalid' : ''
-                                    }
-                                    onChange={e => setFirstname(e.target.value)}
-                                    defaultValue={firstname || ''}
-                                  />
-                                  <FormFeedback>
-                                    Le prénom doit contenir au moins 2
-                                    caractères
-                                  </FormFeedback>
-                                </FormGroup>
-                              </Col>
-                            </Row>
-                            <Row>
-                              <Col md={6}>
-                                <FormGroup>
-                                  <Label for="userUpdateEmail">
-                                    Adresse email
-                                  </Label>
-                                  <Input
-                                    type="email"
-                                    name="userUpdateEmail"
-                                    id="userUpdateEmail"
-                                    className={emailError ? 'is-invalid' : ''}
-                                    onChange={e => setEmail(e.target.value)}
-                                    defaultValue={email || ''}
-                                  />
-                                  <FormFeedback>
-                                    L'adresse email est incorrecte
-                                  </FormFeedback>
-                                </FormGroup>
-                              </Col>
-                              <Col md={6}>
-                                <FormGroup>
-                                  <Label for="userUpdateRank">Rang</Label>
-                                  <Input
-                                    type="select"
-                                    name="select"
-                                    id="userUpdateRank"
-                                    className={rankError ? 'is-invalid' : ''}
-                                    onChange={e => {
-                                      setRank(e.target.value)
-                                    }}
-                                  >
-                                    <option selected={rank === 1}>
-                                      Utilisateur
-                                    </option>
-                                    <option selected={rank === 2}>
-                                      Administrateur
-                                    </option>
-                                  </Input>
-                                  <FormFeedback>
-                                    Le rang est incorrect
-                                  </FormFeedback>
-                                </FormGroup>
-                              </Col>
-                            </Row>
-                            <FormGroup row>
-                              <Label for="userUpdateBiography" sm={2}>
-                                Biographie
-                              </Label>
-                              <Col sm={10}>
-                                <Input
-                                  type="textarea"
-                                  name="userUpdateBiography"
-                                  id="userUpdateBiography"
-                                  className={biographyError ? 'is-invalid' : ''}
-                                  onChange={e => setBiography(e.target.value)}
-                                  value={biography || ''}
-                                />
-                                <FormFeedback>
-                                  La biographie doit contenir au moins 10
-                                  caractères
-                                </FormFeedback>
-                              </Col>
-                            </FormGroup>
-                            <Row>
-                              <Col md={6}>
-                                <FormGroup>
-                                  <Label for="userUpdateSex">Genre</Label>
-                                  <Input
-                                    type="select"
-                                    name="userUpdateSex"
-                                    id="userUpdateSex"
-                                    className={sexError ? 'is-invalid' : ''}
-                                    onChange={e => setSex(e.target.value)}
-                                  >
-                                    <option selected={sex === 'Homme'}>
-                                      Homme
-                                    </option>
-                                    <option selected={sex === 'Femme'}>
-                                      Femme
-                                    </option>
-                                    <option selected={sex === 'Autre'}>
-                                      Autre
-                                    </option>
-                                  </Input>
-                                  <FormFeedback>
-                                    Le genre est invalide
-                                  </FormFeedback>
-                                </FormGroup>
-                              </Col>
-                              <Col md={6}>
-                                <FormGroup>
-                                  <Label for="userUpdateJob">Emploi</Label>
-                                  <Input
-                                    type="text"
-                                    name="userUpdateJob"
-                                    id="userUpdateJob"
-                                    className={jobError ? 'is-invalid' : ''}
-                                    onChange={e => setJob(e.target.value)}
-                                    defaultValue={job || ''}
-                                  />
-                                  <FormFeedback>
-                                    L'emploi doit contenir au moins 3 caractères
-                                  </FormFeedback>
-                                </FormGroup>
-                              </Col>
-                            </Row>
-                            <Row>
-                              <Col md={6}>
-                                <FormGroup>
-                                  <Label for="userUpdateBirthdate">
-                                    Date de naissance
-                                  </Label>
-                                  <Input
-                                    type="date"
-                                    name="userUpdateBirthdate"
-                                    id="userUpdateBirthdate"
-                                    className={
-                                      birthdateError ? 'is-invalid' : ''
-                                    }
-                                    onChange={e => setBirthdate(e.target.value)}
-                                    defaultValue={getBirthdate() || ''}
-                                  />
-                                  <FormFeedback>
-                                    La date de naissance est incorrecte
-                                  </FormFeedback>
-                                </FormGroup>
-                              </Col>
-                              <Col md={6}>
-                                <FormGroup>
-                                  <Label for="userUpdateBirthplace">
-                                    Ville d'origine
-                                  </Label>
-                                  <Input
-                                    type="text"
-                                    name="userUpdateBirthplace"
-                                    id="userUpdateBirthplace"
-                                    className={
-                                      birthplaceError ? 'is-invalid' : ''
-                                    }
-                                    onChange={e =>
-                                      setBirthplace(e.target.value)
-                                    }
-                                    defaultValue={birthplace || ''}
-                                  />
-                                  <FormFeedback>
-                                    La ville d'origine doit contenir au moins 3
-                                    caractères
-                                  </FormFeedback>
-                                </FormGroup>
-                              </Col>
-                            </Row>
-                            <Row>
-                              <Col md={6}>
-                                <FormGroup>
-                                  <Label for="userUpdateRelationshipstatus">
-                                    Situation amoureuse
-                                  </Label>
-                                  <Input
-                                    type="select"
-                                    name="userUpdateRelationshipstatus"
-                                    id="userUpdateRelationshipstatus"
-                                    className={
-                                      relationshipstatusError
+                                      this.state.biographyError
                                         ? 'is-invalid'
                                         : ''
                                     }
                                     onChange={e =>
-                                      setRelationshipStatus(e.target.value)
+                                      this.setState({biography: e.target.value})
                                     }
-                                  >
-                                    <option
-                                      selected={
-                                        relationshipstatus === 'Célibataire'
-                                      }
-                                    >
-                                      Célibataire
-                                    </option>
-                                    <option
-                                      selected={
-                                        relationshipstatus === 'En couple'
-                                      }
-                                    >
-                                      En couple
-                                    </option>
-                                    <option
-                                      selected={
-                                        relationshipstatus === 'Marié(e)'
-                                      }
-                                    >
-                                      Marié(e)
-                                    </option>
-                                    <option
-                                      selected={
-                                        relationshipstatus === 'Veuf(ve)'
-                                      }
-                                    >
-                                      Veuf(ve)
-                                    </option>
-                                    <option
-                                      selected={
-                                        relationshipstatus === 'Non précisé'
-                                      }
-                                    >
-                                      Non précisé
-                                    </option>
-                                  </Input>
-                                  <FormFeedback>
-                                    La situation amoureuse est incorrecte
-                                  </FormFeedback>
-                                </FormGroup>
-                              </Col>
-                              <Col md={6}>
-                                <FormGroup>
-                                  <Label for="userUpdateLivingplace">
-                                    Ville actuelle
-                                  </Label>
-                                  <Input
-                                    type="text"
-                                    name="userUpdateLivingplace"
-                                    id="userUpdateLivingplace"
-                                    className={
-                                      livingplaceError ? 'is-invalid' : ''
-                                    }
-                                    onChange={e =>
-                                      setLivingplace(e.target.value)
-                                    }
-                                    defaultValue={livingplace || ''}
+                                    value={this.state.biography || ''}
                                   />
                                   <FormFeedback>
-                                    La ville actuelle doit contenir au moins 3
+                                    La biographie doit contenir au moins 10
                                     caractères
                                   </FormFeedback>
-                                </FormGroup>
-                              </Col>
-                              <UpdateButton
-                                className="modal-choice"
-                                color="primary"
-                                onClick={checkForm}
-                              >
-                                <FontAwesomeIcon icon={faPencilAlt} />
-                              </UpdateButton>
-                            </Row>
-                          </Form>
-                        </UserUpdateContainer>
-                      </Col>
-                    </Row>
-                  </Container>
-                </Col>
-              </Row>
-            </Container>
-          </Col>
-        </Row>
-      </Container>
-    </Fragment>
-  )
+                                </Col>
+                              </FormGroup>
+                              <Row>
+                                <Col md={6}>
+                                  <FormGroup>
+                                    <Label for="userUpdateSex">Genre</Label>
+                                    <Input
+                                      type="select"
+                                      name="userUpdateSex"
+                                      id="userUpdateSex"
+                                      className={
+                                        this.state.sexError ? 'is-invalid' : ''
+                                      }
+                                      onChange={e =>
+                                        this.setState({sex: e.target.value})
+                                      }
+                                    >
+                                      <option
+                                        selected={this.state.sex === 'Homme'}
+                                      >
+                                        Homme
+                                      </option>
+                                      <option
+                                        selected={this.state.sex === 'Femme'}
+                                      >
+                                        Femme
+                                      </option>
+                                      <option
+                                        selected={this.state.sex === 'Autre'}
+                                      >
+                                        Autre
+                                      </option>
+                                    </Input>
+                                    <FormFeedback>
+                                      Le genre est invalide
+                                    </FormFeedback>
+                                  </FormGroup>
+                                </Col>
+                                <Col md={6}>
+                                  <FormGroup>
+                                    <Label for="userUpdateJob">Emploi</Label>
+                                    <Input
+                                      type="text"
+                                      name="userUpdateJob"
+                                      id="userUpdateJob"
+                                      className={
+                                        this.state.jobError ? 'is-invalid' : ''
+                                      }
+                                      onChange={e =>
+                                        this.setState({job: e.target.value})
+                                      }
+                                      defaultValue={this.state.job || ''}
+                                    />
+                                    <FormFeedback>
+                                      L'emploi doit contenir au moins 3
+                                      caractères
+                                    </FormFeedback>
+                                  </FormGroup>
+                                </Col>
+                              </Row>
+                              <Row>
+                                <Col md={6}>
+                                  <FormGroup>
+                                    <Label for="userUpdateBirthdate">
+                                      Date de naissance
+                                    </Label>
+                                    <Input
+                                      type="date"
+                                      name="userUpdateBirthdate"
+                                      id="userUpdateBirthdate"
+                                      className={
+                                        this.state.birthdateError
+                                          ? 'is-invalid'
+                                          : ''
+                                      }
+                                      onChange={e =>
+                                        this.setState({
+                                          birthdate: e.target.value,
+                                        })
+                                      }
+                                      defaultValue={this.getBirthdate() || ''}
+                                    />
+                                    <FormFeedback>
+                                      La date de naissance est incorrecte
+                                    </FormFeedback>
+                                  </FormGroup>
+                                </Col>
+                                <Col md={6}>
+                                  <FormGroup>
+                                    <Label for="userUpdateBirthplace">
+                                      Ville d'origine
+                                    </Label>
+                                    <Input
+                                      type="text"
+                                      name="userUpdateBirthplace"
+                                      id="userUpdateBirthplace"
+                                      className={
+                                        this.state.birthplaceError
+                                          ? 'is-invalid'
+                                          : ''
+                                      }
+                                      onChange={e =>
+                                        this.setState({
+                                          birthplace: e.target.value,
+                                        })
+                                      }
+                                      defaultValue={this.state.birthplace || ''}
+                                    />
+                                    <FormFeedback>
+                                      La ville d'origine doit contenir au moins
+                                      3 caractères
+                                    </FormFeedback>
+                                  </FormGroup>
+                                </Col>
+                              </Row>
+                              <Row>
+                                <Col md={6}>
+                                  <FormGroup>
+                                    <Label for="userUpdateRelationshipstatus">
+                                      Situation amoureuse
+                                    </Label>
+                                    <Input
+                                      type="select"
+                                      name="userUpdateRelationshipstatus"
+                                      id="userUpdateRelationshipstatus"
+                                      className={
+                                        this.state.relationshipstatusError
+                                          ? 'is-invalid'
+                                          : ''
+                                      }
+                                      onChange={e =>
+                                        this.setState({
+                                          relationshipstatus: e.target.value,
+                                        })
+                                      }
+                                    >
+                                      <option
+                                        selected={
+                                          this.state.relationshipstatus ===
+                                          'Célibataire'
+                                        }
+                                      >
+                                        Célibataire
+                                      </option>
+                                      <option
+                                        selected={
+                                          this.state.relationshipstatus ===
+                                          'En couple'
+                                        }
+                                      >
+                                        En couple
+                                      </option>
+                                      <option
+                                        selected={
+                                          this.state.relationshipstatus ===
+                                          'Marié(e)'
+                                        }
+                                      >
+                                        Marié(e)
+                                      </option>
+                                      <option
+                                        selected={
+                                          this.state.relationshipstatus ===
+                                          'Veuf(ve)'
+                                        }
+                                      >
+                                        Veuf(ve)
+                                      </option>
+                                      <option
+                                        selected={
+                                          this.state.relationshipstatus ===
+                                          'Non précisé'
+                                        }
+                                      >
+                                        Non précisé
+                                      </option>
+                                    </Input>
+                                    <FormFeedback>
+                                      La situation amoureuse est incorrecte
+                                    </FormFeedback>
+                                  </FormGroup>
+                                </Col>
+                                <Col md={6}>
+                                  <FormGroup>
+                                    <Label for="userUpdateLivingplace">
+                                      Ville actuelle
+                                    </Label>
+                                    <Input
+                                      type="text"
+                                      name="userUpdateLivingplace"
+                                      id="userUpdateLivingplace"
+                                      className={
+                                        this.state.livingplaceError
+                                          ? 'is-invalid'
+                                          : ''
+                                      }
+                                      onChange={e =>
+                                        this.setState({
+                                          livingplace: e.target.value,
+                                        })
+                                      }
+                                      defaultValue={
+                                        this.state.livingplace || ''
+                                      }
+                                    />
+                                    <FormFeedback>
+                                      La ville actuelle doit contenir au moins 3
+                                      caractères
+                                    </FormFeedback>
+                                  </FormGroup>
+                                </Col>
+                                <UpdateButton
+                                  className="modal-choice"
+                                  color="primary"
+                                  onClick={this.checkForm}
+                                >
+                                  <FontAwesomeIcon icon={faPencilAlt} />
+                                </UpdateButton>
+                              </Row>
+                            </Form>
+                          </UserUpdateContainer>
+                        </Col>
+                      </Row>
+                    </Container>
+                  </Col>
+                </Row>
+              </Container>
+            </Col>
+          </Row>
+        </Container>
+      </Fragment>
+    )
+  }
 }
 
-export default UserPreferencesPage
+export default withRouter(UserPreferencesPage)

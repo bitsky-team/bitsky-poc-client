@@ -141,48 +141,21 @@ const ProfilePage = props => {
   const [tab, setTab] = useState(1)
 
   useEffect(() => {
-    Promise.all([getUser(), getPosts(), getFavoritesTrends()]).then(
-      ([userResponse, postsResponse, favoritesTrendsResponse]) => {
+    Promise.all([getUser(), getPosts()]).then(
+      ([userResponse, postsResponse]) => {
         const {success: userSuccess, user} = userResponse.data
         const {success: postsSuccess, posts} = postsResponse.data
-        const {
-          success: favoritesTrendsSuccess,
-          favoritesTrends,
-        } = favoritesTrendsResponse.data
-        const sortArray = (a, b) => {
-          if (a.count > b.count) return -1
-          if (a.count < b.count) return 1
-          return 0
-        }
-
-        if (userSuccess && postsSuccess && favoritesTrendsSuccess) {
+        
+        if (userSuccess && postsSuccess) {
           // Setting user
           setUser(user)
 
           // Setting posts
           setPosts(convertPosts(posts))
-
+  
           // Setting trends
-          const stateTrends = []
-          favoritesTrends.sort(sortArray)
-          favoritesTrends.slice(0, 3).forEach(favoriteTrend => {
-            stateTrends.push(
-              <FavoriteTrend
-                key={favoriteTrend.id}
-                onClick={() =>
-                  props.history.push('/activity_feed', {
-                    trend: favoriteTrend.name,
-                  })
-                }
-              >
-                {favoriteTrend.name}
-              </FavoriteTrend>
-            )
-          })
-          setFavoritesTrends(stateTrends)
+          convertFavoritesTrends()
         } else {
-          console.log(userSuccess, postsSuccess, favoritesTrendsSuccess)
-
           toast.error('Erreur lors du chargement du profil', {
             autoClose: 5000,
             position: toast.POSITION.BOTTOM_RIGHT,
@@ -255,6 +228,36 @@ const ProfilePage = props => {
       })
     )
   }
+  const convertFavoritesTrends = async () => {
+    const response = await getFavoritesTrends()
+    const {success, favoritesTrends} = response.data
+    const sortArray = (a, b) => {
+      if (a.count > b.count) return -1
+      if (a.count < b.count) return 1
+      return 0
+    }
+    
+    if(success) {
+      // Setting trends
+      const stateTrends = []
+      favoritesTrends.sort(sortArray)
+      favoritesTrends.slice(0, 3).forEach(favoriteTrend => {
+        stateTrends.push(
+          <FavoriteTrend
+            key={favoriteTrend.id}
+            onClick={() =>
+              props.history.push('/activity_feed', {
+                trend: favoriteTrend.name,
+              })
+            }
+          >
+            {favoriteTrend.name}
+          </FavoriteTrend>
+        )
+      })
+      setFavoritesTrends(stateTrends)
+    }
+  }
   const deletePost = async id => {
     const response = await axios.post(
       `${config.API_ROOT}/remove_post`,
@@ -281,6 +284,9 @@ const ProfilePage = props => {
             return p.key !== str_id
           })
         )
+        
+        convertFavoritesTrends()
+        
         toast.success('La publication a été supprimée !', {
           autoClose: 5000,
           position: toast.POSITION.BOTTOM_RIGHT,
@@ -303,7 +309,7 @@ const ProfilePage = props => {
     }
   }
 
-  if (!user || !userPosts || !favoritesTrends) {
+  if (!user || !userPosts) {
     return (
       <Fragment>
         <Navbar />
@@ -325,7 +331,7 @@ const ProfilePage = props => {
     <div>
       <Navbar />
 
-      <Container className="main-container" style={{marginTop: '15px'}}>
+      <Container className="main-container" style={{paddingTop: '55px'}}>
         <CenteredRow>
           <Col md="10">
             <ProfileContainer>
@@ -340,7 +346,7 @@ const ProfilePage = props => {
                         message
                       </Button>
                     ) : (
-                      <Button color="info" className="see-more-button">
+                      <Button color="info" className="see-more-button" onClick={() => props.history.push('/user_preferences')}>
                         <FontAwesomeIcon icon={faPencilAlt} /> Modifier mon
                         profil
                       </Button>
