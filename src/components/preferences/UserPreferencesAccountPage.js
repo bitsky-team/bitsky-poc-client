@@ -6,11 +6,6 @@ import styled from "styled-components";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import DeleteModal from './DeleteModal'
-import axios from "axios";
-import {config} from "../../config";
-import qs from "qs";
-import jwtDecode from "jwt-decode";
-import {toast} from 'react-toastify'
 
 const UserPreferencesAccountPage = () => {
 
@@ -23,13 +18,13 @@ const UserPreferencesAccountPage = () => {
   `
 
   const DeleteButton = styled(Button)`
-    
-    &&& {
+   
+    && {
         background-color: rgb(238, 117, 117);
         border: 1px solid rgb(238, 117, 117);
     }
     
-    &&&:hover,  &&&&:active, &&&:focus{
+    &&:hover,  &&&&:active, &&:focus{
         background-color: rgb(234, 81, 81);
         border: 1px solid rgb(234, 81, 81);
     }

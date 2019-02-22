@@ -41,11 +41,12 @@ const DeleteModal = (props) => {
             <ModalBody style={{background: 'white'}}>
                 {!error ?
                     <div>
-                        Êtes-vous sûr de vouloir supprimer votre compte ?
-                        <br/><br/>
-                        En supprimant votre compte, vous perdez l'accès à celui-ci et cela entraine la suppression de toutes les données vous concernant (publications, commentaires, fichiers, messages, etc).
-                        <br/>
-                        Si ces données n'ont pas été sauvegardées ou enregistrées à un autre emplacement, elles seront perdues.
+                        <p>Êtes-vous sûr de vouloir supprimer votre compte ?</p>
+
+                        <p>
+                            En supprimant votre compte, vous perdez l'accès à celui-ci et cela entraine la suppression de toutes les données vous concernant (publications, commentaires, fichiers, messages, etc).
+                            Si ces données n'ont pas été sauvegardées ou enregistrées à un autre emplacement, elles seront perdues.
+                        </p>
                     </div>
                     : <Alert color='danger'>Impossible d'effectuer cette opération</Alert>
                 }
