@@ -391,6 +391,7 @@ class UserPreferencesPage extends Component {
                                       onChange={e => {
                                         this.setState({rank: e.target.value})
                                       }}
+                                      disabled
                                     >
                                       <option selected={this.state.rank === 1}>
                                         Utilisateur
