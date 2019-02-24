@@ -19,6 +19,7 @@ import UserPreferencesAccountPage from './components/preferences/UserPreferences
 
 // Services
 import AuthService from './services/AuthService'
+import {AdministrationSettingsPage} from './components/administration/AdministrationSettingsPage'
 
 const PrivateRoute = ({component: Component, authed, ...rest}) => {
   return (
@@ -96,19 +97,6 @@ class Router extends Component {
         <PrivateRoute
           exact
           authed={this.state.authenticated}
-          path="/administration"
-          component={AdministrationPage}
-        />
-        <PrivateRoute
-          exact
-          authed={this.state.authenticated}
-          path="/admin_manage_users"
-          component={UsersAdministrationPage}
-        />
-
-        <PrivateRoute
-          exact
-          authed={this.state.authenticated}
           path="/user_preferences"
           component={UserPreferencesPage}
         />
@@ -123,6 +111,24 @@ class Router extends Component {
           authed={this.state.authenticated}
           path="/user_account"
           component={UserPreferencesAccountPage}
+        />
+        <PrivateRoute
+          exact
+          authed={this.state.authenticated}
+          path="/administration"
+          component={AdministrationPage}
+        />
+        <PrivateRoute
+          exact
+          authed={this.state.authenticated}
+          path="/admin_manage_users"
+          component={UsersAdministrationPage}
+        />
+        <PrivateRoute
+          exact
+          authed={this.state.authenticated}
+          path={"/admin_manage_settings"}
+          component={AdministrationSettingsPage}
         />
       </div>
     )

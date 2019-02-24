@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import { withRouter, Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCommentAlt, faComments, faUsers, faServer, faCogs, faArchive, faUserAlt, faArrowAltCircleLeft, faTh } from '@fortawesome/free-solid-svg-icons'
-import { faCalendarAlt } from '@fortawesome/free-regular-svg-icons'
+import { faCommentAlt, faComments, faUsers, faServer, faArchive, faUserAlt, faArrowAltCircleLeft, faTh } from '@fortawesome/free-solid-svg-icons'
 
 class AdministrationSideMenu extends Component {
 
@@ -16,9 +15,7 @@ class AdministrationSideMenu extends Component {
             <li><Link to='/admin_manage_posts'><FontAwesomeIcon icon={faCommentAlt} /> Publications</Link></li>
             <li><Link to='/admin_manage_comments'><FontAwesomeIcon icon={faComments} /> Commentaires</Link></li>
             <li><Link to='/admin_manage_groups'><FontAwesomeIcon icon={faUsers} /> Groupes</Link></li>
-            <li><Link to='/admin_manage_modules'><FontAwesomeIcon icon={faServer} /> Modules</Link></li>
-            <li><Link to='/admin_manage_calendar'><FontAwesomeIcon icon={faCalendarAlt} /> Calendrier</Link></li>
-            <li><Link to='/admin_manage_parameters'><FontAwesomeIcon icon={faCogs} /> Paramètres</Link></li>
+            <li><Link to='/admin_manage_settings'><FontAwesomeIcon icon={faServer} /> Modules</Link></li>
             <li><Link to='/activity_feed'><FontAwesomeIcon icon={faArrowAltCircleLeft} /> Retourner à l'accueil</Link></li>
         </ul>
       </div>
