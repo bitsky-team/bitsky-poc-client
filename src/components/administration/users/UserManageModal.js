@@ -179,7 +179,7 @@ export default class UserManageModal extends Component {
           birthplace: this.state.birthplace,
           relationshipstatus: this.state.relationshipstatus,
           livingplace: this.state.livingplace,
-          avatar: avatar_default,
+          avatar: this.props.user && this.props.type === 'UPDATE' ? this.props.user.avatar : avatar_default,
           type: this.props.type
         })
       )
