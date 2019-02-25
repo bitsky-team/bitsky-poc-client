@@ -6,11 +6,30 @@ import SingleFormRightContainer from '../common/single-form/RightContainer'
 
 import axios from 'axios'
 import qs from 'qs'
+import {withRouter} from 'react-router'
 
-export default class RegisterPage extends Component {
+class RegisterPage extends Component {
   state = {
     errorModal: false,
     confirmModal: false
+  }
+  
+  componentDidMount() {
+    this.getRegistrationState()
+  }
+  
+  getRegistrationState = async () => {
+    const response = await axios.get(
+      `${config.API_ROOT}/get_registration_module_state`
+    )
+    
+    const {success, state} = response.data
+    
+    if (success) {
+      if(!state) {
+        this.props.history.push('/login')
+      }
+    }
   }
 
   toggleError = (e) => {
@@ -131,3 +150,5 @@ export default class RegisterPage extends Component {
     )
   }
 }
+
+export default withRouter(RegisterPage)
