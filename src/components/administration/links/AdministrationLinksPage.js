@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {Container, Row, Col, Form, Alert} from 'reactstrap'
+import {Container, Row, Col, Alert} from 'reactstrap'
 import AdministrationSideMenu from '../common/AdministrationSideMenu'
 import jwtDecode from 'jwt-decode'
 import Navbar from '../../common/template/Navbar'
@@ -7,6 +7,9 @@ import Rank from '../../common/Rank'
 import styled from 'styled-components'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCopy, faPlus} from '@fortawesome/free-solid-svg-icons'
+import {CopyToClipboard} from 'react-copy-to-clipboard'
+import {toast} from 'react-toastify'
+import {AdministrationLinksModal} from './AdministrationLinksModal'
 
 const ModuleContainer = styled.div`
   && {
@@ -67,10 +70,6 @@ const KeyButton = styled.button`
   }
 `
 
-const KeyForm = styled(Form)`
-  margin-top: 16px;
-`
-
 export const AdministrationLinksPage = () => {
   const [session] = useState(
     localStorage.getItem('token')
@@ -79,9 +78,17 @@ export const AdministrationLinksPage = () => {
   )
 
   const [links, setLinks] = useState([])
+  const [isOpen, setIsOpen] = useState(false)
+
+  const [value] = useState(process.env.REACT_APP_BITSKY_LINK_KEY)
+
+  const toggleLinkModal = () => {
+    setIsOpen(!isOpen)
+  }
 
   return (
     <div>
+      <AdministrationLinksModal open={isOpen} toggleLinkModal={toggleLinkModal}/>
       <Navbar />
       <Container className="main-container">
         <Row>
@@ -102,11 +109,22 @@ export const AdministrationLinksPage = () => {
                 <h4>Votre clé de liaison</h4>
                 <KeyMainContainer>
                   <KeyContainer>
-                    <span>{process.env.REACT_APP_BITSKY_LINK_KEY}</span>
+                    <span>{value}</span>
                   </KeyContainer>
-                  <KeyButton className="btn btn-info">
-                    <FontAwesomeIcon icon={faCopy} />
-                  </KeyButton>
+                  <CopyToClipboard
+                    text={value}
+                    onCopy={() =>
+                      toast.success('La clé a bien été copiée !', {
+                        autoClose: 5000,
+                        position: toast.POSITION.BOTTOM_RIGHT,
+                        className: 'notification-success',
+                      })
+                    }
+                  >
+                    <KeyButton className="btn btn-info">
+                      <FontAwesomeIcon icon={faCopy} />
+                    </KeyButton>
+                  </CopyToClipboard>
                 </KeyMainContainer>
               </KeyTitleContainer>
             </KeyModuleContainer>
@@ -120,7 +138,7 @@ export const AdministrationLinksPage = () => {
                     <button
                       type="button"
                       className="btn btn-info"
-                      onClick={() => this.toggleUserManageModal('ADD', null)}
+                      onClick={toggleLinkModal}
                     >
                       <FontAwesomeIcon icon={faPlus} /> Ajouter
                     </button>
