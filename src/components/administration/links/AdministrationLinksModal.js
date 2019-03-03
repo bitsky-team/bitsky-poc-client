@@ -76,6 +76,14 @@ export const AdministrationLinksModal = props => {
       if (success) {
         if (data.first_agreement && data.second_agreement) {
           createLink(linkName, bitskyKey, 1)
+  
+          await axios.post(
+            `https://bitsky.be/activeLink`,
+            qs.stringify({
+              alreadyActivated: props.senderKey,
+              toActivate: bitskyKey,
+            })
+          )
           
           toast.success('La liaison est établie !', {
             autoClose: 5000,
