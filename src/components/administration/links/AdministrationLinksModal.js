@@ -46,7 +46,7 @@ export const AdministrationLinksModal = props => {
         })
       )
       
-      const {success, data, error} = response.data
+      const {success, data, message: error} = response.data
       
       if(success) {
         if(data.first_agreement && data.second_agreement) {
