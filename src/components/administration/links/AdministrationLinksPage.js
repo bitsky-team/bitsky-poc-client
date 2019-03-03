@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect, Fragment} from 'react'
 import {Container, Row, Col, Alert} from 'reactstrap'
 import AdministrationSideMenu from '../common/AdministrationSideMenu'
 import jwtDecode from 'jwt-decode'
@@ -10,6 +10,9 @@ import {faCopy, faPlus} from '@fortawesome/free-solid-svg-icons'
 import {CopyToClipboard} from 'react-copy-to-clipboard'
 import {toast} from 'react-toastify'
 import {AdministrationLinksModal} from './AdministrationLinksModal'
+import axios from 'axios'
+import {config} from '../../../config'
+import qs from 'qs'
 
 const ModuleContainer = styled.div`
   && {
@@ -80,93 +83,105 @@ export const AdministrationLinksPage = () => {
   const [links, setLinks] = useState([])
   const [isOpen, setIsOpen] = useState(false)
 
-  const [value] = useState(process.env.REACT_APP_BITSKY_LINK_KEY)
+  const [value, setValue] = useState('?')
 
   const toggleLinkModal = () => {
     setIsOpen(!isOpen)
   }
 
+  const getKey = async () => {
+   return axios.post(`${config.API_ROOT}/get_key`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') }))
+  }
+  
+  useEffect(() => {
+    getKey().then(({data}) => data.success ? setValue(data.key) : setValue('?'))
+  }, [])
+
   return (
     <div>
-      <AdministrationLinksModal open={isOpen} toggleLinkModal={toggleLinkModal} senderKey={value} />
-      <Navbar />
-      <Container className="main-container">
-        <Row>
-          <Col md="3" className="no-margin-left no-margin-right">
-            <div className="user-container">
-              <img src={localStorage.getItem('avatar')} alt="Avatar" />
-              <h5>{session.firstname + ' ' + session.lastname}</h5>
-              <p className="rank">
-                <Rank id={session.rank} />
-              </p>
-            </div>
-
-            <AdministrationSideMenu />
-          </Col>
-          <Col md="9" className="no-margin-left no-margin-right">
-            <KeyModuleContainer className="user-container no-center admin-dashboard">
-              <KeyTitleContainer>
-                <h4>Votre clé de liaison</h4>
-                <KeyMainContainer>
-                  <KeyContainer>
-                    <span>{value}</span>
-                  </KeyContainer>
-                  <CopyToClipboard
-                    text={value}
-                    onCopy={() =>
-                      toast.success('La clé a bien été copiée !', {
-                        autoClose: 5000,
-                        position: toast.POSITION.BOTTOM_RIGHT,
-                        className: 'notification-success',
-                      })
-                    }
-                  >
-                    <KeyButton className="btn btn-info">
-                      <FontAwesomeIcon icon={faCopy} />
-                    </KeyButton>
-                  </CopyToClipboard>
-                </KeyMainContainer>
-              </KeyTitleContainer>
-            </KeyModuleContainer>
-            <ModuleContainer className="user-container no-center admin-top-bar">
-              <Container className="no-padding-left no-padding-right">
-                <Row className="align-items-center">
-                  <Col className="text-left">
-                    <h4>Liaisons</h4>
-                  </Col>
-                  <Col className="text-right">
-                    <button
-                      type="button"
-                      className="btn btn-info"
-                      onClick={toggleLinkModal}
-                    >
-                      <FontAwesomeIcon icon={faPlus} /> Ajouter
-                    </button>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    {links.length > 0 ? (
-                      links
-                    ) : (
-                      <Alert
-                        color="info"
-                        style={{
-                          width: '50%',
-                          margin: '16px auto',
-                          textAlign: 'center',
-                        }}
+      {value && (
+        <Fragment>
+          <AdministrationLinksModal open={isOpen} toggleLinkModal={toggleLinkModal} senderKey={value} />
+          <Navbar />
+          <Container className="main-container">
+            <Row>
+              <Col md="3" className="no-margin-left no-margin-right">
+                <div className="user-container">
+                  <img src={localStorage.getItem('avatar')} alt="Avatar" />
+                  <h5>{session.firstname + ' ' + session.lastname}</h5>
+                  <p className="rank">
+                    <Rank id={session.rank} />
+                  </p>
+                </div>
+        
+                <AdministrationSideMenu />
+              </Col>
+              <Col md="9" className="no-margin-left no-margin-right">
+                <KeyModuleContainer className="user-container no-center admin-dashboard">
+                  <KeyTitleContainer>
+                    <h4>Votre clé de liaison</h4>
+                    <KeyMainContainer>
+                      <KeyContainer>
+                        <span>{value}</span>
+                      </KeyContainer>
+                      <CopyToClipboard
+                        text={value}
+                        onCopy={() =>
+                          toast.success('La clé a bien été copiée !', {
+                            autoClose: 5000,
+                            position: toast.POSITION.BOTTOM_RIGHT,
+                            className: 'notification-success',
+                          })
+                        }
                       >
-                        Il n'y a aucune liaison pour le moment.
-                      </Alert>
-                    )}
-                  </Col>
-                </Row>
-              </Container>
-            </ModuleContainer>
-          </Col>
-        </Row>
-      </Container>
+                        <KeyButton className="btn btn-info">
+                          <FontAwesomeIcon icon={faCopy} />
+                        </KeyButton>
+                      </CopyToClipboard>
+                    </KeyMainContainer>
+                  </KeyTitleContainer>
+                </KeyModuleContainer>
+                <ModuleContainer className="user-container no-center admin-top-bar">
+                  <Container className="no-padding-left no-padding-right">
+                    <Row className="align-items-center">
+                      <Col className="text-left">
+                        <h4>Liaisons</h4>
+                      </Col>
+                      <Col className="text-right">
+                        <button
+                          type="button"
+                          className="btn btn-info"
+                          onClick={toggleLinkModal}
+                        >
+                          <FontAwesomeIcon icon={faPlus} /> Ajouter
+                        </button>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        {links.length > 0 ? (
+                          links
+                        ) : (
+                          <Alert
+                            color="info"
+                            style={{
+                              width: '50%',
+                              margin: '16px auto',
+                              textAlign: 'center',
+                            }}
+                          >
+                            Il n'y a aucune liaison pour le moment.
+                          </Alert>
+                        )}
+                      </Col>
+                    </Row>
+                  </Container>
+                </ModuleContainer>
+              </Col>
+            </Row>
+          </Container>
+        </Fragment>
+      )}
     </div>
   )
 }
