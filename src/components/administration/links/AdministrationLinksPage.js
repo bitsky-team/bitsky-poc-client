@@ -88,7 +88,7 @@ export const AdministrationLinksPage = () => {
 
   return (
     <div>
-      <AdministrationLinksModal open={isOpen} toggleLinkModal={toggleLinkModal}/>
+      <AdministrationLinksModal open={isOpen} toggleLinkModal={toggleLinkModal} senderKey={value} />
       <Navbar />
       <Container className="main-container">
         <Row>

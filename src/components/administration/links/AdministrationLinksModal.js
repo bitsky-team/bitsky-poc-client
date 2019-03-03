@@ -16,6 +16,9 @@ import {
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faTimes} from '@fortawesome/free-solid-svg-icons'
 import {faHandshake} from '@fortawesome/free-regular-svg-icons/faHandshake'
+import axios from 'axios'
+import qs from 'qs'
+import {toast} from 'react-toastify'
 
 export const AdministrationLinksModal = props => {
   const [linkName, setLinkName] = useState('')
@@ -26,18 +29,56 @@ export const AdministrationLinksModal = props => {
 
   const {open, toggleLinkModal} = props
 
-  const etablishLink = () => {
+  const etablishLink = async () => {
     setLinkNameError(false)
     setBitskyKeyError(false)
 
     let isLinkCorrect = linkName && linkName.length >= 2
     let isKeyCorrect = bitskyKey && bitskyKey.length === 32
-
-    if (isLinkCorrect && isKeyCorrect) {
-      console.log('ok')
+    let checkNotSameKey = bitskyKey !== props.senderKey
+    
+    if (isLinkCorrect && isKeyCorrect && checkNotSameKey) {
+      const response = await axios.post(
+        `https://bitsky.be/link`,
+        qs.stringify({
+          senderKey: props.senderKey,
+          receiverKey: bitskyKey,
+        })
+      )
+      
+      const {success, data, error} = response.data
+      
+      if(success) {
+        if(data.first_agreement && data.second_agreement) {
+          toast.success('La liaison est établie !', {
+            autoClose: 5000,
+            position: toast.POSITION.BOTTOM_RIGHT,
+            className: 'notification-success',
+          })
+        } else if(data.first_agreement && !data.second_agreement) {
+          toast.success('La liaison est créée et en attente de validation !', {
+            autoClose: 5000,
+            position: toast.POSITION.BOTTOM_RIGHT,
+            className: 'notification-success',
+          })
+        }
+      } else {
+        toast.error(`Impossible de créer la liaison ! (${error})`, {
+          autoClose: 5000,
+          position: toast.POSITION.BOTTOM_RIGHT,
+        })
+      }
+  
+      toggleLinkModal()
     } else {
       setLinkNameError(!isLinkCorrect)
       setBitskyKeyError(!isKeyCorrect)
+      if(!checkNotSameKey) {
+        toast.error(`Veuillez entrer une clé valide !`, {
+          autoClose: 5000,
+          position: toast.POSITION.BOTTOM_RIGHT,
+        })
+      }
     }
   }
 
