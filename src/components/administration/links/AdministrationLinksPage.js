@@ -6,7 +6,7 @@ import Navbar from '../../common/template/Navbar'
 import Rank from '../../common/Rank'
 import styled from 'styled-components'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faCopy, faPlus} from '@fortawesome/free-solid-svg-icons'
+import {faCopy, faPlus, faTimes} from '@fortawesome/free-solid-svg-icons'
 import {CopyToClipboard} from 'react-copy-to-clipboard'
 import {toast} from 'react-toastify'
 import {AdministrationLinksModal} from './AdministrationLinksModal'
@@ -73,6 +73,29 @@ const KeyButton = styled.button`
   }
 `
 
+const Link = styled.p`
+  display: flex;
+  align-content: center;
+  margin-top: 10px !important;
+  font-size: 18px;
+  color: #83b2e0;
+  
+  span {
+    margin-left: 10px;
+    align-self: center;
+    font-size: 14px;
+    font-style: italic;
+    color: #bebfc4;
+  }
+`
+
+const DeleteLink = styled.span`
+  && {
+    color: #CF94CA;
+    cursor: pointer;
+  }
+`
+
 export const AdministrationLinksPage = () => {
   const [session] = useState(
     localStorage.getItem('token')
@@ -90,18 +113,69 @@ export const AdministrationLinksPage = () => {
   }
 
   const getKey = async () => {
-   return axios.post(`${config.API_ROOT}/get_key`, qs.stringify({ uniq_id: localStorage.getItem('id'), token: localStorage.getItem('token') }))
+    return axios.post(
+      `${config.API_ROOT}/get_key`,
+      qs.stringify({
+        uniq_id: localStorage.getItem('id'),
+        token: localStorage.getItem('token'),
+      })
+    )
+  }
+
+  const getLinks = async key => {
+    return axios.post(
+      `${config.API_ROOT}/get_active_links`,
+      qs.stringify({
+        uniq_id: localStorage.getItem('id'),
+        token: localStorage.getItem('token'),
+      })
+    )
   }
   
+  const displayLinks = async key => {
+    getLinks(key).then(({data}) => {
+      if (data.success) {
+        const dataLinks = data.key
+        const componentsLink = dataLinks.map(dataLink => (
+          <Link key={dataLink.id}>
+            {dataLink.name} <span>({dataLink.bitsky_key})</span>
+            <DeleteLink onClick={() => deleteLink(dataLink.bitsky_key)}><FontAwesomeIcon icon={faTimes}/></DeleteLink>
+          </Link>
+        ))
+        setLinks(componentsLink)
+      } else {
+        toast.error(`Impossible de récupérer les liens ! (${data})`, {
+          autoClose: 5000,
+          position: toast.POSITION.BOTTOM_RIGHT,
+        })
+      }
+    })
+  }
+  const deleteLink = async key => {
+    console.log(key)
+  }
+
   useEffect(() => {
-    getKey().then(({data}) => data.success ? setValue(data.key) : setValue('?'))
+    getKey().then(({data}) => {
+      if (data.success) {
+        setValue(data.key)
+        displayLinks(data.key)
+      } else {
+        setValue('?')
+      }
+    })
   }, [])
 
   return (
     <div>
       {value && (
         <Fragment>
-          <AdministrationLinksModal open={isOpen} toggleLinkModal={toggleLinkModal} senderKey={value} />
+          <AdministrationLinksModal
+            open={isOpen}
+            toggleLinkModal={toggleLinkModal}
+            senderKey={value}
+            displayLinks={displayLinks}
+          />
           <Navbar />
           <Container className="main-container">
             <Row>
@@ -113,7 +187,7 @@ export const AdministrationLinksPage = () => {
                     <Rank id={session.rank} />
                   </p>
                 </div>
-        
+
                 <AdministrationSideMenu />
               </Col>
               <Col md="9" className="no-margin-left no-margin-right">

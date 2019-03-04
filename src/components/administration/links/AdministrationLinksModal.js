@@ -85,6 +85,8 @@ export const AdministrationLinksModal = props => {
             })
           )
           
+          props.displayLinks(props.value)
+          
           toast.success('La liaison est établie !', {
             autoClose: 5000,
             position: toast.POSITION.BOTTOM_RIGHT,
