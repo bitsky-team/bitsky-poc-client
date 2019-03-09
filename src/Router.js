@@ -8,9 +8,8 @@ import RegisterPage from './components/register/RegisterPage'
 import ActivityFeedPage from './components/activity_feed/ActivityFeedPage'
 import RegisterConfirmationPage from './components/register/RegisterConfirmationPage'
 import ProfilePage from './components/profile/ProfilePage'
-
-// Services
 import AdministrationPage from './components/administration/AdministrationPage'
+import {AdministrationLinksPage} from './components/administration/links/AdministrationLinksPage'
 import UsersAdministrationPage from './components/administration/users/UsersAdministrationPage'
 import UserDocumentationPage from './components/docs/user/UserDocumentationPage'
 import UserPreferencesPage from './components/preferences/UserPreferencesPage'
@@ -130,6 +129,7 @@ class Router extends Component {
           path={"/admin_manage_settings"}
           component={AdministrationSettingsPage}
         />
+        <PrivateRoute exact authed={this.state.authenticated} path={"/admin_manage_links"} component={AdministrationLinksPage}/>
       </div>
     )
   }

@@ -80,7 +80,7 @@ export default class UserManageModal extends Component {
   }
 
   checkRank = async () => {
-    if(typeof this.state.rank === 'number') await this.getRanks()
+    if (typeof this.state.rank === 'number') await this.getRanks()
     return this.state.ranks.includes(this.state.rank)
   }
 
@@ -124,25 +124,40 @@ export default class UserManageModal extends Component {
       isFirstnameOk = this.state.firstname && this.state.firstname.length >= 2,
       isEmailOk =
         this.state.email &&
-        this.state.email.match(/^[a-zA-Z]\w+(?:\.[a-zA-Z]\w+){0,3}@[a-zA-Z]\w+(?:\.[a-zA-Z]\w+){1,3}$/),
+        this.state.email.match(
+          /^[a-zA-Z]\w+(?:\.[a-zA-Z]\w+){0,3}@[a-zA-Z]\w+(?:\.[a-zA-Z]\w+){1,3}$/
+        ),
       isRankOk = this.checkRank(),
-      isPasswordOk = (this.state.password && this.state.password.length >= 8) || (this.props.type === 'UPDATE' && !this.state.password),
+      isPasswordOk =
+        (this.state.password && this.state.password.length >= 8) ||
+        (this.props.type === 'UPDATE' && !this.state.password),
       isRepeatPasswordOk =
-        (this.state.repeatPassword && this.state.repeatPassword.length >= 8) || (this.props.type === 'UPDATE' && !this.state.password),
-      arePasswordsOk = (this.state.password === this.state.repeatPassword) || (this.props.type === 'UPDATE' && !this.state.password),
+        (this.state.repeatPassword && this.state.repeatPassword.length >= 8) ||
+        (this.props.type === 'UPDATE' && !this.state.password),
+      arePasswordsOk =
+        this.state.password === this.state.repeatPassword ||
+        (this.props.type === 'UPDATE' && !this.state.password),
       isBiographyOk = this.state.biography && this.state.biography.length >= 10,
       isSexOk = this.checkSex(),
       isJobOk = this.state.job && this.state.job.length >= 3,
-      isBirthdateFilled = this.state.birthdate && this.state.birthdate.length === 10,
-      splittedBirthdate = this.state.birthdate.split('-'),
+      isBirthdateFilled =
+        this.state.birthdate && this.state.birthdate.length === 10,
+      splittedBirthdate =
+        this.state.birthdate && this.state.birthdate.split('-'),
       isBirthdateCorrect =
-        Number(splittedBirthdate[0]) > 1899 && Number(splittedBirthdate[0]) <= new Date().getFullYear()
-      && Number(splittedBirthdate[1]) > 0 && Number(splittedBirthdate[1]) <= 12
-      && Number(splittedBirthdate[2]) > 0 && Number(splittedBirthdate[2]) <= 31,
+        splittedBirthdate &&
+        Number(splittedBirthdate[0]) > 1899 &&
+        Number(splittedBirthdate[0]) <= new Date().getFullYear() &&
+        Number(splittedBirthdate[1]) > 0 &&
+        Number(splittedBirthdate[1]) <= 12 &&
+        Number(splittedBirthdate[2]) > 0 &&
+        Number(splittedBirthdate[2]) <= 31,
       isBirthdateOk = isBirthdateFilled && isBirthdateCorrect,
-      isBirthplaceOk = this.state.birthplace && this.state.birthplace.length >= 3,
+      isBirthplaceOk =
+        this.state.birthplace && this.state.birthplace.length >= 3,
       isRelationshipstatusOk = this.checkRelationshipstatus(),
-      isLivingplaceOk = this.state.livingplace && this.state.livingplace.length >= 3,
+      isLivingplaceOk =
+        this.state.livingplace && this.state.livingplace.length >= 3,
       isFormOk =
         isLastnameOk &&
         isFirstnameOk &&
@@ -171,7 +186,10 @@ export default class UserManageModal extends Component {
           email: this.state.email,
           password: this.state.password,
           repeatPassword: this.state.repeatPassword,
-          rank: (typeof this.state.rank !== 'number') ? this.getRankNumber() : this.state.rank,
+          rank:
+            typeof this.state.rank !== 'number'
+              ? this.getRankNumber()
+              : this.state.rank,
           biography: this.state.biography,
           sex: this.state.sex,
           job: this.state.job,
@@ -179,8 +197,11 @@ export default class UserManageModal extends Component {
           birthplace: this.state.birthplace,
           relationshipstatus: this.state.relationshipstatus,
           livingplace: this.state.livingplace,
-          avatar: this.props.user && this.props.type === 'UPDATE' ? this.props.user.avatar : avatar_default,
-          type: this.props.type
+          avatar:
+            this.props.user && this.props.type === 'UPDATE'
+              ? this.props.user.avatar
+              : avatar_default,
+          type: this.props.type,
         })
       )
 
