@@ -107,6 +107,17 @@ export const AdministrationLinksPage = () => {
   const [isOpen, setIsOpen] = useState(false)
 
   const [value, setValue] = useState('?')
+  
+  useEffect(() => {
+    getKey().then(({data}) => {
+      if (data.success) {
+        setValue(data.key)
+        displayLinks(data.key)
+      } else {
+        setValue('?')
+      }
+    })
+  }, [])
 
   const toggleLinkModal = () => {
     setIsOpen(!isOpen)
@@ -139,7 +150,7 @@ export const AdministrationLinksPage = () => {
         const componentsLink = dataLinks.map(dataLink => (
           <Link key={dataLink.id}>
             {dataLink.name} <span>({dataLink.bitsky_key})</span>
-            <DeleteLink onClick={() => deleteLink(dataLink.bitsky_key)}><FontAwesomeIcon icon={faTimes}/></DeleteLink>
+            <DeleteLink onClick={() => deleteLink(dataLink.id, dataLink.bitsky_key)}><FontAwesomeIcon icon={faTimes}/></DeleteLink>
           </Link>
         ))
         setLinks(componentsLink)
@@ -151,20 +162,29 @@ export const AdministrationLinksPage = () => {
       }
     })
   }
-  const deleteLink = async key => {
-    console.log(key)
+  const deleteLink = async (id, key) => {
+    const {data: myKey} = await getKey()
+    
+    await axios.post(
+      `https://bitsky.be/deleteLink`,
+      qs.stringify({
+        senderKey: myKey.key,
+        receiverKey: key,
+      })
+    )
+  
+    await axios.post(
+      `${config.API_ROOT}/delete_link`,
+      qs.stringify({
+        uniq_id: localStorage.getItem('id'),
+        token: localStorage.getItem('token'),
+        bitsky_key: key
+      })
+    )
+    
+    const stateLinks = links.filter(e => e.key !== id)
+    setLinks(stateLinks)
   }
-
-  useEffect(() => {
-    getKey().then(({data}) => {
-      if (data.success) {
-        setValue(data.key)
-        displayLinks(data.key)
-      } else {
-        setValue('?')
-      }
-    })
-  }, [])
 
   return (
     <div>
