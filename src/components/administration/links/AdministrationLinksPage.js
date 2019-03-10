@@ -13,6 +13,7 @@ import {AdministrationLinksModal} from './AdministrationLinksModal'
 import axios from 'axios'
 import {config} from '../../../config'
 import qs from 'qs'
+import LinkService from '../../../services/LinkService'
 
 const ModuleContainer = styled.div`
   && {
@@ -109,7 +110,7 @@ export const AdministrationLinksPage = () => {
   const [value, setValue] = useState('?')
   
   useEffect(() => {
-    getKey().then(({data}) => {
+    LinkService.getKey().then(({data}) => {
       if (data.success) {
         setValue(data.key)
         displayLinks(data.key)
@@ -122,16 +123,7 @@ export const AdministrationLinksPage = () => {
   const toggleLinkModal = () => {
     setIsOpen(!isOpen)
   }
-
-  const getKey = async () => {
-    return axios.post(
-      `${config.API_ROOT}/get_key`,
-      qs.stringify({
-        uniq_id: localStorage.getItem('id'),
-        token: localStorage.getItem('token'),
-      })
-    )
-  }
+  
 
   const getLinks = async key => {
     return axios.post(
@@ -163,7 +155,7 @@ export const AdministrationLinksPage = () => {
     })
   }
   const deleteLink = async (id, key) => {
-    const {data: myKey} = await getKey()
+    const {data: myKey} = await LinkService.getKey()
     
     await axios.post(
       `https://bitsky.be/deleteLink`,

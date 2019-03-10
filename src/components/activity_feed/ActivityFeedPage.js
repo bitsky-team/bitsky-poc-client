@@ -36,6 +36,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import SideMenu from './SideMenu'
 import Trend from './Trend'
+import LinkService from '../../services/LinkService'
 
 export default class ActivityFeedPage extends Component {
   _isMounted = false
@@ -62,9 +63,11 @@ export default class ActivityFeedPage extends Component {
     return await response
   }
 
-  getPosts = async trend => {
+  getPosts = async (trend, ip = null) => {
+    const bitsky = ip ? `http://${ip}` : config.API_ROOT
+    
     const response = await axios.post(
-      `${config.API_ROOT}/get_allposts`,
+      `${bitsky}/get_allposts`,
       qs.stringify({
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
@@ -271,45 +274,73 @@ export default class ActivityFeedPage extends Component {
     }
   }
 
-  setPosts = trend => {
-    this.getPosts(trend).then(response => {
-      const {success, posts} = response.data
-      if (success && this._isMounted) {
-        let statePosts = this.state.posts
-
-        posts.forEach(post => {
-          statePosts.push(
-            <Post
-              id={post.id}
-              key={'post-' + post.id}
-              ownerId={post.owner.id}
-              ownerAvatar={post.owner.avatar}
-              ownerName={post.owner.firstname + ' ' + post.owner.lastname}
-              ownerRank={post.owner.rank}
-              content={post.content}
-              tag={post.tag}
-              filled={false}
-              favorites={post.favorites}
-              comments={post.comments}
-              date={post.created_at}
-              isOwner={
-                post.owner.firstname + ' ' + post.owner.lastname ===
-                  this.state.session.firstname +
-                    ' ' +
-                    this.state.session.lastname || this.state.session.rank === 2
-              }
-              handleDeleteButtonClick={this.handleDeleteButtonClick}
-              refreshTrends={this.setTrends}
-            />
-          )
-        })
-
-        this.setState({posts: statePosts})
-        this.removeLoading('posts')
-        this.checkEmpty()
-      } else if (this._isMounted) {
-        console.log('Failed loading posts: ' + response.message)
-      }
+  setPosts = async trend => {
+    let posts = []
+    const homePosts = await this.getPosts(trend)
+    
+    // Loading posts from actual bitsky
+    if(homePosts.data.success && this._isMounted) {
+      homePosts.data.posts.forEach(post => {
+        post = {...post, fromStranger: false}
+        posts.push(post)
+      })
+    }
+  
+    const key = await LinkService.getKey()
+    const links = await LinkService.getLinks()
+    
+    // Loading posts from others bitsky
+    if(key.data.success && links.data.success) {
+      links.data.data.forEach(async link => {
+        const foreignPosts = await this.getPosts(trend, link.foreign_ip)
+  
+        if(foreignPosts.data.success && this._isMounted) {
+          foreignPosts.data.posts.forEach(post => {
+            post = {...post, fromStranger: true}
+            posts.push(post)
+          })
+  
+          this.pushPostsToState(posts)
+        }
+      })
+    } else {
+      this.pushPostsToState(posts)
+    }
+  }
+  
+  pushPostsToState = (posts) => {
+    let statePosts = this.state.posts
+    
+    posts = _.orderBy(posts, ['created_at'], ['desc'])
+    
+    posts.forEach(post => {
+      statePosts.push(<Post
+        id={post.id}
+        key={'post-' + post.id}
+        ownerId={post.owner.id}
+        ownerAvatar={post.owner.avatar}
+        ownerName={post.owner.firstname + ' ' + post.owner.lastname}
+        ownerRank={post.owner.rank}
+        content={post.content}
+        tag={post.tag}
+        filled={false}
+        favorites={post.favorites}
+        comments={post.comments}
+        date={post.created_at}
+        isOwner={
+          post.owner.firstname + ' ' + post.owner.lastname ===
+          this.state.session.firstname +
+          ' ' +
+          this.state.session.lastname || this.state.session.rank === 2
+        }
+        handleDeleteButtonClick={this.handleDeleteButtonClick}
+        refreshTrends={this.setTrends}
+        fromStranger={post.fromStranger}
+      />)
+    
+      this.setState({posts: statePosts})
+      this.removeLoading('posts')
+      this.checkEmpty()
     })
   }
 

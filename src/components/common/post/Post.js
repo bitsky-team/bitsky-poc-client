@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, Fragment} from 'react'
 import {config} from '../../../config'
 import DateService from '../../../services/DateService'
 
@@ -20,6 +20,21 @@ import qs from 'qs'
 import Rank from '../../common/Rank'
 import BestComments from './BestComments'
 import {withRouter} from 'react-router'
+import styled from 'styled-components'
+import logo_small from '../../../assets/img/logo-small.png'
+
+const Logo = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  
+  img {
+    cursor: initial !important;
+    position: initial !important;
+    border: none !important;
+    height: 32px !important;
+  }
+`
 
 class Post extends Component {
   _isMounted = false
@@ -38,7 +53,7 @@ class Post extends Component {
   }
 
   isOwner() {
-    if (this.props.isOwner) {
+    if (this.props.isOwner && !this.props.fromStranger) {
       return (
         <FontAwesomeIcon
           className="delete"
@@ -206,6 +221,7 @@ class Post extends Component {
             <small>
               <Rank id={this.props.ownerRank} />
             </small>
+            <Fragment>{this.props.fromStranger && <Logo><img src={logo_small} alt='linkedPost' /></Logo>}</Fragment>
           </div>
           <p
             className="post-content"
