@@ -291,18 +291,22 @@ export default class ActivityFeedPage extends Component {
     
     // Loading posts from others bitsky
     if(key.data.success && links.data.success) {
-      links.data.data.forEach(async link => {
-        const foreignPosts = await this.getPosts(trend, link.foreign_ip)
-  
-        if(foreignPosts.data.success && this._isMounted) {
-          foreignPosts.data.posts.forEach(post => {
-            post = {...post, fromStranger: true}
-            posts.push(post)
-          })
-  
-          this.pushPostsToState(posts)
-        }
-      })
+      if(links.data.data.length > 0) {
+        links.data.data.forEach(async link => {
+          const foreignPosts = await this.getPosts(trend, link.foreign_ip)
+    
+          if(foreignPosts.data.success && this._isMounted) {
+            foreignPosts.data.posts.forEach(post => {
+              post = {...post, fromStranger: true}
+              posts.push(post)
+            })
+      
+            this.pushPostsToState(posts)
+          }
+        })
+      } else {
+        this.pushPostsToState(posts)
+      }
     } else {
       this.pushPostsToState(posts)
     }
