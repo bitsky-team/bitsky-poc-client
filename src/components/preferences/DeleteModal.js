@@ -35,10 +35,10 @@ const DeleteModal = (props) => {
 
     return (
         <Modal isOpen={props.open} toggle={props.toggleDeleteModal} className="user-modal">
-            <ModalHeader style={{background: 'white'}}>
+            <ModalHeader>
                 Suppression de mon compte
             </ModalHeader>
-            <ModalBody style={{background: 'white'}}>
+            <ModalBody>
                 {!error ?
                     <div>
                         <p>Êtes-vous sûr de vouloir supprimer votre compte ?</p>
@@ -51,7 +51,7 @@ const DeleteModal = (props) => {
                     : <Alert color='danger'>Impossible d'effectuer cette opération</Alert>
                 }
             </ModalBody>
-            <ModalFooter style={{background: 'white'}}>
+            <ModalFooter>
                 <Button className="modal-choice" color="primary" onClick={deleteAccount}><FontAwesomeIcon
                     icon={faCheck}/></Button>{' '}
                 <Button className="modal-choice" color="secondary"

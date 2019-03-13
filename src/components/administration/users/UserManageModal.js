@@ -315,10 +315,10 @@ export default class UserManageModal extends Component {
         toggle={this.props.toggleUserManageModal}
         className="user-modal"
       >
-        <ModalHeader style={{background: 'white'}}>
+        <ModalHeader>
           {this.props.type === 'ADD' ? 'Ajouter' : 'Modifier'} un utilisateur
         </ModalHeader>
-        <ModalBody style={{background: 'white'}}>
+        <ModalBody>
           <div ref={node => (this.error = node)}>
             <Alert color="danger" style={{display: 'none'}} />
           </div>
@@ -594,7 +594,7 @@ export default class UserManageModal extends Component {
             </Row>
           </Form>
         </ModalBody>
-        <ModalFooter style={{background: 'white'}}>
+        <ModalFooter>
           <Button
             className="modal-choice"
             color="primary"
