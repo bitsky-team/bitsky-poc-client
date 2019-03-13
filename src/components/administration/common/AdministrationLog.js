@@ -54,7 +54,7 @@ const AdministrationLog = (props) => {
     const [level, setLevel] = useState(null)
     const [time, setTime] = useState(null)
     const [type, setType] = useState(null)
-    const [message, setMessage] = useState('')
+    const [message, setMessage] = useState(null)
     const [uniq_id, setUniqId] = useState('')
 
     const getUserProfile = async (user_uniq_id) => {
