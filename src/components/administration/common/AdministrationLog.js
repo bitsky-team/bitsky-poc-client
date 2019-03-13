@@ -53,7 +53,7 @@ const AdministrationLog = (props) => {
 
     const [level, setLevel] = useState(null)
     const [time, setTime] = useState(null)
-    const [type, setType] = useState('')
+    const [type, setType] = useState(null)
     const [message, setMessage] = useState('')
     const [uniq_id, setUniqId] = useState('')
 
