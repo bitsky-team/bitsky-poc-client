@@ -51,7 +51,7 @@ const AdministrationLog = (props) => {
 
     const {log} = props
 
-    const [level, setLevel] = useState('')
+    const [level, setLevel] = useState(null)
     const [time, setTime] = useState('')
     const [type, setType] = useState('')
     const [message, setMessage] = useState('')
