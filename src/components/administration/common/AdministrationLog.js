@@ -55,7 +55,7 @@ const AdministrationLog = (props) => {
     const [time, setTime] = useState(null)
     const [type, setType] = useState(null)
     const [message, setMessage] = useState(null)
-    const [uniq_id, setUniqId] = useState('')
+    const [uniq_id, setUniqId] = useState(null)
 
     const getUserProfile = async (user_uniq_id) => {
       return await axios.post(`${config.API_ROOT}/get_user_by_uniq_id`,
