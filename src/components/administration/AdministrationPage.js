@@ -196,7 +196,7 @@ export default class AdministrationPage extends Component {
               <div className="user-container no-center admin-dashboard">
                 <h4>Derniers logs</h4>
                 <div className="admin-logs-container">
-                  {this.state.logs.length > 0 ? _.take(this.state.logs, 5) : 'Il n\'existe pas de log'}
+                  {this.state.logs.length > 0 ? _.take(this.state.logs, 5) : 'Il n\'y a aucun log'}
                 </div>
                 <SeeMoreButton color="info" onClick={this.toggleLogsModalState}>Voir plus</SeeMoreButton>{' '}
               </div>
