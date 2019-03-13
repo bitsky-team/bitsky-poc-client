@@ -88,12 +88,12 @@ export default class UserSearchModal extends Component {
 
   render = () => {
     return (
-      <Modal isOpen={this.props.isOpen} toggle={this.props.toggle}>
-        <ModalHeader style={{background: 'white'}}>
+      <Modal isOpen={this.props.isOpen} toggle={this.props.toggle} className="user-modal">
+        <ModalHeader>
           Rechercher un utilisateur
         </ModalHeader>
 
-        <ModalBody style={{background: 'white'}}>
+        <ModalBody>
           <Form>
             <Row>
               <Col>
@@ -210,7 +210,7 @@ export default class UserSearchModal extends Component {
           </Form>
         </ModalBody>
 
-        <ModalFooter style={{background: 'white'}}>
+        <ModalFooter>
           <Button
             className="modal-choice"
             color="primary"

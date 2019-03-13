@@ -123,10 +123,10 @@ export const AdministrationLinksModal = props => {
 
   return (
     <Modal isOpen={open} toggle={toggleLinkModal} className="user-modal">
-      <ModalHeader style={{background: 'white'}}>
+      <ModalHeader>
         Établir une liaison
       </ModalHeader>
-      <ModalBody style={{background: 'white'}}>
+      <ModalBody>
         <Form>
           <Row>
             <Col md={6}>
@@ -162,7 +162,7 @@ export const AdministrationLinksModal = props => {
           </Row>
         </Form>
       </ModalBody>
-      <ModalFooter style={{background: 'white'}}>
+      <ModalFooter>
         <Button className="modal-choice" color="primary" onClick={etablishLink}>
           <FontAwesomeIcon icon={faHandshake} />
         </Button>{' '}

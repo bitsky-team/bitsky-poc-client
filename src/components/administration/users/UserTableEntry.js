@@ -2,8 +2,9 @@ import React, { Component } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faPencilAlt, faTrash } from '@fortawesome/free-solid-svg-icons'
 import Rank from '../../common/Rank'
+import {withRouter} from 'react-router'
 
-export default class UserTableEntry extends Component {
+class UserTableEntry extends Component {
 
   render() {
     return (
@@ -14,8 +15,10 @@ export default class UserTableEntry extends Component {
         <td>{this.props.firstname}</td>
         <td>{this.props.email}</td>
         <td><Rank id={this.props.rank} /></td>
-        <td><button className="btn btn-info"><FontAwesomeIcon icon={faEye} /></button>{' '}<button className="btn btn-info" onClick={this.props.toggleUserManageModal}><FontAwesomeIcon icon={faPencilAlt} /></button>{' '}<button className="btn btn-info" onClick={e => this.props.toggleUserDeleteModal(this.props.id, this.props.firstname, this.props.lastname)}><FontAwesomeIcon icon={faTrash} /></button>{' '}</td>
+        <td><button className="btn btn-info" onClick={() => this.props.history.push(`/profile/${this.props.id}`)}><FontAwesomeIcon icon={faEye} /></button>{' '}<button className="btn btn-info" onClick={this.props.toggleUserManageModal}><FontAwesomeIcon icon={faPencilAlt} /></button>{' '}<button className="btn btn-info" onClick={e => this.props.toggleUserDeleteModal(this.props.id, this.props.firstname, this.props.lastname)}><FontAwesomeIcon icon={faTrash} /></button>{' '}</td>
       </tr>
     )
   }
 }
+
+export default withRouter(UserTableEntry)
