@@ -72,7 +72,7 @@ export default class AdministrationPage extends Component {
   }
 
   getLogs = async () => {
-    return await axios.post(
+    return axios.post(
       `${config.API_ROOT}/get_logs`,
       qs.stringify({
         token: localStorage.getItem('token'),
