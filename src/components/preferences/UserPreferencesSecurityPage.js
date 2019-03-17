@@ -57,7 +57,6 @@ const UserPreferencesSecurityPage = () => {
           className: 'notification-success',
         })
       } else {
-        console.log(response)
         toast.error('Une erreur est survenue !', {
           autoClose: 5000,
           position: toast.POSITION.BOTTOM_RIGHT,

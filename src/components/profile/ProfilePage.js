@@ -15,7 +15,7 @@ import Navbar from '../common/template/Navbar'
 import styled from 'styled-components'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {
-  faCommentAlt,
+  faCommentAlt, faLink,
   faMapMarkerAlt,
   faPencilAlt,
 } from '@fortawesome/free-solid-svg-icons'
@@ -59,6 +59,7 @@ const LeftColumnContainer = styled.div`
 const RightColumnHeader = styled.div`
   display: flex;
   align-items: flex-end;
+  position: relative;
 `
 const LivingPlace = styled.h5`
   color: #b7b7b7;
@@ -133,6 +134,14 @@ const FavoriteTrend = styled.h5`
   }
 `
 
+const LinkedLogo = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #b7b7b7;
+  font-size: 18px;
+`
+
 const ProfilePage = props => {
   const [session] = (localStorage.getItem('token')) ? useState(jwtDecode(localStorage.getItem('token'))) : useState(null)
   const [user, setUser] = useState(null)
@@ -167,9 +176,10 @@ const ProfilePage = props => {
 
   const getUser = async () => {
     const userId = props.match.params.id || session.id
-
-    return axios.post(
-      `${config.API_ROOT}/get_user`,
+    const bitsky = (props.match.params.fromStranger) ? `http://${props.match.params.fromStranger}` : config.API_ROOT
+    
+    return await axios.post(
+      `${bitsky}/get_user`,
       qs.stringify({
         token: localStorage.getItem('token'),
         uniq_id: localStorage.getItem('id'),
@@ -177,11 +187,13 @@ const ProfilePage = props => {
       })
     )
   }
+  
   const getPosts = async () => {
     const userId = props.match.params.id || session.id
+    const bitsky = (props.match.params.fromStranger) ? `http://${props.match.params.fromStranger}` : config.API_ROOT
 
     return axios.post(
-      `${config.API_ROOT}/get_allpostsofuser`,
+      `${bitsky}/get_allpostsofuser`,
       qs.stringify({
         token: localStorage.getItem('token'),
         uniq_id: localStorage.getItem('id'),
@@ -189,6 +201,7 @@ const ProfilePage = props => {
       })
     )
   }
+  
   const convertPosts = posts => {
     let statePosts = []
     posts.forEach(post => {
@@ -206,6 +219,7 @@ const ProfilePage = props => {
           favorites={post.favorites}
           comments={post.comments}
           date={post.created_at}
+          fromStranger={post.fromStranger}
           isOwner={
             post.owner.firstname + ' ' + post.owner.lastname ===
               session.firstname + ' ' + session.lastname || session.rank === 2
@@ -218,9 +232,10 @@ const ProfilePage = props => {
   }
   const getFavoritesTrends = async () => {
     const userId = props.match.params.id || session.id
+    const bitsky = (props.match.params.fromStranger) ? `http://${props.match.params.fromStranger}` : config.API_ROOT
 
     return axios.post(
-      `${config.API_ROOT}/get_favoritestrends`,
+      `${bitsky}/get_favoritestrends`,
       qs.stringify({
         token: localStorage.getItem('token'),
         uniq_id: localStorage.getItem('id'),
@@ -368,6 +383,7 @@ const ProfilePage = props => {
                       <FontAwesomeIcon icon={faMapMarkerAlt} />
                       {user.livingplace}
                     </LivingPlace>
+                    {props.match.params.fromStranger && <LinkedLogo><FontAwesomeIcon icon={faLink} /></LinkedLogo>}
                   </RightColumnHeader>
 
                   <Job>{user.job}</Job>

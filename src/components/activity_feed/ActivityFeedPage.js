@@ -61,9 +61,8 @@ export default class ActivityFeedPage extends Component {
     )
     return await response
   }
-
   getPosts = async trend => {
-    const response = await axios.post(
+    return await axios.post(
       `${config.API_ROOT}/get_allposts`,
       qs.stringify({
         uniq_id: localStorage.getItem('id'),
@@ -71,18 +70,16 @@ export default class ActivityFeedPage extends Component {
         trend: trend,
       })
     )
-    return await response
   }
 
   getTrends = async () => {
-    const response = await axios.post(
+    return axios.post(
       `${config.API_ROOT}/get_trends`,
       qs.stringify({
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
       })
     )
-    return await response
   }
 
   storePost = async content => {
@@ -270,46 +267,53 @@ export default class ActivityFeedPage extends Component {
       }
     }
   }
-
-  setPosts = trend => {
-    this.getPosts(trend).then(response => {
-      const {success, posts} = response.data
-      if (success && this._isMounted) {
-        let statePosts = this.state.posts
-
-        posts.forEach(post => {
-          statePosts.push(
-            <Post
-              id={post.id}
-              key={'post-' + post.id}
-              ownerId={post.owner.id}
-              ownerAvatar={post.owner.avatar}
-              ownerName={post.owner.firstname + ' ' + post.owner.lastname}
-              ownerRank={post.owner.rank}
-              content={post.content}
-              tag={post.tag}
-              filled={false}
-              favorites={post.favorites}
-              comments={post.comments}
-              date={post.created_at}
-              isOwner={
-                post.owner.firstname + ' ' + post.owner.lastname ===
-                  this.state.session.firstname +
-                    ' ' +
-                    this.state.session.lastname || this.state.session.rank === 2
-              }
-              handleDeleteButtonClick={this.handleDeleteButtonClick}
-              refreshTrends={this.setTrends}
-            />
-          )
-        })
-
-        this.setState({posts: statePosts})
-        this.removeLoading('posts')
-        this.checkEmpty()
-      } else if (this._isMounted) {
-        console.log('Failed loading posts: ' + response.message)
-      }
+  
+  setPosts = async trend => {
+    const {data} = await this.getPosts(trend)
+    
+    if(data.success) {
+      this.pushPostsToState(data.posts)
+    } else {
+      toast.error('Impossible de charger les posts !', {
+        autoClose: 5000,
+        position: toast.POSITION.BOTTOM_RIGHT,
+      })
+    }
+  }
+  
+  pushPostsToState = (posts) => {
+    let statePosts = this.state.posts
+    
+    posts = _.orderBy(posts, ['created_at'], ['desc'])
+    
+    posts.forEach(post => {
+      statePosts.push(<Post
+        id={post.id}
+        key={'post-' + post.id}
+        ownerId={post.owner.id}
+        ownerAvatar={post.owner.avatar}
+        ownerName={post.owner.firstname + ' ' + post.owner.lastname}
+        ownerRank={post.owner.rank}
+        content={post.content}
+        tag={post.tag}
+        filled={false}
+        favorites={post.favorites}
+        comments={post.comments}
+        date={post.created_at}
+        isOwner={
+          post.owner.firstname + ' ' + post.owner.lastname ===
+          this.state.session.firstname +
+          ' ' +
+          this.state.session.lastname || this.state.session.rank === 2
+        }
+        handleDeleteButtonClick={this.handleDeleteButtonClick}
+        refreshTrends={this.setTrends}
+        fromStranger={post.from_stranger}
+      />)
+    
+      this.setState({posts: statePosts})
+      this.removeLoading('posts')
+      this.checkEmpty()
     })
   }
 
