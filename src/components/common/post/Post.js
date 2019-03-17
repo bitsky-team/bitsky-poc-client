@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, Fragment} from 'react'
 import {config} from '../../../config'
 import DateService from '../../../services/DateService'
 
@@ -46,7 +46,7 @@ class Post extends Component {
   }
 
   isOwner() {
-    if (this.props.isOwner) {
+    if (this.props.isOwner && !this.props.fromStranger) {
       return (
         <FontAwesomeIcon
           className="delete"
