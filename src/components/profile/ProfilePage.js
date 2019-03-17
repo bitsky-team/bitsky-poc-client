@@ -200,16 +200,26 @@ const ProfilePage = props => {
   
   const getPosts = async () => {
     const userId = props.match.params.id || session.id
-    const bitsky = (props.match.params.fromStranger) ? `http://${props.match.params.fromStranger}` : config.API_ROOT
-
-    return axios.post(
-      `${bitsky}/get_allpostsofuser`,
-      qs.stringify({
-        token: localStorage.getItem('token'),
-        uniq_id: localStorage.getItem('id'),
-        user_id: userId,
-      })
-    )
+    
+    if (!props.match.params.fromStranger) {
+      return axios.post(
+        `${config.API_ROOT}/get_allpostsofuser`,
+        qs.stringify({
+          token: localStorage.getItem('token'),
+          uniq_id: localStorage.getItem('id'),
+          user_id: userId,
+        })
+      )
+    } else {
+      return axios.post(
+        `${config.API_ROOT}/get_allpostsofstrangeruser`,
+        qs.stringify({
+          uniq_id: localStorage.getItem('id'),
+          bitsky_ip: props.match.params.fromStranger,
+          user_id: userId,
+        })
+      )
+    }
   }
   
   const convertPosts = posts => {
