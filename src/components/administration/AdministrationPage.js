@@ -87,11 +87,14 @@ export default class AdministrationPage extends Component {
         let logs_result = []
         const {logs} = response.data
 
-        logs.forEach((log, i) => {
-          logs_result.push(
-            <AdministrationLog key={i} log={log}/>,
-          )
-        })
+        if(logs) {
+          logs.forEach((log, i) => {
+            logs_result.push(
+              <AdministrationLog key={i} log={log}/>,
+            )
+          })
+        }
+        
         logs_result.reverse()
         this.setState({logs: logs_result})
       })
@@ -195,7 +198,7 @@ export default class AdministrationPage extends Component {
               </div>
               <div className="user-container no-center admin-dashboard">
                 <h4>Derniers logs</h4>
-                <div className="admin-logs-container">
+                <div className="admin-logs-container margin-top-10">
                   {this.state.logs.length > 0 ? _.take(this.state.logs, 5) : 'Il n\'y a aucun log'}
                 </div>
                 <SeeMoreButton color="info" onClick={this.toggleLogsModalState}>Voir plus</SeeMoreButton>{' '}

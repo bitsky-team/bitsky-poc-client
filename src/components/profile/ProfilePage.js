@@ -15,7 +15,7 @@ import Navbar from '../common/template/Navbar'
 import styled from 'styled-components'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {
-  faCommentAlt,
+  faCommentAlt, faLink,
   faMapMarkerAlt,
   faPencilAlt,
 } from '@fortawesome/free-solid-svg-icons'
@@ -59,6 +59,7 @@ const LeftColumnContainer = styled.div`
 const RightColumnHeader = styled.div`
   display: flex;
   align-items: flex-end;
+  position: relative;
 `
 const LivingPlace = styled.h5`
   color: #b7b7b7;
@@ -133,6 +134,14 @@ const FavoriteTrend = styled.h5`
   }
 `
 
+const LinkedLogo = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #b7b7b7;
+  font-size: 18px;
+`
+
 const ProfilePage = props => {
   const [session] = (localStorage.getItem('token')) ? useState(jwtDecode(localStorage.getItem('token'))) : useState(null)
   const [user, setUser] = useState(null)
@@ -167,28 +176,52 @@ const ProfilePage = props => {
 
   const getUser = async () => {
     const userId = props.match.params.id || session.id
-
-    return axios.post(
-      `${config.API_ROOT}/get_user`,
-      qs.stringify({
-        token: localStorage.getItem('token'),
-        uniq_id: localStorage.getItem('id'),
-        user_id: userId,
-      })
-    )
+    
+    if(!props.match.params.fromStranger) {
+      return await axios.post(
+        `${config.API_ROOT}/get_user`,
+        qs.stringify({
+          token: localStorage.getItem('token'),
+          uniq_id: localStorage.getItem('id'),
+          user_id: userId,
+        })
+      )
+    } else {
+      return await axios.post(
+        `${config.API_ROOT}/get_stranger_user`,
+        qs.stringify({
+          uniq_id: localStorage.getItem('id'),
+          bitsky_ip: props.match.params.fromStranger,
+          user_id: userId,
+        })
+      )
+    }
   }
+  
   const getPosts = async () => {
     const userId = props.match.params.id || session.id
-
-    return axios.post(
-      `${config.API_ROOT}/get_allpostsofuser`,
-      qs.stringify({
-        token: localStorage.getItem('token'),
-        uniq_id: localStorage.getItem('id'),
-        user_id: userId,
-      })
-    )
+    
+    if (!props.match.params.fromStranger) {
+      return axios.post(
+        `${config.API_ROOT}/get_allpostsofuser`,
+        qs.stringify({
+          token: localStorage.getItem('token'),
+          uniq_id: localStorage.getItem('id'),
+          user_id: userId,
+        })
+      )
+    } else {
+      return axios.post(
+        `${config.API_ROOT}/get_allpostsofstrangeruser`,
+        qs.stringify({
+          uniq_id: localStorage.getItem('id'),
+          bitsky_ip: props.match.params.fromStranger,
+          user_id: userId,
+        })
+      )
+    }
   }
+  
   const convertPosts = posts => {
     let statePosts = []
     posts.forEach(post => {
@@ -206,6 +239,7 @@ const ProfilePage = props => {
           favorites={post.favorites}
           comments={post.comments}
           date={post.created_at}
+          fromStranger={post.fromStranger}
           isOwner={
             post.owner.firstname + ' ' + post.owner.lastname ===
               session.firstname + ' ' + session.lastname || session.rank === 2
@@ -216,18 +250,31 @@ const ProfilePage = props => {
     })
     return statePosts
   }
+  
   const getFavoritesTrends = async () => {
     const userId = props.match.params.id || session.id
 
-    return axios.post(
-      `${config.API_ROOT}/get_favoritestrends`,
-      qs.stringify({
-        token: localStorage.getItem('token'),
-        uniq_id: localStorage.getItem('id'),
-        user_id: userId,
-      })
-    )
+    if(!props.match.params.fromStranger) {
+      return axios.post(
+        `${config.API_ROOT}/get_favoritestrends`,
+        qs.stringify({
+          token: localStorage.getItem('token'),
+          uniq_id: localStorage.getItem('id'),
+          user_id: userId,
+        })
+      )
+    } else {
+      return axios.post(
+        `${config.API_ROOT}/get_strangerfavoritestrends`,
+        qs.stringify({
+          uniq_id: localStorage.getItem('id'),
+          bitsky_ip: props.match.params.fromStranger,
+          user_id: userId,
+        })
+      )
+    }
   }
+  
   const convertFavoritesTrends = async () => {
     const response = await getFavoritesTrends()
     const {success, favoritesTrends} = response.data
@@ -240,21 +287,25 @@ const ProfilePage = props => {
     if(success) {
       // Setting trends
       const stateTrends = []
-      favoritesTrends.sort(sortArray)
-      favoritesTrends.slice(0, 3).forEach(favoriteTrend => {
-        stateTrends.push(
-          <FavoriteTrend
-            key={favoriteTrend.id}
-            onClick={() =>
-              props.history.push('/activity_feed', {
-                trend: favoriteTrend.name,
-              })
-            }
-          >
-            {favoriteTrend.name}
-          </FavoriteTrend>
-        )
-      })
+      
+      if(favoritesTrends) {
+        favoritesTrends.sort(sortArray)
+        favoritesTrends.slice(0, 3).forEach(favoriteTrend => {
+          stateTrends.push(
+            <FavoriteTrend
+              key={favoriteTrend.id}
+              onClick={() =>
+                props.history.push('/activity_feed', {
+                  trend: favoriteTrend.name,
+                })
+              }
+            >
+              {favoriteTrend.name}
+            </FavoriteTrend>
+          )
+        })
+      }
+      
       setFavoritesTrends(stateTrends)
     }
   }
@@ -368,6 +419,7 @@ const ProfilePage = props => {
                       <FontAwesomeIcon icon={faMapMarkerAlt} />
                       {user.livingplace}
                     </LivingPlace>
+                    {props.match.params.fromStranger && <LinkedLogo><FontAwesomeIcon icon={faLink} /></LinkedLogo>}
                   </RightColumnHeader>
 
                   <Job>{user.job}</Job>
