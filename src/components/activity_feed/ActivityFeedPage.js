@@ -36,6 +36,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import SideMenu from './SideMenu'
 import Trend from './Trend'
+import Loader from '../Loader'
 
 export default class ActivityFeedPage extends Component {
   _isMounted = false
@@ -46,7 +47,9 @@ export default class ActivityFeedPage extends Component {
       : null,
     postModal: false,
     tagValue: '',
+    postsLoading: true,
     posts: [],
+    trendsLoading: true,
     trends: [],
     trend: null,
   }
@@ -270,51 +273,60 @@ export default class ActivityFeedPage extends Component {
       }
     }
   }
-
-  setPosts = trend => {
-    this.getPosts(trend).then(response => {
-      const {success, posts} = response.data
-      if (success && this._isMounted) {
-        let statePosts = this.state.posts
-
-        posts.forEach(post => {
-          statePosts.push(
-            <Post
-              id={post.id}
-              key={'post-' + post.id}
-              ownerId={post.owner.id}
-              ownerAvatar={post.owner.avatar}
-              ownerName={post.owner.firstname + ' ' + post.owner.lastname}
-              ownerRank={post.owner.rank}
-              content={post.content}
-              tag={post.tag}
-              filled={false}
-              favorites={post.favorites}
-              comments={post.comments}
-              date={post.created_at}
-              isOwner={
-                post.owner.firstname + ' ' + post.owner.lastname ===
-                  this.state.session.firstname +
-                    ' ' +
-                    this.state.session.lastname || this.state.session.rank === 2
-              }
-              handleDeleteButtonClick={this.handleDeleteButtonClick}
-              refreshTrends={this.setTrends}
-            />
-          )
-        })
-
-        this.setState({posts: statePosts})
-        this.removeLoading('posts')
-        this.checkEmpty()
-      } else if (this._isMounted) {
-        console.log('Failed loading posts: ' + response.message)
-      }
+  
+  setPosts = async trend => {
+    this.setState({postsLoading: true})
+  
+    const {data} = await this.getPosts(trend)
+    
+    if(data.success) {
+      this.pushPostsToState(data.posts)
+    } else {
+      toast.error('Impossible de charger les posts !', {
+        autoClose: 5000,
+        position: toast.POSITION.BOTTOM_RIGHT,
+      })
+    }
+  }
+  
+  pushPostsToState = (posts) => {
+    let statePosts = this.state.posts
+    
+    posts = _.orderBy(posts, ['created_at'], ['desc'])
+    
+    posts.forEach(post => {
+      statePosts.push(<Post
+        id={post.id}
+        key={'post-' + post.id}
+        ownerId={post.owner.id}
+        ownerAvatar={post.owner.avatar}
+        ownerName={post.owner.firstname + ' ' + post.owner.lastname}
+        ownerRank={post.owner.rank}
+        content={post.content}
+        tag={post.tag}
+        filled={false}
+        favorites={post.favorites}
+        comments={post.comments}
+        date={post.created_at}
+        isOwner={
+          post.owner.firstname + ' ' + post.owner.lastname ===
+          this.state.session.firstname +
+          ' ' +
+          this.state.session.lastname || this.state.session.rank === 2
+        }
+        handleDeleteButtonClick={this.handleDeleteButtonClick}
+        refreshTrends={this.setTrends}
+        fromStranger={post.from_stranger}
+      />)
+    
+      this.setState({posts: statePosts, postsLoading: false})
+      this.checkEmpty()
     })
   }
 
   setTrends = () => {
     if (this._isMounted) this.resetTrends()
+    this.setState({trendsLoading: true})
 
     this.getTrends().then(response => {
       const {success, trends} = response.data
@@ -335,7 +347,7 @@ export default class ActivityFeedPage extends Component {
           )
         })
 
-        this.setState({trends: stateTrends})
+        this.setState({trends: stateTrends, trendsLoading: false})
       } else if (this._isMounted) {
         console.log('Failed loading trends: ', response)
       }
@@ -495,22 +507,15 @@ export default class ActivityFeedPage extends Component {
               </div>
               <div
                 className="posts-container"
-                ref={postsContainer => (this.postsContainer = postsContainer)}
               >
                 <Alert id="posts-message" color="info" className="info-message">
                   Il n'y a aucune publication pour le moment
                 </Alert>
-                <Alert
-                  id="posts-loading"
-                  color="info"
-                  className="info-message"
-                  style={{display: 'block'}}
-                >
-                  Chargement...
-                </Alert>
+                <Loader display={this.state.postsLoading}/>
                 <div>{this.state.posts}</div>
               </div>
             </Col>
+  
             <Col md="4" className="no-margin-left no-margin-right">
               <div className="user-container right-container">
                 <div className="right-container-header">
@@ -525,6 +530,7 @@ export default class ActivityFeedPage extends Component {
                 </div>
                 <hr />
                 <div style={{display: "block !important"}}>
+                  <Loader display={this.state.trendsLoading} />
                   <div>{this.state.trends}</div>
                 </div>
               </div>

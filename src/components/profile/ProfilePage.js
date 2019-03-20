@@ -1,6 +1,5 @@
 import React, {Fragment, useState, useEffect} from 'react'
 import {
-  Alert,
   Button,
   Col,
   Container,
@@ -26,15 +25,8 @@ import qs from 'qs'
 import {toast} from 'react-toastify'
 import Post from '../common/post/Post'
 import {withRouter} from 'react-router'
+import Loader from '../Loader'
 
-const LoaderContainer = styled(Container)`
-  display: flex;
-  justify-content: center;
-  width: 50vw !important;
-  * {
-    flex: 1;
-  }
-`
 const CenteredRow = styled(Row)`
   display: flex;
   justify-content: center;
@@ -137,6 +129,7 @@ const ProfilePage = props => {
   const [session] = (localStorage.getItem('token')) ? useState(jwtDecode(localStorage.getItem('token'))) : useState(null)
   const [user, setUser] = useState(null)
   const [userPosts, setPosts] = useState(null)
+  const [favoritesTrendsLoader, setFavoritesTrendsLoader] = useState(true)
   const [favoritesTrends, setFavoritesTrends] = useState(null)
   const [tab, setTab] = useState(1)
 
@@ -151,7 +144,7 @@ const ProfilePage = props => {
           setUser(user)
 
           // Setting posts
-          setPosts(convertPosts(posts))
+         setPosts(convertPosts(posts))
   
           // Setting trends
           convertFavoritesTrends()
@@ -229,6 +222,7 @@ const ProfilePage = props => {
     )
   }
   const convertFavoritesTrends = async () => {
+    setFavoritesTrendsLoader(true)
     const response = await getFavoritesTrends()
     const {success, favoritesTrends} = response.data
     const sortArray = (a, b) => {
@@ -256,6 +250,7 @@ const ProfilePage = props => {
         )
       })
       setFavoritesTrends(stateTrends)
+      setFavoritesTrendsLoader(false)
     }
   }
   const deletePost = async id => {
@@ -314,15 +309,9 @@ const ProfilePage = props => {
       <Fragment>
         <Navbar />
 
-        <LoaderContainer className="main-container">
-          <Alert
-            color="info"
-            className="info-message"
-            style={{display: 'block', height: 'fit-content'}}
-          >
-            Chargement...
-          </Alert>
-        </LoaderContainer>
+        <div style={{marginTop: '40px'}}>
+          <Loader display={!user || !userPosts}/>
+        </div>
       </Fragment>
     )
   }
@@ -358,6 +347,7 @@ const ProfilePage = props => {
                     <hr />
                   </FavoritesTrendsTitle>
                   <FavoritesTrendsContainer>
+                    <Loader display={favoritesTrendsLoader}/>
                     {favoritesTrends}
                   </FavoritesTrendsContainer>
                 </Col>
