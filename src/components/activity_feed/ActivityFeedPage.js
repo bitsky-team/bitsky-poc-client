@@ -36,6 +36,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import SideMenu from './SideMenu'
 import Trend from './Trend'
+import Loader from '../Loader'
 
 export default class ActivityFeedPage extends Component {
   _isMounted = false
@@ -46,7 +47,9 @@ export default class ActivityFeedPage extends Component {
       : null,
     postModal: false,
     tagValue: '',
+    postsLoading: true,
     posts: [],
+    trendsLoading: true,
     trends: [],
     trend: null,
   }
@@ -269,6 +272,7 @@ export default class ActivityFeedPage extends Component {
   }
   
   setPosts = async trend => {
+    this.setState({postsLoading: true})
     const {data} = await this.getPosts(trend)
     
     if(data.success) {
@@ -311,14 +315,14 @@ export default class ActivityFeedPage extends Component {
         fromStranger={post.from_stranger}
       />)
     
-      this.setState({posts: statePosts})
-      this.removeLoading('posts')
+      this.setState({posts: statePosts, postsLoading: false})
       this.checkEmpty()
     })
   }
 
   setTrends = () => {
     if (this._isMounted) this.resetTrends()
+    this.setState({trendsLoading: true})
 
     this.getTrends().then(response => {
       const {success, trends} = response.data
@@ -339,7 +343,7 @@ export default class ActivityFeedPage extends Component {
           )
         })
 
-        this.setState({trends: stateTrends})
+        this.setState({trends: stateTrends, trendsLoading: false})
       } else if (this._isMounted) {
         console.log('Failed loading trends: ', response)
       }
@@ -499,22 +503,15 @@ export default class ActivityFeedPage extends Component {
               </div>
               <div
                 className="posts-container"
-                ref={postsContainer => (this.postsContainer = postsContainer)}
               >
                 <Alert id="posts-message" color="info" className="info-message">
                   Il n'y a aucune publication pour le moment
                 </Alert>
-                <Alert
-                  id="posts-loading"
-                  color="info"
-                  className="info-message"
-                  style={{display: 'block'}}
-                >
-                  Chargement...
-                </Alert>
+                <Loader display={this.state.postsLoading}/>
                 <div>{this.state.posts}</div>
               </div>
             </Col>
+  
             <Col md="4" className="no-margin-left no-margin-right">
               <div className="user-container right-container">
                 <div className="right-container-header">
@@ -529,6 +526,7 @@ export default class ActivityFeedPage extends Component {
                 </div>
                 <hr />
                 <div style={{display: "block !important"}}>
+                  <Loader display={this.state.trendsLoading} />
                   <div>{this.state.trends}</div>
                 </div>
               </div>
