@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, Fragment} from 'react'
 import {config} from '../../../config'
 import DateService from '../../../services/DateService'
 
@@ -7,7 +7,7 @@ import {
   faTag,
   faStar as faFullStar,
   faClock,
-  faTimes,
+  faTimes, faLink,
 } from '@fortawesome/free-solid-svg-icons'
 import {
   faStar as faEmptyStar,
@@ -20,6 +20,14 @@ import qs from 'qs'
 import Rank from '../../common/Rank'
 import BestComments from './BestComments'
 import {withRouter} from 'react-router'
+import styled from 'styled-components'
+
+const LinkedLogo = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #b7b7b7;
+`
 
 class Post extends Component {
   _isMounted = false
@@ -38,7 +46,7 @@ class Post extends Component {
   }
 
   isOwner() {
-    if (this.props.isOwner) {
+    if (this.props.isOwner && !this.props.fromStranger) {
       return (
         <FontAwesomeIcon
           className="delete"
@@ -197,15 +205,20 @@ class Post extends Component {
           <img
             src={this.props.ownerAvatar}
             alt="Avatar"
-            onClick={() =>
-              this.props.history.push(`/profile/${this.props.ownerId}`)
-            }
+            onClick={() => {
+              if(this.props.fromStranger) {
+                this.props.history.push(`/profile/${this.props.ownerId}/${this.props.fromStranger}`)
+              } else {
+                this.props.history.push(`/profile/${this.props.ownerId}`)
+              }
+            }}
           />
           <div className="title">
             <h4>{this.props.ownerName}</h4>
             <small>
               <Rank id={this.props.ownerRank} />
             </small>
+            <Fragment>{this.props.fromStranger && <LinkedLogo><FontAwesomeIcon icon={faLink} /></LinkedLogo>}</Fragment>
           </div>
           <p
             className="post-content"

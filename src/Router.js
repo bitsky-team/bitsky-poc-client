@@ -84,7 +84,7 @@ class Router extends Component {
         <PrivateRoute
           exact
           authed={this.state.authenticated}
-          path="/profile/:id?"
+          path="/profile/:id?/:fromStranger?"
           component={ProfilePage}
         />
         <PrivateRoute

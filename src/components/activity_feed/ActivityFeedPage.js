@@ -64,9 +64,8 @@ export default class ActivityFeedPage extends Component {
     )
     return await response
   }
-
   getPosts = async trend => {
-    const response = await axios.post(
+    return await axios.post(
       `${config.API_ROOT}/get_allposts`,
       qs.stringify({
         uniq_id: localStorage.getItem('id'),
@@ -74,18 +73,16 @@ export default class ActivityFeedPage extends Component {
         trend: trend,
       })
     )
-    return await response
   }
 
   getTrends = async () => {
-    const response = await axios.post(
+    return axios.post(
       `${config.API_ROOT}/get_trends`,
       qs.stringify({
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
       })
     )
-    return await response
   }
 
   storePost = async content => {
@@ -276,7 +273,6 @@ export default class ActivityFeedPage extends Component {
   
   setPosts = async trend => {
     this.setState({postsLoading: true})
-  
     const {data} = await this.getPosts(trend)
     
     if(data.success) {
