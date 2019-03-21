@@ -11,7 +11,7 @@ class AdministrationSideMenu extends Component {
         <ul>
             <li><Link to='/administration'><FontAwesomeIcon icon={faTh} /> Tableau de bord</Link></li>
             <li><Link to='/admin_manage_users'><FontAwesomeIcon icon={faUserAlt} /> Utilisateurs</Link></li>
-            <li><Link to='/admin_manage_files'><FontAwesomeIcon icon={faArchive} /> Fichiers</Link></li>
+            <li><Link to='/admin_files'><FontAwesomeIcon icon={faArchive} /> Fichiers</Link></li>
             <li><Link to='/admin_manage_posts'><FontAwesomeIcon icon={faCommentAlt} /> Publications</Link></li>
             <li><Link to='/admin_manage_comments'><FontAwesomeIcon icon={faComments} /> Commentaires</Link></li>
             <li><Link to='/admin_manage_groups'><FontAwesomeIcon icon={faUsers} /> Groupes</Link></li>

@@ -47,7 +47,7 @@ const Level = styled.span`
     border-radius: 50%;
 `
 
-const AdministrationLog = (props) => {
+const AdministrationLog = props => {
 
     const {log} = props
 

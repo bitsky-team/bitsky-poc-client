@@ -8,7 +8,7 @@ import qs from 'qs'
 import jwtDecode from "jwt-decode";
 import {toast} from "react-toastify";
 
-const DeleteModal = (props) => {
+const DeleteModal = ({open, toggleDeleteModal}) => {
 
     const [error, setError] = useState(false)
     const [session] = useState(jwtDecode(localStorage.getItem('token')))
@@ -34,7 +34,7 @@ const DeleteModal = (props) => {
     }
 
     return (
-        <Modal isOpen={props.open} toggle={props.toggleDeleteModal} className="user-modal">
+        <Modal isOpen={open} toggle={toggleDeleteModal} className="user-modal">
             <ModalHeader>
                 Suppression de mon compte
             </ModalHeader>
@@ -55,7 +55,7 @@ const DeleteModal = (props) => {
                 <Button className="modal-choice" color="primary" onClick={deleteAccount}><FontAwesomeIcon
                     icon={faCheck}/></Button>{' '}
                 <Button className="modal-choice" color="secondary"
-                        onClick={props.toggleDeleteModal}><FontAwesomeIcon icon={faTimes}/></Button>
+                        onClick={toggleDeleteModal}><FontAwesomeIcon icon={faTimes}/></Button>
             </ModalFooter>
         </Modal>
     )
