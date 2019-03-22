@@ -26,6 +26,7 @@ import UserManageModal from './UserManageModal'
 import UserDeleteModal from './UserDeleteModal'
 import UserSearchModal from './UserSearchModal'
 import Rank from '../../common/Rank'
+import Loader from '../../Loader'
 
 export default class UsersAdministrationPage extends Component {
   _isMounted = false
@@ -39,6 +40,7 @@ export default class UsersAdministrationPage extends Component {
     session: localStorage.getItem('token')
       ? jwtDecode(localStorage.getItem('token'))
       : null,
+    loading: true,
     users: [],
     filteredUsers: [],
     displayType: 'thumbnails',
@@ -113,11 +115,6 @@ export default class UsersAdministrationPage extends Component {
     )
       return
 
-    if (this.usersLoading) {
-      let usersLoading = this.usersLoading.firstChild
-      if (usersLoading) usersLoading.style.display = 'block'
-    }
-
     switch (action) {
       case 'filterThumbnails':
         this.refs.filterToList.classList.remove('active')
@@ -142,6 +139,7 @@ export default class UsersAdministrationPage extends Component {
   }
 
   getUsers = async displayType => {
+    this.setState({loading: true})
     this.setState({users: [], filteredUsers: []})
 
     const response = await axios.post(
@@ -218,7 +216,7 @@ export default class UsersAdministrationPage extends Component {
           break
       }
 
-      this.setState({users: usersList})
+      this.setState({users: usersList, loading: false})
     }
 
     if (this.usersLoading) {
@@ -330,16 +328,7 @@ export default class UsersAdministrationPage extends Component {
                 style={{marginTop: '15px'}}
               >
                 <Container className="no-padding-left no-padding-right">
-                  <div ref={node => (this.usersLoading = node)}>
-                    <Alert
-                      id="users-loading"
-                      color="info"
-                      className="info-message"
-                      style={{display: 'block'}}
-                    >
-                      Chargement...
-                    </Alert>
-                  </div>
+                  <Loader display={this.state.loading ? 1 : 0} />
                   <Row>
                     {this.state.displayType === 'list' ?
                       (this.state.filteredUsers.length > 0 || this.state.users.length > 0) && (

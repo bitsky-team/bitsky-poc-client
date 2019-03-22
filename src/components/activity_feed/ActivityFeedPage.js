@@ -339,6 +339,7 @@ export default class ActivityFeedPage extends Component {
               author={trend.post.owner}
               score={trend.score}
               updateFilter={this.updateFilter}
+              fromStranger={trend.fromStranger || null}
             />
           )
         })
@@ -507,7 +508,7 @@ export default class ActivityFeedPage extends Component {
                 <Alert id="posts-message" color="info" className="info-message">
                   Il n'y a aucune publication pour le moment
                 </Alert>
-                <Loader display={this.state.postsLoading}/>
+                <Loader display={this.state.postsLoading ? 1 : 0}/>
                 <div>{this.state.posts}</div>
               </div>
             </Col>
@@ -526,7 +527,7 @@ export default class ActivityFeedPage extends Component {
                 </div>
                 <hr />
                 <div style={{display: "block !important"}}>
-                  <Loader display={this.state.trendsLoading} />
+                  <Loader display={this.state.trendsLoading ? 1 : 0} />
                   <div>{this.state.trends}</div>
                 </div>
               </div>

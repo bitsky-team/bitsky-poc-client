@@ -361,7 +361,7 @@ const ProfilePage = props => {
         <Navbar />
 
         <div style={{marginTop: '40px'}}>
-          <Loader display={!user || !userPosts}/>
+          <Loader display={(!user || !userPosts) ? 1 : 0}/>
         </div>
       </Fragment>
     )
@@ -398,7 +398,7 @@ const ProfilePage = props => {
                     <hr />
                   </FavoritesTrendsTitle>
                   <FavoritesTrendsContainer>
-                    <Loader display={favoritesTrendsLoader}/>
+                    <Loader display={favoritesTrendsLoader ? 1 : 0}/>
                     {favoritesTrends}
                   </FavoritesTrendsContainer>
                 </Col>

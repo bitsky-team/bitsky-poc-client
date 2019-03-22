@@ -22,6 +22,18 @@ class Trend extends Component {
     filterActivityFeed = () => {
         this.props.updateFilter(this.props.name)
     }
+    
+    redirectToAuthor = (e) => {
+      e.preventDefault()
+      
+      const {author, fromStranger, history} = this.props
+      
+      if(!fromStranger) {
+        history.push(`/profile/${author.id}`)
+      } else {
+        history.push(`/profile/${author.id}/${fromStranger}`)
+      }
+    }
 
     doNothing = () => {}
 
@@ -39,7 +51,7 @@ class Trend extends Component {
 
                 <div className="trend-content" onClick={() => this.postViewer.current.toggle()}>
                     <p dangerouslySetInnerHTML={this.getContent()} />
-                  <small>Par <Link to={`/profile/${author.id}`}>{author.name}</Link></small>
+                  <small>Par <Link to='/' onClick={this.redirectToAuthor}>{author.name}</Link></small>
                 </div>
                 <Button color="info" className="see-more-button" onClick={this.filterActivityFeed}>Voir plus</Button>{' '}
 

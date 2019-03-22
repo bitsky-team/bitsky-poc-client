@@ -129,9 +129,9 @@ class Comment extends Component {
         ':' +
         dateTime.getMinutes() +
         ':' +
-        (dateTime.getSeconds() + 1)
+        dateTime.getSeconds()
       dateTime = date + ' ' + time
-    
+  
       this.setState({dateTime, displayedDate: DateService.timeSince(dateTime)})
     }, 1000)
   }
@@ -153,6 +153,10 @@ class Comment extends Component {
   componentWillUnmount = () => {
     this._isMounted = false
     clearInterval(this.interval)
+  }
+  
+  componentDidUpdate = () => {
+    console.log('oui')
   }
 
   render = () => {

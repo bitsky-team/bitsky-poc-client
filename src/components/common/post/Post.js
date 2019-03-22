@@ -82,6 +82,7 @@ class Post extends Component {
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
         post_id: this.props.id,
+        bitsky_ip: this.props.fromStranger,
       })
     )
   }
@@ -93,6 +94,7 @@ class Post extends Component {
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
         post_id: this.props.id,
+        bitsky_ip: this.props.fromStranger,
       })
     )
   }
@@ -114,6 +116,7 @@ class Post extends Component {
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
         post_id: this.props.id,
+        bitsky_ip: this.props.fromStranger,
       })
     )
     const {success, favorite} = response.data
