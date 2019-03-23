@@ -155,7 +155,6 @@ class Comment extends Component {
     clearInterval(this.interval)
   }
   
-    console.log('oui')
   }
 
   render = () => {
