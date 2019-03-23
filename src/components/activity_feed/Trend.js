@@ -38,7 +38,7 @@ class Trend extends Component {
     doNothing = () => {}
 
     render() {
-        const {name, score, author, post_id} = this.props
+        const {name, score, author, post_id, fromStranger} = this.props
       
         return (
             <div>
@@ -66,6 +66,7 @@ class Trend extends Component {
                     adjustBestComments={this.doNothing}
                     setCommentsCount={this.doNothing}
                     refreshTrends={this.doNothing}
+                    fromStranger={fromStranger}
                 />
             </div>
         )
