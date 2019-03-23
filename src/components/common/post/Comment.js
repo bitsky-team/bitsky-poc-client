@@ -155,7 +155,6 @@ class Comment extends Component {
     clearInterval(this.interval)
   }
   
-  componentDidUpdate = () => {
     console.log('oui')
   }
 
