@@ -5,7 +5,6 @@ import {
   Row,
   Col,
   Table,
-  Alert,
 } from 'reactstrap'
 import jwtDecode from 'jwt-decode'
 import AdministrationSideMenu from '../common/AdministrationSideMenu'

@@ -271,6 +271,7 @@ class Post extends Component {
           decreaseCommentCounterFromActivityFeed={this.decreaseCommentCounter}
           setCommentsCount={this.setCommentsCount}
           refreshTrends={this.props.refreshTrends}
+          fromStranger={this.props.fromStranger}
         />
       </div>
     )
