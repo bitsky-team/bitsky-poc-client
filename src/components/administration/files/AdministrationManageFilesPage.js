@@ -7,18 +7,21 @@ import {
   Input,
   InputGroupAddon,
   Button,
+  Breadcrumb,
+  BreadcrumbItem,
 } from 'reactstrap'
 import AdministrationSideMenu from '../common/AdministrationSideMenu'
 import Navbar from '../../common/template/Navbar'
 import Rank from '../../common/Rank'
 import jwtDecode from 'jwt-decode'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faSearch, faUpload, faSort} from '@fortawesome/free-solid-svg-icons'
+import {faSearch, faUpload, faSort, faFolderPlus} from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components'
 import posed from 'react-pose'
 import AdministrationFileViewer from './common/AdministrationFileViewer'
 import AdministrationFileRowTable from './common/AdministrationFileRowTable'
 import _ from 'lodash'
+import AdministrationFileUploadModal from './AdministrationFileUploadModal'
 
 const ContentLabel = posed.label({
   up: {
@@ -64,7 +67,7 @@ const SearchInput = styled(Input)`
 `
 
 const FileHeaderTableContainer = styled.div`
-  margin-top: 30px;
+  margin-top: 5px !important;
   box-shadow: 0px 4px 34px -18px #222;
   font-weight: 500;
   
@@ -91,6 +94,33 @@ const NoFile = styled.span`
   margin: 10px;
 `
 
+const FilesContainer = styled.div`
+  margin-top: 40px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+`
+const AddFolderButton = styled.span`
+  height: 29px;
+  width: 29px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 20px
+  background: #FFF;
+  border-radius: 5px;
+  cursor: pointer;
+  color: rgb(131, 178, 224);
+  
+  &&&&:hover {
+    box-shadow: 2px 3px 10px -3px rgba(100,100,100,0.6) !important;  
+  }
+`
+
+const ButtonsContainer = styled.div`
+  display: flex;
+`
+
 const AdministrationManageFilesPage = () => {
 
   const [session] = useState(localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null)
@@ -98,6 +128,8 @@ const AdministrationManageFilesPage = () => {
 
   const [filesComponent, setFilesComponent] = useState([])
   const [filesComponentViewer, setFilesComponentViewer] = useState([])
+
+  const [fileModalState, setFileModalState] = useState(false)
 
   const [files] = useState([
     {
@@ -111,7 +143,7 @@ const AdministrationManageFilesPage = () => {
     {
       'title': 'Mes plats',
       'type': 'png',
-      'author': 'Sylvain',
+      'author': 'Jason',
       'date': '13-01-2019',
       'size': '2 Mo',
       'src': 'http://lorempixel.com/400/200/food/',
@@ -127,20 +159,66 @@ const AdministrationManageFilesPage = () => {
     {
       'title': 'Vacances',
       'type': 'png',
-      'author': 'Sylvain',
+      'author': 'Jason',
       'date': '19-02-2019',
       'size': '3 Mo',
       'src': 'http://lorempixel.com/400/200/nature/\'',
     },
+    {
+      'type': 'folder',
+      'size': '15 Mo',
+      'title': 'mes vacances',
+      'content': [
+        {
+          'title': 'Vacances Espagne',
+          'type': 'png',
+          'author': 'Jason',
+          'date': '19-02-2019',
+          'size': '3 Mo',
+          'src': 'http://lorempixel.com/400/200/nature/\'',
+        },
+        {
+          'type': 'folder',
+          'size': '15 Mo',
+          'title': 'vacances Italie',
+          'content': [
+            {
+              'title': 'Italie',
+              'type': 'png',
+              'author': 'Jason',
+              'date': '19-02-2019',
+              'size': '3 Mo',
+              'src': 'http://lorempixel.com/400/200/nature/\'',
+            },
+          ]
+        }
+      ]
+    }
   ])
+
+  const openFolder = (type, content) => {
+    if(type === 'folder') {
+      const items = []
+      content.forEach((item, id) => {
+        items.push(
+          <AdministrationFileRowTable key={id} content={item.content} openFolder={openFolder} title={item.title} type={item.type} author={item.author} date={item.date} size={item.size} id={id} />
+        )
+      })
+      setFilesComponent(items)
+    }
+  }
+
+  const toggleModalState = () => {
+    setFileModalState(!fileModalState)
+  }
 
   useEffect(() => {
     let files_result = []
     let files_viewer = []
-    
+
     files.forEach((file, id) => {
       files_result.push(
-        <AdministrationFileRowTable key={id} title={file.title} type={file.type} author={file.author} date={file.date} size={file.size} id={id} />
+        <AdministrationFileRowTable key={id} content={file.content} openFolder={openFolder} title={file.title} type={file.type} author={file.author} date={file.date} size={file.size} id={id} />
       )
     })
 
@@ -156,6 +234,7 @@ const AdministrationManageFilesPage = () => {
 
   return (
     <div>
+      <AdministrationFileUploadModal isOpen={fileModalState} toggle={toggleModalState}/>
       <Navbar/>
       <Container className="main-container">
         <Row>
@@ -190,7 +269,7 @@ const AdministrationManageFilesPage = () => {
                     </InputGroup>
                   </ColContainer>
                   <ColContainer md="3">
-                    <UploadButton color="info"><FontAwesomeIcon icon={faUpload}/> Uploader</UploadButton>
+                    <UploadButton color="info" onClick={toggleModalState}><FontAwesomeIcon icon={faUpload}/> Uploader</UploadButton>
                   </ColContainer>
                 </Row>
               </Container>
@@ -205,6 +284,16 @@ const AdministrationManageFilesPage = () => {
             <Container>
               <Row>
                 <Col md="12">
+                  <FilesContainer>
+                    <div>
+                      <Breadcrumb>
+                        <BreadcrumbItem active>Home</BreadcrumbItem>
+                      </Breadcrumb>
+                    </div>
+                    <ButtonsContainer>
+                      <AddFolderButton><FontAwesomeIcon icon={faFolderPlus}/></AddFolderButton>
+                    </ButtonsContainer>
+                  </FilesContainer>
                   <FileHeaderTableContainer className="user-container admin-dashboard">
                     <Container>
                       <Row>

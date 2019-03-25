@@ -1,5 +1,5 @@
 import React from 'react'
-import {Card, CardBody, CardImg, CardSubtitle, CardText, Col, Row} from 'reactstrap'
+import {Card, CardBody, CardImg, CardSubtitle, CardText, Col} from 'reactstrap'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faFilePdf, faImage, faFile} from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components'
@@ -91,7 +91,7 @@ const AdministrationFileViewer = ({type, src, size, title, author, date}) => {
         <ContainerOverlay>
           <ImgFileViewer top width="100%"
                          src={src}
-                         alt="Card image cap"/>
+                         alt="File image"/>
           <Overlay id="overlay">
             <CardText>
               <small>Uploadé par {author} le {date}</small>

@@ -1716,3 +1716,7 @@ span.comment-counter, span.fav-counter, .post-details .counter-container {
   background: #FFF;
   width: 80vw;
 }
+
+ol.breadcrumb {
+  background: #FFF !important;
+}
