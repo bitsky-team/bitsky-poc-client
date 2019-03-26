@@ -22,6 +22,10 @@ import AdministrationFileViewer from './common/AdministrationFileViewer'
 import AdministrationFileRowTable from './common/AdministrationFileRowTable'
 import _ from 'lodash'
 import AdministrationFileUploadModal from './AdministrationFileUploadModal'
+import axios from 'axios'
+import {config} from '../../../config'
+import qs from 'qs'
+import {toast} from 'react-toastify'
 
 const ContentLabel = posed.label({
   up: {
@@ -131,62 +135,66 @@ const AdministrationManageFilesPage = () => {
 
   const [fileModalState, setFileModalState] = useState(false)
 
-  const [files] = useState([
+  const [files, setFilesContent] = useState([])
+
+  /*const [files] = useState([
     {
-      'title': 'Ma passion pour les chats',
+      'name': 'Ma passion pour les chats',
       'type': 'png',
       'author': 'Sylvain',
-      'date': '15-02-2019',
+      'updated_at': '15-02-2019',
       'size': '3 Mo',
       'src': 'http://lorempixel.com/400/200/cats/',
     },
     {
-      'title': 'Mes plats',
+      'name': 'Mes plats',
       'type': 'png',
       'author': 'Jason',
-      'date': '13-01-2019',
+      'updated_at': '13-01-2019',
       'size': '2 Mo',
       'src': 'http://lorempixel.com/400/200/food/',
     },
     {
-      'title': 'Mon PDF',
+      'name': 'Mon PDF',
       'type': 'pdf',
       'author': 'Sylvain',
-      'date': '10-01-2019',
+      'updated_at': '10-01-2019',
       'size': '207 ko',
       'src': 'https://assets.awwwards.com/awards/submissions/2016/12/58415e2c44e79.jpg',
     },
     {
-      'title': 'Vacances',
+      'name': 'Vacances',
       'type': 'png',
       'author': 'Jason',
-      'date': '19-02-2019',
+      'updated_at': '19-02-2019',
       'size': '3 Mo',
       'src': 'http://lorempixel.com/400/200/nature/\'',
     },
     {
       'type': 'folder',
       'size': '15 Mo',
-      'title': 'mes vacances',
+      'name': 'mes vacances',
+      'updated_at': '19-02-2019',
       'content': [
         {
-          'title': 'Vacances Espagne',
+          'name': 'Vacances Espagne',
           'type': 'png',
           'author': 'Jason',
-          'date': '19-02-2019',
+          'updated_at': '19-02-2019',
           'size': '3 Mo',
           'src': 'http://lorempixel.com/400/200/nature/\'',
         },
         {
           'type': 'folder',
           'size': '15 Mo',
-          'title': 'vacances Italie',
+          'name': 'vacances Italie',
+          'updated_at': '19-02-2019',
           'content': [
             {
-              'title': 'Italie',
+              'name': 'Italie',
               'type': 'png',
               'author': 'Jason',
-              'date': '19-02-2019',
+              'updated_at': '19-02-2019',
               'size': '3 Mo',
               'src': 'http://lorempixel.com/400/200/nature/\'',
             },
@@ -194,14 +202,14 @@ const AdministrationManageFilesPage = () => {
         }
       ]
     }
-  ])
+  ])*/
 
   const openFolder = (type, content) => {
     if(type === 'folder') {
       const items = []
       content.forEach((item, id) => {
         items.push(
-          <AdministrationFileRowTable key={id} content={item.content} openFolder={openFolder} title={item.title} type={item.type} author={item.author} date={item.date} size={item.size} id={id} />
+          <AdministrationFileRowTable key={id} content={item.content} openFolder={openFolder} name={item.name} type={item.type} author={item.author} updated_at={item.updated_at} size={item.size} id={id} />
         )
       })
       setFilesComponent(items)
@@ -212,19 +220,46 @@ const AdministrationManageFilesPage = () => {
     setFileModalState(!fileModalState)
   }
 
+  const getFiles = async () => {
+    return axios.post(
+      `${config.API_ROOT}/get_files`,
+      qs.stringify({
+        uniq_id: localStorage.getItem('id'),
+        token: localStorage.getItem('token'),
+      })
+    )
+  }
+
+  const setFiles = async () => {
+    const response = await getFiles()
+    const {success, content} = response.data
+    if(success) {
+      console.log(content)
+      setFilesContent(content)
+      console.log(files)
+    }else {
+      toast.error('Erreur lors du chargement des fichiers', {
+        autoClose: 5000,
+        position: toast.POSITION.BOTTOM_RIGHT,
+      })
+    }
+  }
+
   useEffect(() => {
     let files_result = []
     let files_viewer = []
 
+    setFiles()
+
     files.forEach((file, id) => {
       files_result.push(
-        <AdministrationFileRowTable key={id} content={file.content} openFolder={openFolder} title={file.title} type={file.type} author={file.author} date={file.date} size={file.size} id={id} />
+        <AdministrationFileRowTable key={id} content={file.content} openFolder={openFolder} name={file.name} type={file.type} author={file.author} updated_at={file.updated_at} size={file.size} id={id} />
       )
     })
 
     _.take(files, 3).forEach( (file, id) => {
       files_viewer.push(
-        <AdministrationFileViewer key={id} src={file.src} title={file.title} type={file.type} author={file.author} date={file.date} size={file.size}/>
+        <AdministrationFileViewer key={id} src={file.src} name={file.name} type={file.type} author={file.author} updated_at={file.updated_at} size={file.size}/>
       )
     })
 

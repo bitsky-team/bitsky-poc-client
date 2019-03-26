@@ -87,7 +87,7 @@ const cursor = type => {
   }
 }
 
-const AdministrationFileRowTable = ({title, type, author, date, size, id, openFolder, content}) => {
+const AdministrationFileRowTable = ({name, type, author, updated_at, size, id, openFolder, content}) => {
 
   const FolderCursor = styled.span`
     cursor: ${cursor(type)}
@@ -99,12 +99,12 @@ const AdministrationFileRowTable = ({title, type, author, date, size, id, openFo
         <Row>
           <Text md="2" onClick={() => openFolder(type, content)}>
             <FolderCursor>
-              {type === 'folder' ? <FontAwesomeIcon icon={faFolder}/> : ''} {title}
+              {type === 'folder' ? <FontAwesomeIcon icon={faFolder}/> : ''} {name}
             </FolderCursor>
           </Text>
           <Text md="2">{type}</Text>
           <Text md="2">{author}</Text>
-          <Text md="2">{date}</Text>
+          <Text md="2">{updated_at}</Text>
           <Text md="2">{size}</Text>
           <Options md="2">
             <OptionsHover id={`file${String(id)}`}>

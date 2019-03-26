@@ -57,7 +57,7 @@ const FileSize = styled.small`
   bottom: 10px;
 `
 
-const AdministrationFileViewer = ({type, src, size, title, author, date}) => {
+const AdministrationFileViewer = ({type, src, size, name, author, updated_at}) => {
 
   const switchType = (type) => {
     switch (type) {
@@ -94,13 +94,13 @@ const AdministrationFileViewer = ({type, src, size, title, author, date}) => {
                          alt="File image"/>
           <Overlay id="overlay">
             <CardText>
-              <small>Uploadé par {author} le {date}</small>
+              <small>Uploadé par {author} le {updated_at}</small>
               <FileSize>{size}</FileSize>
             </CardText>
           </Overlay>
         </ContainerOverlay>
         <FileTitle>
-          <CardSubtitle><Icon icon={switchIcon(type)}/> {title}</CardSubtitle>
+          <CardSubtitle><Icon icon={switchIcon(type)}/> {name}</CardSubtitle>
         </FileTitle>
       </FileViewer>
     </Col>
