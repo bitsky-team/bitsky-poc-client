@@ -27,18 +27,19 @@ export default class BestComments extends Component {
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
         post_id: this.props.id,
+        bitsky_ip: this.props.fromStranger
       })
     )
+    
     return await response
   }
 
   setBestComments = async () => {
     const comments =  await this.getBestComments()
+    const {success, comments: data} = comments.data
     
-    console.log('Best comments response structure:', comments)
-    
-    if(comments.success) {
-      this.pushBestCommentsToState(comments.data)
+    if(success) {
+      this.pushBestCommentsToState(data)
     }
   }
 
@@ -52,12 +53,14 @@ export default class BestComments extends Component {
           id={comment.id}
           author={comment.owner}
           content={comment.content}
+          fromStranger={comment.fromStranger}
         />
       )
     })
 
     this.setState({comments: stateComments})
     this.adjustMargin()
+    this.props.setCommentsLoading(false)
   }
 
   componentDidMount = () => {
@@ -208,6 +211,7 @@ export default class BestComments extends Component {
           adjustBestComments={this.adjustMargin}
           setCommentsCount={this.props.setCommentsCount}
           refreshTrends={this.props.refreshTrends}
+          fromStranger={this.props.fromStranger}
         />
       </div>
     )

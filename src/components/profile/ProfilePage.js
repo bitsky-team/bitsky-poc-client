@@ -153,7 +153,7 @@ const ProfilePage = props => {
           setUser(user)
 
           // Setting posts
-         setPosts(convertPosts(posts))
+          setPosts(convertPosts(posts))
   
           // Setting trends
           convertFavoritesTrends()
@@ -232,7 +232,7 @@ const ProfilePage = props => {
           favorites={post.favorites}
           comments={post.comments}
           date={post.created_at}
-          fromStranger={post.fromStranger}
+          fromStranger={props.match.params.fromStranger}
           isOwner={
             post.owner.firstname + ' ' + post.owner.lastname ===
               session.firstname + ' ' + session.lastname || session.rank === 2
@@ -361,7 +361,7 @@ const ProfilePage = props => {
         <Navbar />
 
         <div style={{marginTop: '40px'}}>
-          <Loader display={!user || !userPosts}/>
+          <Loader display={(!user || !userPosts) ? 1 : 0}/>
         </div>
       </Fragment>
     )
@@ -398,7 +398,7 @@ const ProfilePage = props => {
                     <hr />
                   </FavoritesTrendsTitle>
                   <FavoritesTrendsContainer>
-                    <Loader display={favoritesTrendsLoader}/>
+                    <Loader display={favoritesTrendsLoader ? 1 : 0}/>
                     {favoritesTrends}
                   </FavoritesTrendsContainer>
                 </Col>

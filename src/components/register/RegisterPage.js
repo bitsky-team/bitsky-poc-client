@@ -85,7 +85,6 @@ class RegisterPage extends Component {
       }else {
         setTimeout(() => {
           if(this.errorMessage && this.errorsList) {
-            console.log(this.errorsList)
             this.errorMessage.innerHTML = 'Veuillez vérifier les points suivants:'
             if(!emailCheck) this.errorsList.innerHTML += '<li>Votre adresse email est incorrecte</li>'
             if(!passwordCheckLength || !repeatPasswordCheckLength) this.errorsList.innerHTML += '<li>Les mots de passe doivent comporter au moins 8 caractères</li>'

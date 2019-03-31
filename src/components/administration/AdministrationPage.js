@@ -18,6 +18,7 @@ import AdministrationLog from './common/AdministrationLog'
 import _ from 'lodash'
 import styled from 'styled-components'
 import AdministrationLogModal from './logs/AdministrationLogModal'
+import Loader from '../Loader'
 
 const SeeMoreButton = styled(Button)`
     background-color: rgb(131, 178, 224);
@@ -49,6 +50,7 @@ export default class AdministrationPage extends Component {
       disque3: 3,
       disque4: 3,
     },
+    logsLoading: true,
     logs: [],
     logsModalState: false,
   }
@@ -82,6 +84,7 @@ export default class AdministrationPage extends Component {
   }
 
   setLogs = () => {
+    this.setState({logsLoading: true})
     this.getLogs()
       .then(response => {
         let logs_result = []
@@ -96,7 +99,7 @@ export default class AdministrationPage extends Component {
         }
         
         logs_result.reverse()
-        this.setState({logs: logs_result})
+        this.setState({logs: logs_result, logsLoading: false})
       })
   }
 
@@ -199,9 +202,10 @@ export default class AdministrationPage extends Component {
               <div className="user-container no-center admin-dashboard">
                 <h4>Derniers logs</h4>
                 <div className="admin-logs-container margin-top-10">
-                  {this.state.logs.length > 0 ? _.take(this.state.logs, 5) : 'Il n\'y a aucun log'}
+                  <Loader display={this.state.logsLoading ? 1 : 0}/>
+                  {this.state.logs.length > 0 ? _.take(this.state.logs, 5) : undefined}
                 </div>
-                <SeeMoreButton color="info" onClick={this.toggleLogsModalState}>Voir plus</SeeMoreButton>{' '}
+                {this.state.logs.length > 0 && <SeeMoreButton color="info" onClick={this.toggleLogsModalState}>Voir plus</SeeMoreButton>}{' '}
               </div>
             </Col>
           </Row>

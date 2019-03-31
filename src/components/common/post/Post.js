@@ -21,6 +21,7 @@ import Rank from '../../common/Rank'
 import BestComments from './BestComments'
 import {withRouter} from 'react-router'
 import styled from 'styled-components'
+import Loader from '../../Loader'
 
 const LinkedLogo = styled.div`
   position: absolute;
@@ -35,6 +36,7 @@ class Post extends Component {
   state = {
     favoriteFilled: this.props.favoriteFilled,
     favorites: this.props.favorites,
+    commentsLoading: true,
     comments: this.props.comments,
     date: this.props.date,
     displayedDate: DateService.timeSince(this.props.date),
@@ -82,6 +84,7 @@ class Post extends Component {
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
         post_id: this.props.id,
+        bitsky_ip: this.props.fromStranger,
       })
     )
   }
@@ -93,6 +96,7 @@ class Post extends Component {
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
         post_id: this.props.id,
+        bitsky_ip: this.props.fromStranger,
       })
     )
   }
@@ -114,6 +118,7 @@ class Post extends Component {
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
         post_id: this.props.id,
+        bitsky_ip: this.props.fromStranger,
       })
     )
     const {success, favorite} = response.data
@@ -138,6 +143,7 @@ class Post extends Component {
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
         post_id: this.props.id,
+        bitsky_ip: this.props.fromStranger
       })
     )
     return await response
@@ -246,9 +252,9 @@ class Post extends Component {
                 <span
                   className="comment-counter"
                   onClick={this.handleCommentCounterClick}
-                  ref={node => (this.commentCounter = node)}
                 >
-                  <FontAwesomeIcon icon={faComments} /> {this.state.comments}
+                  <FontAwesomeIcon icon={faComments} />{' '}
+                  {this.state.commentsLoading ? <Loader display={1} row={1} /> : this.state.comments}
                 </span>
               </Col>
               <Col md="4" className="text-right">
@@ -268,6 +274,8 @@ class Post extends Component {
           decreaseCommentCounterFromActivityFeed={this.decreaseCommentCounter}
           setCommentsCount={this.setCommentsCount}
           refreshTrends={this.props.refreshTrends}
+          fromStranger={this.props.fromStranger}
+          setCommentsLoading={(state) => this.setState({commentsLoading: state})}
         />
       </div>
     )

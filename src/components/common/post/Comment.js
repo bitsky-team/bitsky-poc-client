@@ -27,9 +27,9 @@ class Comment extends Component {
 
   isOwner = () => {
     if (
-      this.props.owner.firstname + ' ' + this.props.owner.lastname ===
-        this.state.session.firstname + ' ' + this.state.session.lastname ||
-      this.state.session.rank === 2
+      (this.props.owner.firstname + ' ' + this.props.owner.lastname ===
+      this.state.session.firstname + ' ' + this.state.session.lastname ||
+        (this.state.session.rank === 2 && !this.props.strangerPost))
     ) {
       return (
         <span className="remove">
@@ -54,6 +54,7 @@ class Comment extends Component {
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
         post_comment_id: this.props.id,
+        bitsky_ip: this.props.strangerPost
       })
     )
 
@@ -74,6 +75,7 @@ class Comment extends Component {
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
         post_comment_id: this.props.id,
+        bitsky_ip: this.props.strangerPost
       })
     )
 
@@ -103,6 +105,7 @@ class Comment extends Component {
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
         post_comment_id: this.props.id,
+        bitsky_ip: this.props.strangerPost
       })
     )
 
@@ -129,9 +132,9 @@ class Comment extends Component {
         ':' +
         dateTime.getMinutes() +
         ':' +
-        (dateTime.getSeconds() + 1)
+        dateTime.getSeconds()
       dateTime = date + ' ' + time
-    
+  
       this.setState({dateTime, displayedDate: DateService.timeSince(dateTime)})
     }, 1000)
   }
@@ -154,6 +157,7 @@ class Comment extends Component {
     this._isMounted = false
     clearInterval(this.interval)
   }
+  
 
   render = () => {
     return (
@@ -161,9 +165,13 @@ class Comment extends Component {
         <img
           src={this.props.owner.avatar}
           alt="avatar"
-          onClick={() =>
-            this.props.history.push(`/profile/${this.props.owner.id}`)
-          }
+          onClick={() => {
+            if(this.props.fromStranger) {
+              this.props.history.push(`/profile/${this.props.owner.id}/${this.props.fromStranger}`)
+            } else {
+              this.props.history.push(`/profile/${this.props.owner.id}`)
+            }
+          }}
         />
         <span className="author" ref={node => (this.authorBox = node)}>
           {this.props.owner.firstname + ' ' + this.props.owner.lastname}
