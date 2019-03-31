@@ -18,7 +18,13 @@ class CommentThumbnail extends Component {
           id={'post-comment-thumnail-' + this.props.id + '-image'}
           src={this.props.author.avatar}
           alt="avatar"
-          onClick={() => this.props.history.push(`/profile/${this.props.author.id}`)}
+          onClick={() => {
+            if(this.props.fromStranger) {
+              this.props.history.push(`/profile/${this.props.author.id}/${this.props.fromStranger}`)
+            } else {
+              this.props.history.push(`/profile/${this.props.author.id}`)
+            }
+          }}
         />
         <span className="author" ref={node => (this.authorBox = node)}>
           {this.props.author.firstname + ' ' + this.props.author.lastname}

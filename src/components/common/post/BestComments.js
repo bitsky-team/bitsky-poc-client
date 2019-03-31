@@ -30,6 +30,7 @@ export default class BestComments extends Component {
         bitsky_ip: this.props.fromStranger
       })
     )
+    
     return await response
   }
 
@@ -52,12 +53,14 @@ export default class BestComments extends Component {
           id={comment.id}
           author={comment.owner}
           content={comment.content}
+          fromStranger={comment.fromStranger}
         />
       )
     })
 
     this.setState({comments: stateComments})
     this.adjustMargin()
+    this.props.setCommentsLoading(false)
   }
 
   componentDidMount = () => {

@@ -23,6 +23,7 @@ import qs from 'qs'
 import TextareaAutosize from 'react-autosize-textarea'
 import {toast} from 'react-toastify'
 import Comment from './Comment'
+import Loader from '../../Loader'
 
 export default class PostViewer extends React.Component {
   _isMounted = false
@@ -35,6 +36,7 @@ export default class PostViewer extends React.Component {
     post: null,
     favoriteFilled: false,
     favorites: 0,
+    loadingComments: true,
     commentsCount: 0,
     comments: [],
     score: '?',
@@ -183,6 +185,7 @@ export default class PostViewer extends React.Component {
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
         post_id: this.props.id,
+        bitsky_ip: this.props.fromStranger
       })
     )
     const {success, favorite} = response.data
@@ -247,9 +250,10 @@ export default class PostViewer extends React.Component {
         token: localStorage.getItem('token'),
         post_id: this.props.id,
         content: this.commentContent.textarea.value,
+        bitsky_ip: this.props.fromStranger
       })
     )
-
+    
     const {success, comment, message} = response.data
 
     if (success && this._isMounted) {
@@ -310,6 +314,7 @@ export default class PostViewer extends React.Component {
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
         comment_id: id,
+        bitsky_ip: this.props.fromStranger
       })
     )
 
@@ -340,6 +345,7 @@ export default class PostViewer extends React.Component {
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
         post_id: this.props.id,
+        bitsky_ip: this.props.fromStranger
       })
     )
 
@@ -353,6 +359,8 @@ export default class PostViewer extends React.Component {
   }
 
   setComments = () => {
+    this.setState({loadingComments: true})
+    
     this.getComments().then(response => {
       const {success, comments} = response.data
 
@@ -372,11 +380,13 @@ export default class PostViewer extends React.Component {
               refreshBestComments={this.props.refreshBestComments}
               refreshTrends={this.props.refreshTrends}
               refreshPostScore={this.setScore}
+              fromStranger={comment.fromStranger}
+              strangerPost={this.props.fromStranger}
             />
           )
         })
 
-        this.setState({comments: stateComments})
+        this.setState({comments: stateComments, loadingComments: false})
       }
     })
   }
@@ -407,11 +417,13 @@ export default class PostViewer extends React.Component {
                   <img
                     src={this.state.post.owner.avatar}
                     alt="Avatar"
-                    onClick={() =>
-                      (window.location.href = `/profile/${
-                        this.state.post.owner.id
-                      }`)
-                    }
+                    onClick={() => {
+                      if(this.props.fromStranger) {
+                        window.location.href = `/profile/${this.state.post.owner.id}/${this.props.fromStranger}`
+                      } else {
+                        window.location.href = `/profile/${this.state.post.owner.id}`
+                      }
+                    }}
                   />
                   <div className="title">
                     <h4>
@@ -506,15 +518,21 @@ export default class PostViewer extends React.Component {
                   <FontAwesomeIcon icon={faPaperPlane} />
                 </span>
               </div>
-
-              <div
-                className="postComments"
-                style={{
-                  display: this.state.comments.length > 0 ? 'block' : 'none',
-                }}
-              >
-                {this.state.comments}
-              </div>
+              
+              {this.state.loadingComments ? (
+                <div style={{marginTop: '10px'}}>
+                  <Loader display={1} />
+                </div>
+              ) : (
+                <div
+                  className="postComments"
+                  style={{
+                    display: this.state.comments.length > 0 ? 'block' : 'none',
+                  }}
+                >
+                  {this.state.comments}
+                </div>
+              )}
             </ModalBody>
           </Modal>
         ) : (
