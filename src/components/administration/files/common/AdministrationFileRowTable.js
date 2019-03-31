@@ -78,42 +78,61 @@ const FileRow = styled.div`
   }
 `
 
-const cursor = type => {
-  switch (type) {
-    case 'folder':
-      return 'pointer'
-    default:
-      return 'default'
+const AdministrationFileRowTable = ({name, type, author, updated_at, size, id, openFolder}) => {
+
+  const cursor = type => {
+    switch (type) {
+      case 'dossier':
+        return 'pointer'
+      default:
+        return 'default'
+    }
   }
-}
 
-const AdministrationFileRowTable = ({name, type, author, updated_at, size, id, openFolder, content}) => {
-
-  const FolderCursor = styled.span`
-    cursor: ${cursor(type)}
+  const FolderHover = styled(Col)`
+    cursor: ${cursor(type)};
+    transition: 0.3s ease-in-out !important;
+    
+    :hover {
+      color: rgb(62, 58, 58);
+    }
   `
+
+  const deleteItem = type => {
+    // TODO: deleteItem
+  }
 
   return (
     <FileRow className="user-container admin-dashboard">
       <Container>
         <Row>
-          <Text md="2" onClick={() => openFolder(type, content)}>
-            <FolderCursor>
-              {type === 'folder' ? <FontAwesomeIcon icon={faFolder}/> : ''} {name}
-            </FolderCursor>
-          </Text>
-          <Text md="2">{type}</Text>
-          <Text md="2">{author}</Text>
-          <Text md="2">{updated_at}</Text>
-          <Text md="2">{size}</Text>
-          <Options md="2">
-            <OptionsHover id={`file${String(id)}`}>
-              <FontAwesomeIcon icon={faEllipsisV}/>
-            </OptionsHover>
-          </Options>
+          <FolderHover md="10" onClick={() => openFolder(type, name)}>
+            <Container>
+              <Row>
+                <Text md="3">
+                    {type === 'dossier' ? <FontAwesomeIcon icon={faFolder}/> : ''} {name}
+                </Text>
+                <Text md="2">{type}</Text>
+                <Text md="3">{author}</Text>
+                <Text md="2">{updated_at}</Text>
+                <Text md="2">{size}</Text>
+              </Row>
+            </Container>
+          </FolderHover>
+          <Col md="2">
+            <Container>
+              <Row>
+                <Options>
+                  <OptionsHover id={`file${String(id)}`}>
+                    <FontAwesomeIcon icon={faEllipsisV}/>
+                  </OptionsHover>
+                </Options>
+              </Row>
+            </Container>
+          </Col>
           <PopoverContainer trigger="legacy" placement="top" target={`file${String(id)}`}>
             <PopoverContent>
-              {type === 'folder' ? ' ' : (
+              {type === 'dossier' ? ' ' : (
                 <IconContainer>
                   <IconHover><OptionsButton icon={faEye} id="eye"/></IconHover>
                 </IconContainer>
@@ -122,7 +141,7 @@ const AdministrationFileRowTable = ({name, type, author, updated_at, size, id, o
                 <IconHover><OptionsButton icon={faDownload} id="download"/></IconHover>
               </IconContainer>
               <TrashIconContainer>
-                <IconHover><TrashButton icon={faTrashAlt} id="trash"/></IconHover>
+                <IconHover><TrashButton icon={faTrashAlt} id="trash" onClick={() => deleteItem(type, name)}/></IconHover>
               </TrashIconContainer>
             </PopoverContent>
           </PopoverContainer>

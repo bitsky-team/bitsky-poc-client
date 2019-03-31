@@ -18,14 +18,14 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faSearch, faUpload, faSort, faFolderPlus} from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components'
 import posed from 'react-pose'
-import AdministrationFileViewer from './common/AdministrationFileViewer'
 import AdministrationFileRowTable from './common/AdministrationFileRowTable'
-import _ from 'lodash'
 import AdministrationFileUploadModal from './AdministrationFileUploadModal'
 import axios from 'axios'
 import {config} from '../../../config'
 import qs from 'qs'
 import {toast} from 'react-toastify'
+import Loader from '../../Loader'
+import AdministrationFileCreateFolderModal from './AdministrationFileCreateFolderModal'
 
 const ContentLabel = posed.label({
   up: {
@@ -125,99 +125,82 @@ const ButtonsContainer = styled.div`
   display: flex;
 `
 
+const MainFilesContainer = styled(Col)`
+  padding: 0 !important;
+`
+
+const BreadCrumbItem = styled(BreadcrumbItem)`
+  cursor: pointer;
+  
+  :hover {
+      text-decoration: underline;
+  }
+`
+
 const AdministrationManageFilesPage = () => {
 
   const [session] = useState(localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null)
   const [toggelLabel, setToggleLabel] = useState(false)
-
   const [filesComponent, setFilesComponent] = useState([])
-  const [filesComponentViewer, setFilesComponentViewer] = useState([])
-
   const [fileModalState, setFileModalState] = useState(false)
+  const [createFolderModalState, setCreateFolderModalState] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [path, setPath] = useState(null)
+  const [breadcrumbItem, setBreadCrumbItem] = useState(null)
 
-  const [files, setFilesContent] = useState([])
+  const BreadCrumbContainer = styled(Breadcrumb)`
+    display: ${path ? 'block' : 'none'} !important;
+  `
 
-  /*const [files] = useState([
-    {
-      'name': 'Ma passion pour les chats',
-      'type': 'png',
-      'author': 'Sylvain',
-      'updated_at': '15-02-2019',
-      'size': '3 Mo',
-      'src': 'http://lorempixel.com/400/200/cats/',
-    },
-    {
-      'name': 'Mes plats',
-      'type': 'png',
-      'author': 'Jason',
-      'updated_at': '13-01-2019',
-      'size': '2 Mo',
-      'src': 'http://lorempixel.com/400/200/food/',
-    },
-    {
-      'name': 'Mon PDF',
-      'type': 'pdf',
-      'author': 'Sylvain',
-      'updated_at': '10-01-2019',
-      'size': '207 ko',
-      'src': 'https://assets.awwwards.com/awards/submissions/2016/12/58415e2c44e79.jpg',
-    },
-    {
-      'name': 'Vacances',
-      'type': 'png',
-      'author': 'Jason',
-      'updated_at': '19-02-2019',
-      'size': '3 Mo',
-      'src': 'http://lorempixel.com/400/200/nature/\'',
-    },
-    {
-      'type': 'folder',
-      'size': '15 Mo',
-      'name': 'mes vacances',
-      'updated_at': '19-02-2019',
-      'content': [
-        {
-          'name': 'Vacances Espagne',
-          'type': 'png',
-          'author': 'Jason',
-          'updated_at': '19-02-2019',
-          'size': '3 Mo',
-          'src': 'http://lorempixel.com/400/200/nature/\'',
-        },
-        {
-          'type': 'folder',
-          'size': '15 Mo',
-          'name': 'vacances Italie',
-          'updated_at': '19-02-2019',
-          'content': [
-            {
-              'name': 'Italie',
-              'type': 'png',
-              'author': 'Jason',
-              'updated_at': '19-02-2019',
-              'size': '3 Mo',
-              'src': 'http://lorempixel.com/400/200/nature/\'',
-            },
-          ]
-        }
-      ]
+  const openFolder = (type, name) => {
+    if (type === 'dossier') {
+      const newPath = `${path || ''}/${name}`
+      setPath(newPath)
+      setBreadcrumb(newPath)
     }
-  ])*/
+  }
 
-  const openFolder = (type, content) => {
-    if(type === 'folder') {
-      const items = []
-      content.forEach((item, id) => {
-        items.push(
-          <AdministrationFileRowTable key={id} content={item.content} openFolder={openFolder} name={item.name} type={item.type} author={item.author} updated_at={item.updated_at} size={item.size} id={id} />
-        )
-      })
-      setFilesComponent(items)
-    }
+  const setBreadcrumb = (newPath) => {
+    const splittedPath = newPath ? newPath.split('/') : ['']
+    const lastItem = splittedPath.pop()
+    const breadcrumb = []
+
+    splittedPath.forEach((item, index) => {
+      if(!item.trim()) item = 'Home'
+      breadcrumb.push(<BreadCrumbItem key={index} onClick={() => goTo(index)}>{item}</BreadCrumbItem>)
+    })
+
+    breadcrumb.push(<BreadCrumbItem key={'breadcrumb-last'} active>{lastItem}</BreadCrumbItem>)
+
+    setBreadCrumbItem(breadcrumb)
+  }
+
+  const goTo = limit => {
+    const completePath = `Home${path}`
+    const splittedPath = completePath.split('/')
+    splittedPath[0] = null
+
+    let newPath = ''
+
+    splittedPath.forEach((item, index) => {
+      if(index > limit) return
+      if(item) {
+        newPath += `/${item}`
+      }
+    })
+
+    if(!newPath.trim()) newPath = null
+
+    setPath(newPath)
+    setBreadcrumb(newPath)
   }
 
   const toggleModalState = () => {
     setFileModalState(!fileModalState)
+  }
+
+  const toggleFolderModalState = () => {
+    setCreateFolderModalState(!createFolderModalState)
   }
 
   const getFiles = async () => {
@@ -226,50 +209,52 @@ const AdministrationManageFilesPage = () => {
       qs.stringify({
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
-      })
+        path: path || null,
+      }),
     )
   }
 
-  const setFiles = async () => {
-    const response = await getFiles()
-    const {success, content} = response.data
-    if(success) {
-      console.log(content)
-      setFilesContent(content)
-      console.log(files)
-    }else {
-      toast.error('Erreur lors du chargement des fichiers', {
-        autoClose: 5000,
-        position: toast.POSITION.BOTTOM_RIGHT,
-      })
-    }
+
+  const setFiles = () => {
+    setFilesComponent(null)
+    setLoading(true)
+    getFiles().then(response => {
+      const {success, content} = response.data
+      if (success) {
+        if(content) {
+          let files_result = []
+
+          content.forEach((file, id) => {
+            let date = file.updated_at.split(' ').shift()
+            files_result.push(
+              <AdministrationFileRowTable key={id} openFolder={openFolder} name={file.name}
+                                          type={file.type} author={file.author} updated_at={date} size={file.size}
+                                          id={id}/>,
+            )
+          })
+
+          setFilesComponent(files_result)
+          setLoading(false)
+        }
+      } else {
+        toast.error('Erreur lors du chargement des fichiers', {
+          autoClose: 5000,
+          position: toast.POSITION.BOTTOM_RIGHT,
+        })
+      }
+    })
   }
 
   useEffect(() => {
-    let files_result = []
-    let files_viewer = []
 
     setFiles()
 
-    files.forEach((file, id) => {
-      files_result.push(
-        <AdministrationFileRowTable key={id} content={file.content} openFolder={openFolder} name={file.name} type={file.type} author={file.author} updated_at={file.updated_at} size={file.size} id={id} />
-      )
-    })
-
-    _.take(files, 3).forEach( (file, id) => {
-      files_viewer.push(
-        <AdministrationFileViewer key={id} src={file.src} name={file.name} type={file.type} author={file.author} updated_at={file.updated_at} size={file.size}/>
-      )
-    })
-
-    setFilesComponent(files_result)
-    setFilesComponentViewer(files_viewer)
-  },[])
+  }, [path])
 
   return (
     <div>
-      <AdministrationFileUploadModal isOpen={fileModalState} toggle={toggleModalState}/>
+      <AdministrationFileUploadModal isOpen={fileModalState} toggle={toggleModalState} setFiles={setFiles} path={path}/>
+      <AdministrationFileCreateFolderModal isOpen={createFolderModalState} toggle={toggleFolderModalState} path={path} setFiles={setFiles}/>
       <Navbar/>
       <Container className="main-container">
         <Row>
@@ -304,44 +289,47 @@ const AdministrationManageFilesPage = () => {
                     </InputGroup>
                   </ColContainer>
                   <ColContainer md="3">
-                    <UploadButton color="info" onClick={toggleModalState}><FontAwesomeIcon icon={faUpload}/> Uploader</UploadButton>
+                    <UploadButton color="info" onClick={toggleModalState}><FontAwesomeIcon
+                      icon={faUpload}/> Uploader</UploadButton>
                   </ColContainer>
                 </Row>
               </Container>
             </SearchContainer>
-            <div className="user-container admin-dashboard">
-              <Container>
-                <Row>
-                  {filesComponentViewer && filesComponentViewer.length > 0 ? filesComponentViewer : 'Il n\'y a pas de fichier'}
-                </Row>
-              </Container>
-            </div>
+
             <Container>
               <Row>
-                <Col md="12">
+                <MainFilesContainer md="12">
                   <FilesContainer>
                     <div>
-                      <Breadcrumb>
-                        <BreadcrumbItem active>Home</BreadcrumbItem>
-                      </Breadcrumb>
+                      <BreadCrumbContainer>
+                        {breadcrumbItem ? breadcrumbItem : null}
+                      </BreadCrumbContainer>
                     </div>
                     <ButtonsContainer>
-                      <AddFolderButton><FontAwesomeIcon icon={faFolderPlus}/></AddFolderButton>
+                      <AddFolderButton onClick={toggleFolderModalState}><FontAwesomeIcon icon={faFolderPlus}/></AddFolderButton>
                     </ButtonsContainer>
                   </FilesContainer>
                   <FileHeaderTableContainer className="user-container admin-dashboard">
                     <Container>
                       <Row>
-                        <Text md="2"><TextHeader><FontAwesomeIcon icon={faSort}/> Nom</TextHeader></Text>
-                        <Text md="2"><TextHeader><FontAwesomeIcon icon={faSort}/> Type</TextHeader></Text>
-                        <Text md="2"><TextHeader><FontAwesomeIcon icon={faSort}/> Propriétaire</TextHeader></Text>
-                        <Text md="2"><TextHeader><FontAwesomeIcon icon={faSort}/> Date</TextHeader></Text>
-                        <Text md="2"><TextHeader><FontAwesomeIcon icon={faSort}/> Taille</TextHeader></Text>
+                        <Col md="10">
+                          <Container>
+                            <Row>
+                              <Text md="3"><TextHeader><FontAwesomeIcon icon={faSort}/> Nom</TextHeader></Text>
+                              <Text md="2"><TextHeader><FontAwesomeIcon icon={faSort}/> Type</TextHeader></Text>
+                              <Text md="3"><TextHeader><FontAwesomeIcon icon={faSort}/> Propriétaire</TextHeader></Text>
+                              <Text md="2"><TextHeader><FontAwesomeIcon icon={faSort}/> Date</TextHeader></Text>
+                              <Text md="2"><TextHeader><FontAwesomeIcon icon={faSort}/> Taille</TextHeader></Text>
+                            </Row>
+                          </Container>
+                        </Col>
                       </Row>
                     </Container>
                   </FileHeaderTableContainer>
-                  {filesComponent && filesComponent.length> 0 ? filesComponent : <NoFile>Il n'y a pas de fichier</NoFile>}
-                </Col>
+                  <Loader display={loading ? 1 : 0}/>
+                  {filesComponent && filesComponent.length > 0 ? filesComponent :
+                    !loading && <NoFile>Il n'y a pas de fichier</NoFile>}
+                </MainFilesContainer>
               </Row>
             </Container>
           </Col>
