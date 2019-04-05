@@ -26,6 +26,9 @@ import qs from 'qs'
 import {toast} from 'react-toastify'
 import Loader from '../../Loader'
 import AdministrationFileCreateFolderModal from './AdministrationFileCreateFolderModal'
+import FormGroup from 'reactstrap/es/FormGroup'
+import FormFeedback from 'reactstrap/es/FormFeedback'
+import removeAccents from 'remove-accents'
 
 const ContentLabel = posed.label({
   up: {
@@ -155,6 +158,9 @@ const AdministrationManageFilesPage = () => {
   const [toggleSize, setToggleSize] = useState(false)
   const [dataContent, setDataContent] = useState(null)
 
+  const [searchValue, setSearchValue] = useState('')
+  const [searchError, setSearchError] = useState(false)
+
   const BreadCrumbContainer = styled(Breadcrumb)`
     display: ${path ? 'block' : 'none'} !important;
   `
@@ -237,7 +243,8 @@ const AdministrationManageFilesPage = () => {
 
           files_result.push(
             <AdministrationFileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
-                                        type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname} ownerId={file.owner.id} updated_at={date} size={file.converted_size}
+                                        type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname}
+                                        ownerId={file.owner.id} updated_at={date} size={file.converted_size}
                                         id={id} setFiles={setFiles}/>,
           )
         })
@@ -343,12 +350,62 @@ const AdministrationManageFilesPage = () => {
     data.forEach((file, id) => {
       sortedComponents.push(
         <AdministrationFileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
-                                    type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname} ownerId={file.owner.id} updated_at={file.updated_at} size={file.converted_size}
+                                    type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname}
+                                    ownerId={file.owner.id} updated_at={file.updated_at} size={file.converted_size}
                                     id={id} setFiles={setFiles}/>,
       )
     })
 
     setFilesComponent(sortedComponents)
+  }
+
+  const searchName = () => {
+    let data = dataContent
+    let filesComponentSought = []
+
+    data.forEach(file => {
+      file.updated_at = file.updated_at.split(' ').shift()
+    })
+
+    const filteredFiles = data.filter(file => {
+      let value = file.name.toString().toLowerCase()
+
+      value = removeAccents(value)
+
+      let desiredValue = searchValue.toString().toLowerCase()
+
+      desiredValue = removeAccents(desiredValue)
+
+      return value.includes(desiredValue)
+    })
+
+    if (filteredFiles.length === 0) {
+      toast.error('Votre recherche n\'a donné aucun résultat !', {
+        autoClose: 5000,
+        position: toast.POSITION.BOTTOM_RIGHT,
+      })
+    } else {
+      filteredFiles.forEach((file, id) => {
+        filesComponentSought.push(
+          <AdministrationFileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
+                                      type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname}
+                                      ownerId={file.owner.id} updated_at={file.updated_at} size={file.converted_size}
+                                      id={id} setFiles={setFiles}/>,
+        )
+      })
+
+      setFilesComponent(filesComponentSought)
+    }
+  }
+
+  const checkForm = () => {
+    let isOk = searchValue.length > 0
+
+    if (isOk) {
+      searchName()
+    } else {
+      setSearchError(true)
+    }
   }
 
   useEffect(() => {
@@ -381,18 +438,27 @@ const AdministrationManageFilesPage = () => {
                     <h4>Fichiers</h4>
                   </ColContainer>
                   <ColContainer md="7">
-                    <InputGroup>
-                      <AnimatedLabel pose={toggelLabel ? 'up' : 'down'}>Rechercher</AnimatedLabel>
-                      <SearchInput
-                        onFocus={() => setToggleLabel(true)}
-                        onBlur={() => setToggleLabel(false)}
-                      />
-                      <InputGroupAddon addonType="append">
-                        <Button color="info">
-                          <FontAwesomeIcon icon={faSearch}/>
-                        </Button>
-                      </InputGroupAddon>
-                    </InputGroup>
+                    <FormGroup>
+                      <InputGroup>
+                        <AnimatedLabel
+                          pose={toggelLabel || searchValue.length > 0 ? 'up' : 'down'}>Rechercher</AnimatedLabel>
+                        <SearchInput
+                          onFocus={() => setToggleLabel(true)}
+                          onBlur={() => setToggleLabel(false)}
+                          className={searchError ? 'is-invalid' : ''}
+                          onChange={e => {
+                            setSearchError(false)
+                            setSearchValue(e.target.value)
+                          }}
+                        />
+                        <InputGroupAddon addonType="append">
+                          <Button color="info" onClick={checkForm}>
+                            <FontAwesomeIcon icon={faSearch}/>
+                          </Button>
+                        </InputGroupAddon>
+                      </InputGroup>
+                      <FormFeedback>{''}</FormFeedback>
+                    </FormGroup>
                   </ColContainer>
                   <ColContainer md="3">
                     <UploadButton color="info" onClick={toggleModalState}><FontAwesomeIcon
@@ -421,11 +487,16 @@ const AdministrationManageFilesPage = () => {
                         <Col md="10">
                           <Container>
                             <Row>
-                              <Text md="3"><TextHeader onClick={() => sortColumn('name')}><FontAwesomeIcon icon={faSort}/> Nom</TextHeader></Text>
-                              <Text md="2"><TextHeader onClick={() => sortColumn('type')}><FontAwesomeIcon icon={faSort}/> Type</TextHeader></Text>
-                              <Text md="3"><TextHeader onClick={() => sortColumn('owner')}><FontAwesomeIcon icon={faSort}/> Propriétaire</TextHeader></Text>
-                              <Text md="2"><TextHeader onClick={() => sortColumn('date')}><FontAwesomeIcon icon={faSort}/> Date</TextHeader></Text>
-                              <Text md="2"><TextHeader onClick={() => sortColumn('size')}><FontAwesomeIcon icon={faSort}/> Taille</TextHeader></Text>
+                              <Text md="3"><TextHeader onClick={() => sortColumn('name')}><FontAwesomeIcon
+                                icon={faSort}/> Nom</TextHeader></Text>
+                              <Text md="2"><TextHeader onClick={() => sortColumn('type')}><FontAwesomeIcon
+                                icon={faSort}/> Type</TextHeader></Text>
+                              <Text md="3"><TextHeader onClick={() => sortColumn('owner')}><FontAwesomeIcon
+                                icon={faSort}/> Propriétaire</TextHeader></Text>
+                              <Text md="2"><TextHeader onClick={() => sortColumn('date')}><FontAwesomeIcon
+                                icon={faSort}/> Date</TextHeader></Text>
+                              <Text md="2"><TextHeader onClick={() => sortColumn('size')}><FontAwesomeIcon
+                                icon={faSort}/> Taille</TextHeader></Text>
                             </Row>
                           </Container>
                         </Col>
