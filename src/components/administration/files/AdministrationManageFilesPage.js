@@ -148,6 +148,13 @@ const AdministrationManageFilesPage = () => {
   const [path, setPath] = useState(null)
   const [breadcrumbItem, setBreadCrumbItem] = useState(null)
 
+  const [toggleDates, setTogglesDates] = useState(false)
+  const [toggleNames, setToggleNames] = useState(false)
+  const [toggleOwner, setToggleOwner] = useState(false)
+  const [toggleType, setToggleType] = useState(false)
+  const [toggleSize, setToggleSize] = useState(false)
+  const [dataContent, setDataContent] = useState(null)
+
   const BreadCrumbContainer = styled(Breadcrumb)`
     display: ${path ? 'block' : 'none'} !important;
   `
@@ -166,7 +173,7 @@ const AdministrationManageFilesPage = () => {
     const breadcrumb = []
 
     splittedPath.forEach((item, index) => {
-      if(!item.trim()) item = 'Home'
+      if (!item.trim()) item = 'Home'
       breadcrumb.push(<BreadCrumbItem key={index} onClick={() => goTo(index)}>{item}</BreadCrumbItem>)
     })
 
@@ -183,13 +190,13 @@ const AdministrationManageFilesPage = () => {
     let newPath = ''
 
     splittedPath.forEach((item, index) => {
-      if(index > limit) return
-      if(item) {
+      if (index > limit) return
+      if (item) {
         newPath += `/${item}`
       }
     })
 
-    if(!newPath.trim()) newPath = null
+    if (!newPath.trim()) newPath = null
 
     setPath(newPath)
     setBreadcrumb(newPath)
@@ -214,35 +221,134 @@ const AdministrationManageFilesPage = () => {
     )
   }
 
-
-  const setFiles = () => {
+  const setFiles = async () => {
     setFilesComponent(null)
     setLoading(true)
-    getFiles().then(response => {
-      const {success, content} = response.data
-      if (success) {
-        if(content) {
-          let files_result = []
 
-          content.forEach((file, id) => {
-            let date = file.updated_at.split(' ').shift()
-            files_result.push(
-              <AdministrationFileRowTable key={id} openFolder={openFolder} name={file.name}
-                                          type={file.type} author={file.author} updated_at={date} size={file.size}
-                                          id={id}/>,
-            )
-          })
+    const response = await getFiles()
+    const {success, content} = response.data
+    if (success) {
+      if (content) {
+        setDataContent(content)
+        let files_result = []
 
-          setFilesComponent(files_result)
-          setLoading(false)
-        }
-      } else {
-        toast.error('Erreur lors du chargement des fichiers', {
-          autoClose: 5000,
-          position: toast.POSITION.BOTTOM_RIGHT,
+        content.forEach((file, id) => {
+          let date = file.updated_at.split(' ').shift()
+
+          files_result.push(
+            <AdministrationFileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
+                                        type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname} ownerId={file.owner.id} updated_at={date} size={file.converted_size}
+                                        id={id} setFiles={setFiles}/>,
+          )
         })
+        setFilesComponent(files_result)
+        setLoading(false)
       }
+    } else {
+      toast.error('Erreur lors du chargement des fichiers', {
+        autoClose: 5000,
+        position: toast.POSITION.BOTTOM_RIGHT,
+      })
+    }
+  }
+
+  const toggleSortDates = () => {
+    setTogglesDates(!toggleDates)
+  }
+
+  const toggleSortNames = () => {
+    setToggleNames(!toggleNames)
+  }
+
+  const toggleSortOwner = () => {
+    setToggleOwner(!toggleOwner)
+  }
+
+  const toggleSortType = () => {
+    setToggleType(!toggleType)
+  }
+
+  const toggleSortSize = () => {
+    setToggleSize(!toggleSize)
+  }
+
+  const sortColumn = type => {
+    let data = dataContent
+    let sortedComponents = []
+
+    data.forEach(file => {
+      file.updated_at = file.updated_at.split(' ').shift()
     })
+
+    switch (type) {
+      case 'date':
+        toggleSortDates()
+
+        data.sort((a, b) => {
+          let aa = a.updated_at.split('-').reverse().join(),
+            bb = b.updated_at.split('-').reverse().join()
+
+          if (toggleDates) return aa > bb ? -1 : (aa < bb ? 1 : 0)
+          else return aa < bb ? -1 : (aa > bb ? 1 : 0)
+        })
+        break
+      case 'owner':
+        toggleSortOwner()
+
+        data.sort((a, b) => {
+          let currentFirstname = a.owner.firstname.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
+            nextFirstname = b.owner.firstname.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+
+          if (toggleOwner) return currentFirstname < nextFirstname ? -1 : (currentFirstname > nextFirstname ? 1 : 0)
+          else return currentFirstname > nextFirstname ? -1 : (currentFirstname < nextFirstname ? 1 : 0)
+        })
+        break
+      case 'name':
+        toggleSortNames()
+
+        data.sort((a, b) => {
+          let currentName = a.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
+            nextName = b.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+
+          if (toggleNames) return currentName < nextName ? -1 : (currentName > nextName ? 1 : 0)
+          else return currentName > nextName ? -1 : (currentName < nextName ? 1 : 0)
+        })
+        break
+      case 'type':
+        toggleSortType()
+
+        data.sort((a, b) => {
+          let currentType = a.type.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
+            nextType = b.type.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+
+          if (toggleType) return currentType < nextType ? -1 : (currentType > nextType ? 1 : 0)
+          else return currentType > nextType ? -1 : (currentType < nextType ? 1 : 0)
+        })
+        break
+      case 'size':
+        toggleSortSize()
+
+        data.sort((a, b) => {
+          let aa = a.size,
+            bb = b.size
+
+          if (toggleSize) return aa > bb ? -1 : (aa < bb ? 1 : 0)
+          else return aa < bb ? -1 : (aa > bb ? 1 : 0)
+        })
+        break
+      default:
+        break
+    }
+
+    data.forEach((file, id) => {
+      sortedComponents.push(
+        <AdministrationFileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
+                                    type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname} ownerId={file.owner.id} updated_at={file.updated_at} size={file.converted_size}
+                                    id={id} setFiles={setFiles}/>,
+      )
+    })
+
+    setFilesComponent(sortedComponents)
   }
 
   useEffect(() => {
@@ -254,7 +360,8 @@ const AdministrationManageFilesPage = () => {
   return (
     <div>
       <AdministrationFileUploadModal isOpen={fileModalState} toggle={toggleModalState} setFiles={setFiles} path={path}/>
-      <AdministrationFileCreateFolderModal isOpen={createFolderModalState} toggle={toggleFolderModalState} path={path} setFiles={setFiles}/>
+      <AdministrationFileCreateFolderModal isOpen={createFolderModalState} toggle={toggleFolderModalState} path={path}
+                                           setFiles={setFiles}/>
       <Navbar/>
       <Container className="main-container">
         <Row>
@@ -264,7 +371,6 @@ const AdministrationManageFilesPage = () => {
               <h5>{session.firstname + ' ' + session.lastname}</h5>
               <p className="rank"><Rank id={session.rank}/></p>
             </div>
-
             <AdministrationSideMenu/>
           </Col>
           <Col md="9" className="no-margin-left no-margin-right">
@@ -295,7 +401,6 @@ const AdministrationManageFilesPage = () => {
                 </Row>
               </Container>
             </SearchContainer>
-
             <Container>
               <Row>
                 <MainFilesContainer md="12">
@@ -306,7 +411,8 @@ const AdministrationManageFilesPage = () => {
                       </BreadCrumbContainer>
                     </div>
                     <ButtonsContainer>
-                      <AddFolderButton onClick={toggleFolderModalState}><FontAwesomeIcon icon={faFolderPlus}/></AddFolderButton>
+                      <AddFolderButton onClick={toggleFolderModalState}><FontAwesomeIcon
+                        icon={faFolderPlus}/></AddFolderButton>
                     </ButtonsContainer>
                   </FilesContainer>
                   <FileHeaderTableContainer className="user-container admin-dashboard">
@@ -315,11 +421,11 @@ const AdministrationManageFilesPage = () => {
                         <Col md="10">
                           <Container>
                             <Row>
-                              <Text md="3"><TextHeader><FontAwesomeIcon icon={faSort}/> Nom</TextHeader></Text>
-                              <Text md="2"><TextHeader><FontAwesomeIcon icon={faSort}/> Type</TextHeader></Text>
-                              <Text md="3"><TextHeader><FontAwesomeIcon icon={faSort}/> Propriétaire</TextHeader></Text>
-                              <Text md="2"><TextHeader><FontAwesomeIcon icon={faSort}/> Date</TextHeader></Text>
-                              <Text md="2"><TextHeader><FontAwesomeIcon icon={faSort}/> Taille</TextHeader></Text>
+                              <Text md="3"><TextHeader onClick={() => sortColumn('name')}><FontAwesomeIcon icon={faSort}/> Nom</TextHeader></Text>
+                              <Text md="2"><TextHeader onClick={() => sortColumn('type')}><FontAwesomeIcon icon={faSort}/> Type</TextHeader></Text>
+                              <Text md="3"><TextHeader onClick={() => sortColumn('owner')}><FontAwesomeIcon icon={faSort}/> Propriétaire</TextHeader></Text>
+                              <Text md="2"><TextHeader onClick={() => sortColumn('date')}><FontAwesomeIcon icon={faSort}/> Date</TextHeader></Text>
+                              <Text md="2"><TextHeader onClick={() => sortColumn('size')}><FontAwesomeIcon icon={faSort}/> Taille</TextHeader></Text>
                             </Row>
                           </Container>
                         </Col>

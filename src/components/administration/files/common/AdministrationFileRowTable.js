@@ -3,6 +3,12 @@ import {Col, Container, Row, UncontrolledPopover, PopoverBody} from 'reactstrap'
 import {faEye, faTrashAlt, faEllipsisV, faDownload, faFolder} from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import axios from 'axios'
+import {config} from '../../../../config'
+import qs from 'qs'
+import {toast} from 'react-toastify'
+import fileDownload from 'js-file-download'
+import {withRouter} from 'react-router'
 
 const OptionsButton = styled(FontAwesomeIcon)`
   color: rgb(131, 178, 224);
@@ -17,6 +23,14 @@ const Text = styled(Col)`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+`
+
+const OwnerHover = styled.span`
+  z-index: 3;
+  :hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
 `
 
 const IconHover = styled(Text)`
@@ -78,7 +92,7 @@ const FileRow = styled.div`
   }
 `
 
-const AdministrationFileRowTable = ({name, type, author, updated_at, size, id, openFolder}) => {
+const AdministrationFileRowTable = ({name, type, firstname, lastname, ownerId, updated_at, size, id, openFolder, path, setFiles, history: {push}}) => {
 
   const cursor = type => {
     switch (type) {
@@ -90,6 +104,7 @@ const AdministrationFileRowTable = ({name, type, author, updated_at, size, id, o
   }
 
   const FolderHover = styled(Col)`
+    z-index: 2;
     cursor: ${cursor(type)};
     transition: 0.3s ease-in-out !important;
     
@@ -98,8 +113,40 @@ const AdministrationFileRowTable = ({name, type, author, updated_at, size, id, o
     }
   `
 
-  const deleteItem = type => {
-    // TODO: deleteItem
+  const deleteItem = async name => {
+    const response = await axios.post(
+      `${config.API_ROOT}/delete_item`,
+      qs.stringify({
+        uniq_id: localStorage.getItem('id'),
+        token: localStorage.getItem('token'),
+        path: path || null,
+        name,
+      }),
+    )
+    const {success} = response.data
+    if (success) {
+      setFiles()
+    } else {
+      toast.error('L\'item n\'a pas pu être supprimé !', {
+        autoClose: 5000,
+        position: toast.POSITION.BOTTOM_RIGHT,
+      })
+    }
+  }
+
+  const downloadItem = async name => {
+    const response = await axios.post(
+      `${config.API_ROOT}/download_item`,
+      qs.stringify({
+        uniq_id: localStorage.getItem('id'),
+        token: localStorage.getItem('token'),
+        path: path || null,
+        name,
+      }), {
+        responseType: 'blob',
+      },
+    )
+    fileDownload(response.data, name)
   }
 
   return (
@@ -110,10 +157,11 @@ const AdministrationFileRowTable = ({name, type, author, updated_at, size, id, o
             <Container>
               <Row>
                 <Text md="3">
-                    {type === 'dossier' ? <FontAwesomeIcon icon={faFolder}/> : ''} {name}
+                  {type === 'dossier' ? <FontAwesomeIcon icon={faFolder}/> : ''} {name}
                 </Text>
-                <Text md="2">{type}</Text>
-                <Text md="3">{author}</Text>
+                <Text md="2">{type ? type : 'fichier'}</Text>
+                <Text md="3"><OwnerHover
+                  onClick={() => push(`/profile/${ownerId}`)}>{firstname && lastname ? `${firstname} ${lastname}` : 'Inconnu'}</OwnerHover></Text>
                 <Text md="2">{updated_at}</Text>
                 <Text md="2">{size}</Text>
               </Row>
@@ -138,10 +186,11 @@ const AdministrationFileRowTable = ({name, type, author, updated_at, size, id, o
                 </IconContainer>
               )}
               <IconContainer>
-                <IconHover><OptionsButton icon={faDownload} id="download"/></IconHover>
+                <IconHover><OptionsButton icon={faDownload} id="download"
+                                          onClick={() => downloadItem(name)}/></IconHover>
               </IconContainer>
               <TrashIconContainer>
-                <IconHover><TrashButton icon={faTrashAlt} id="trash" onClick={() => deleteItem(type, name)}/></IconHover>
+                <IconHover><TrashButton icon={faTrashAlt} id="trash" onClick={() => deleteItem(name)}/></IconHover>
               </TrashIconContainer>
             </PopoverContent>
           </PopoverContainer>
@@ -151,4 +200,4 @@ const AdministrationFileRowTable = ({name, type, author, updated_at, size, id, o
   )
 }
 
-export default AdministrationFileRowTable
+export default withRouter(AdministrationFileRowTable)

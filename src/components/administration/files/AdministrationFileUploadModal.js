@@ -52,15 +52,6 @@ const AdministrationFileUploadModal = ({isOpen, toggle, path, setFiles}) => {
   const [loadingText, setLoadingText] = useState(null)
   const [percentCompleted, setPercentCompleted] = useState(0)
 
-  const onDrop = useCallback(acceptedFiles => {
-    setFilesToUpload([])
-    acceptedFiles.forEach(file => readFile(file))
-    setFilesList(acceptedFiles.map((file, i) => <li key={i}>{file.name}</li>))
-    setIsUploaded(true)
-
-  }, [])
-  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
-
   const readFile = (file) => {
     setLoadingText(`Récupération du fichier ${file.name}`)
     const reader = new FileReader()
@@ -76,18 +67,25 @@ const AdministrationFileUploadModal = ({isOpen, toggle, path, setFiles}) => {
       setLoadingText(null)
     }
 
-    if(filesToUpload.length < 10) {
+    if (filesToUpload.length < 10) {
       reader.readAsDataURL(file)
     } else {
       alert('Trop de fichiers ! 10 maximum')
     }
   }
 
+  const onDrop = useCallback(acceptedFiles => {
+    acceptedFiles.forEach(file => readFile(file))
+    setFilesList(acceptedFiles.map((file, i) => <li key={i}>{file.name}</li>))
+    setIsUploaded(true)
+
+  }, [])
+  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
+
   const uploadFiles = async () => {
     setLoadingText('Envoi des fichiers...')
-    setPercentCompleted(0)
     setTimeout(async () => {
-      await axios.post(
+      const response = await axios.post(
         `${config.API_ROOT}/upload_files`,
         qs.stringify({
           uniq_id: localStorage.getItem('id'),
@@ -96,25 +94,23 @@ const AdministrationFileUploadModal = ({isOpen, toggle, path, setFiles}) => {
           files: filesToUpload,
         }), {
           onUploadProgress: progressEvent => {
-            setPercentCompleted(Math.round( (progressEvent.loaded * 100) / progressEvent.total ))
-          }
-        }
-      ).then(response => {
-        const {success} = response.data
-
-        if(success) {
-          setLoadingText(null)
-          setFiles()
-          setIsUploaded(false)
-          toggle()
-        }else {
-          toast.error('Le(s) fichier(s) n\'a/ont pas pu être uploadé(s) !', {
-            autoClose: 5000,
-            position: toast.POSITION.BOTTOM_RIGHT,
-          })
-        }
-
-      })
+            setPercentCompleted(Math.round((progressEvent.loaded * 100) / progressEvent.total))
+          },
+        },
+      )
+      const {success} = response.data
+      if (success) {
+        setLoadingText(null)
+        setPercentCompleted(0)
+        setFiles()
+        setIsUploaded(false)
+        toggle()
+      } else {
+        toast.error('Le(s) fichier(s) n\'a/ont pas pu être uploadé(s) !', {
+          autoClose: 5000,
+          position: toast.POSITION.BOTTOM_RIGHT,
+        })
+      }
     }, 1000)
   }
 
@@ -130,11 +126,11 @@ const AdministrationFileUploadModal = ({isOpen, toggle, path, setFiles}) => {
               <div>
                 <div>
                   {loadingText &&
-                    <div>
-                      <div className="text-center">{percentCompleted}%</div>
-                      <ProgressBar value={percentCompleted}/>
-                      <small>{loadingText}</small>
-                    </div>
+                  <div>
+                    <div className="text-center">{percentCompleted}%</div>
+                    <ProgressBar value={percentCompleted}/>
+                    <small>{loadingText}</small>
+                  </div>
                   }
                   <UploadButton color="info">Glisser ou sélectionner un fichier</UploadButton>
                 </div>

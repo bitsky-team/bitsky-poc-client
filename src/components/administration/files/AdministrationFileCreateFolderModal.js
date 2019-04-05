@@ -28,8 +28,8 @@ const AdministrationFileCreateFolderModal = ({isOpen, toggle, path, setFiles}) =
 
     let isOk = name.length > 0
 
-    if(isOk) {
-      await axios.post(
+    if (isOk) {
+      const response = await axios.post(
         `${config.API_ROOT}/create_folder`,
         qs.stringify({
           uniq_id: localStorage.getItem('id'),
@@ -37,19 +37,17 @@ const AdministrationFileCreateFolderModal = ({isOpen, toggle, path, setFiles}) =
           path: path || null,
           name,
         }),
-      ).then(response => {
-        const {success} = response.data
-
-        if(success) {
-          setFiles()
-          toggle()
-        }else {
-          toast.error('Le dossier n\'a pas pu être créé !', {
-            autoClose: 5000,
-            position: toast.POSITION.BOTTOM_RIGHT,
-          })
-        }
-      })
+      )
+      const {success} = response.data
+      if (success) {
+        setFiles()
+        toggle()
+      } else {
+        toast.error('Le dossier n\'a pas pu être créé !', {
+          autoClose: 5000,
+          position: toast.POSITION.BOTTOM_RIGHT,
+        })
+      }
     } else {
       setCreateError(true)
     }
