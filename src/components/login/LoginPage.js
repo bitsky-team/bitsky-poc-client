@@ -6,6 +6,7 @@ import {Link} from 'react-router-dom'
 import axios from 'axios'
 import qs from 'qs'
 import SingleFormRightContainer from '../common/single-form/RightContainer'
+import {toast} from 'react-toastify'
 
 export default class LoginPage extends Component {
   state = {
@@ -91,6 +92,19 @@ export default class LoginPage extends Component {
 
   componentDidMount() {
     this.getRegistrationState()
+  
+    let url = new URL(window.location.href)
+    let searchParams = new URLSearchParams(url.search)
+    
+    switch(searchParams.get('action')) {
+      case 'updated':
+        toast.success('Informations modifées !', {
+          autoClose: 5000,
+          position: toast.POSITION.BOTTOM_RIGHT,
+          className: 'notification-success',
+        })
+        break;
+    }
   }
 
   render() {
