@@ -26,8 +26,9 @@ import {toast} from 'react-toastify'
 import Post from '../common/post/Post'
 import {withRouter} from 'react-router'
 import Loader from '../Loader'
+import Fade from 'react-reveal/Fade';
 
-const CenteredRow = styled(Row)`
+export const CenteredRow = styled(Row)`
   display: flex;
   justify-content: center;
 `
@@ -371,126 +372,128 @@ const ProfilePage = props => {
     <div>
       <Navbar />
 
-      <Container className="main-container" style={{paddingTop: '55px'}}>
-        <CenteredRow>
-          <Col md="10">
-            <ProfileContainer>
-              <Row>
-                <Col md="3">
-                  <LeftColumnContainer>
-                    <Avatar src={user.avatar} alt="Avatar" />
-
-                    {user.id !== session.id ? (
-                      <Button color="info" className="see-more-button">
-                        <FontAwesomeIcon icon={faCommentAlt} /> Envoyer un
-                        message
-                      </Button>
-                    ) : (
-                      <Button color="info" className="see-more-button" onClick={() => props.history.push('/user_preferences')}>
-                        <FontAwesomeIcon icon={faPencilAlt} /> Modifier mon
-                        profil
-                      </Button>
-                    )}
-                  </LeftColumnContainer>
-
-                  <FavoritesTrendsTitle>
-                    <small>Sujets préférés</small>
-                    <hr />
-                  </FavoritesTrendsTitle>
-                  <FavoritesTrendsContainer>
-                    <Loader display={favoritesTrendsLoader ? 1 : 0}/>
-                    {favoritesTrends}
-                  </FavoritesTrendsContainer>
-                </Col>
-                <Col md="9">
-                  <RightColumnHeader>
-                    <h1>{`${user.firstname} ${user.lastname}`}</h1>
-                    <LivingPlace>
-                      <FontAwesomeIcon icon={faMapMarkerAlt} />
-                      {user.livingplace}
-                    </LivingPlace>
-                    {props.match.params.fromStranger && <LinkedLogo><FontAwesomeIcon icon={faLink} /></LinkedLogo>}
-                  </RightColumnHeader>
-
-                  <Job>{user.job}</Job>
-
-                  <Nav tabs>
-                    <NavItem>
-                      <NavLink
-                        className={tab === 1 ? 'active' : null}
-                        onClick={() => {
-                          toggle(1)
-                        }}
-                      >
-                        Publications
-                      </NavLink>
-                    </NavItem>
-                    <NavItem>
-                      <NavLink
-                        className={tab === 2 ? 'active' : null}
-                        onClick={() => {
-                          toggle(2)
-                        }}
-                      >
-                        À propos
-                      </NavLink>
-                    </NavItem>
-                  </Nav>
-                  <TabContent activeTab={tab}>
-                    <TabPane tabId={1}>
-                      <PostsRow>
-                        <Col sm="12">
-                          <PostsContainer className="posts-container">
-                            {userPosts && userPosts.length > 0 ? (
-                              <div>{userPosts}</div>
-                            ) : (
-                              <NoPosts>
-                                {user.firstname} n'a jamais publié.
-                              </NoPosts>
-                            )}
-                          </PostsContainer>
-                        </Col>
-                      </PostsRow>
-                    </TabPane>
-                    <TabPane tabId={2}>
-                      <Row style={{padding: '10px'}}>
-                        <DescriptionContainer sm="12">
-                          <strong>Biographie</strong>
-                          <AboutContainer margin>
-                            {user.biography}
-                          </AboutContainer>
-                        </DescriptionContainer>
-                        <Col sm="6">
-                          <AboutItem>
-                            <strong>Lieu de naissance</strong>
-                            <AboutContainer>{user.birthplace}</AboutContainer>
-                          </AboutItem>
-                          <AboutItem>
-                            <strong>Situation amoureuse</strong>
-                            <AboutContainer>
-                              {user.relationshipstatus}
+      <Fade>
+        <Container className="main-container" style={{paddingTop: '55px'}}>
+          <CenteredRow>
+            <Col md="10">
+              <ProfileContainer>
+                <Row>
+                  <Col md="3">
+                    <LeftColumnContainer>
+                      <Avatar src={user.avatar} alt="Avatar" />
+                
+                      {user.id !== session.id ? (
+                        <Button color="info" className="see-more-button">
+                          <FontAwesomeIcon icon={faCommentAlt} /> Envoyer un
+                          message
+                        </Button>
+                      ) : (
+                        <Button color="info" className="see-more-button" onClick={() => props.history.push('/user_preferences')}>
+                          <FontAwesomeIcon icon={faPencilAlt} /> Modifier mon
+                          profil
+                        </Button>
+                      )}
+                    </LeftColumnContainer>
+              
+                    <FavoritesTrendsTitle>
+                      <small>Sujets préférés</small>
+                      <hr />
+                    </FavoritesTrendsTitle>
+                    <FavoritesTrendsContainer>
+                      <Loader display={favoritesTrendsLoader ? 1 : 0}/>
+                      {favoritesTrends}
+                    </FavoritesTrendsContainer>
+                  </Col>
+                  <Col md="9">
+                    <RightColumnHeader>
+                      <h1>{`${user.firstname} ${user.lastname}`}</h1>
+                      <LivingPlace>
+                        <FontAwesomeIcon icon={faMapMarkerAlt} />
+                        {user.livingplace}
+                      </LivingPlace>
+                      {props.match.params.fromStranger && <LinkedLogo><FontAwesomeIcon icon={faLink} /></LinkedLogo>}
+                    </RightColumnHeader>
+              
+                    <Job>{user.job}</Job>
+              
+                    <Nav tabs>
+                      <NavItem>
+                        <NavLink
+                          className={tab === 1 ? 'active' : null}
+                          onClick={() => {
+                            toggle(1)
+                          }}
+                        >
+                          Publications
+                        </NavLink>
+                      </NavItem>
+                      <NavItem>
+                        <NavLink
+                          className={tab === 2 ? 'active' : null}
+                          onClick={() => {
+                            toggle(2)
+                          }}
+                        >
+                          À propos
+                        </NavLink>
+                      </NavItem>
+                    </Nav>
+                    <TabContent activeTab={tab}>
+                      <TabPane tabId={1}>
+                        <PostsRow>
+                          <Col sm="12">
+                            <PostsContainer className="posts-container">
+                              {userPosts && userPosts.length > 0 ? (
+                                <div>{userPosts}</div>
+                              ) : (
+                                <NoPosts>
+                                  {user.firstname} n'a jamais publié.
+                                </NoPosts>
+                              )}
+                            </PostsContainer>
+                          </Col>
+                        </PostsRow>
+                      </TabPane>
+                      <TabPane tabId={2}>
+                        <Row style={{padding: '10px'}}>
+                          <DescriptionContainer sm="12">
+                            <strong>Biographie</strong>
+                            <AboutContainer margin>
+                              {user.biography}
                             </AboutContainer>
-                          </AboutItem>
-                        </Col>
-                        <Col sm="6">
-                          <AboutItem>
-                            <strong>Genre</strong>
-                            <AboutContainer>{user.sex}</AboutContainer>
-                          </AboutItem>
-                          <AboutItem>
-                            <strong>Date de naissance</strong>
-                            <AboutContainer>{getDate()}</AboutContainer>
-                          </AboutItem>
-                        </Col>
-                      </Row>
-                    </TabPane>
-                  </TabContent>
-                </Col>
-              </Row>
-            </ProfileContainer>
-          </Col>
-        </CenteredRow>
-      </Container>
+                          </DescriptionContainer>
+                          <Col sm="6">
+                            <AboutItem>
+                              <strong>Lieu de naissance</strong>
+                              <AboutContainer>{user.birthplace}</AboutContainer>
+                            </AboutItem>
+                            <AboutItem>
+                              <strong>Situation amoureuse</strong>
+                              <AboutContainer>
+                                {user.relationshipstatus}
+                              </AboutContainer>
+                            </AboutItem>
+                          </Col>
+                          <Col sm="6">
+                            <AboutItem>
+                              <strong>Genre</strong>
+                              <AboutContainer>{user.sex}</AboutContainer>
+                            </AboutItem>
+                            <AboutItem>
+                              <strong>Date de naissance</strong>
+                              <AboutContainer>{getDate()}</AboutContainer>
+                            </AboutItem>
+                          </Col>
+                        </Row>
+                      </TabPane>
+                    </TabContent>
+                  </Col>
+                </Row>
+              </ProfileContainer>
+            </Col>
+          </CenteredRow>
+        </Container>
+      </Fade>
     </div>
   )
 }

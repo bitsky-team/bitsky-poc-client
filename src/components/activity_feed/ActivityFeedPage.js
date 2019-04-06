@@ -37,6 +37,7 @@ import {
 import SideMenu from './SideMenu'
 import Trend from './Trend'
 import Loader from '../Loader'
+import Fade from 'react-reveal/Fade';
 
 export default class ActivityFeedPage extends Component {
   _isMounted = false
@@ -290,30 +291,33 @@ export default class ActivityFeedPage extends Component {
     
     posts = _.orderBy(posts, ['created_at'], ['desc'])
     
-    posts.forEach(post => {
-      statePosts.push(<Post
-        id={post.id}
-        key={'post-' + post.id}
-        ownerId={post.owner.id}
-        ownerAvatar={post.owner.avatar}
-        ownerName={post.owner.firstname + ' ' + post.owner.lastname}
-        ownerRank={post.owner.rank}
-        content={post.content}
-        tag={post.tag}
-        filled={false}
-        favorites={post.favorites}
-        comments={post.comments}
-        date={post.created_at}
-        isOwner={
-          post.owner.firstname + ' ' + post.owner.lastname ===
-          this.state.session.firstname +
-          ' ' +
-          this.state.session.lastname || this.state.session.rank === 2
-        }
-        handleDeleteButtonClick={this.handleDeleteButtonClick}
-        refreshTrends={this.setTrends}
-        fromStranger={post.from_stranger}
-      />)
+    posts.forEach((post, index) => {
+      statePosts.push(
+        <Fade key={'post-' + post.id} bottom delay={500 * (index - 1)}>
+          <Post
+            id={post.id}
+            ownerId={post.owner.id}
+            ownerAvatar={post.owner.avatar}
+            ownerName={post.owner.firstname + ' ' + post.owner.lastname}
+            ownerRank={post.owner.rank}
+            content={post.content}
+            tag={post.tag}
+            filled={false}
+            favorites={post.favorites}
+            comments={post.comments}
+            date={post.created_at}
+            isOwner={
+              post.owner.firstname + ' ' + post.owner.lastname ===
+              this.state.session.firstname +
+              ' ' +
+              this.state.session.lastname || this.state.session.rank === 2
+            }
+            handleDeleteButtonClick={this.handleDeleteButtonClick}
+            refreshTrends={this.setTrends}
+            fromStranger={post.from_stranger}
+          />
+        </Fade>
+      )
     
       this.setState({posts: statePosts, postsLoading: false})
       this.checkEmpty()
@@ -329,18 +333,19 @@ export default class ActivityFeedPage extends Component {
       if (success && this._isMounted) {
         let stateTrends = this.state.trends
 
-        trends.forEach(trend => {
+        trends.forEach((trend, index) => {
           stateTrends.push(
-            <Trend
-              key={'trend-' + trend.name}
-              name={trend.name}
-              post_id={trend.post.id}
-              content={trend.post.content}
-              author={trend.post.owner}
-              score={trend.score}
-              updateFilter={this.updateFilter}
-              fromStranger={trend.fromStranger || null}
-            />
+            <Fade key={'trend-' + trend.name} bottom delay={500 * (index - 1)}>
+              <Trend
+                name={trend.name}
+                post_id={trend.post.id}
+                content={trend.post.content}
+                author={trend.post.owner}
+                score={trend.score}
+                updateFilter={this.updateFilter}
+                fromStranger={trend.fromStranger || null}
+              />
+            </Fade>
           )
         })
 
@@ -528,7 +533,9 @@ export default class ActivityFeedPage extends Component {
                 <hr />
                 <div style={{display: "block !important"}}>
                   <Loader display={this.state.trendsLoading ? 1 : 0} />
-                  <div>{this.state.trends}</div>
+                  <div>
+                    {this.state.trends}
+                  </div>
                 </div>
               </div>
             </Col>
