@@ -46,15 +46,8 @@ const AdministrationFileDownloadModal = ({isOpen, toggle, fileName, path}) => {
       },
     ).then(response => {
       if (response.data) {
-        if (!response.data.success) {
-          fileDownload(response.data, name)
-          setIsDownloading(false)
-        } else {
-          toast.error('Le(s) fichier(s) n\'a/ont pas pu être téléchargé(s) !', {
-            autoClose: 5000,
-            position: toast.POSITION.BOTTOM_RIGHT,
-          })
-        }
+        fileDownload(response.data, name)
+        setIsDownloading(false)
       } else {
         toast.error('Le(s) fichier(s) n\'a/ont pas pu être téléchargé(s) !', {
           autoClose: 5000,
@@ -75,7 +68,7 @@ const AdministrationFileDownloadModal = ({isOpen, toggle, fileName, path}) => {
               <ProgressBar value={percentCompleted}/>
               <small>{loadingText}</small>
             </div>
-          ): null}
+          ) : null}
           {`Voulez-vous télécharger le fichier ${fileName} ?`}
         </ModalBody>
         <ModalFooter>

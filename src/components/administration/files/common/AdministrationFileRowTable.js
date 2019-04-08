@@ -157,15 +157,8 @@ const AdministrationFileRowTable = ({name, type, firstname, lastname, ownerId, u
       },
     )
     if (response.data) {
-      if (!response.data.success) {
-        sendImageSrc(URL.createObjectURL(response.data))
-        toggle()
-      } else {
-        toast.error('Le(s) fichier(s) n\'a/ont pas pu être téléchargé(s) !', {
-          autoClose: 5000,
-          position: toast.POSITION.BOTTOM_RIGHT,
-        })
-      }
+      sendImageSrc(URL.createObjectURL(response.data))
+      toggle()
     } else {
       toast.error('Le(s) fichier(s) n\'a/ont pas pu être téléchargé(s) !', {
         autoClose: 5000,
