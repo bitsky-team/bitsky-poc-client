@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Fragment} from 'react'
 import {Col, Container, Row, UncontrolledPopover, PopoverBody} from 'reactstrap'
 import {faEye, faTrashAlt, faEllipsisV, faDownload, faFolder} from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components'
@@ -7,7 +7,6 @@ import axios from 'axios'
 import {config} from '../../../../config'
 import qs from 'qs'
 import {toast} from 'react-toastify'
-import fileDownload from 'js-file-download'
 import {withRouter} from 'react-router'
 
 const OptionsButton = styled(FontAwesomeIcon)`
@@ -68,13 +67,12 @@ const IconContainer = styled.div`
   border-right: 1px solid #ebebeb;
 `
 
-const TrashIconContainer = styled.div`
-  padding-left: 5px;
-  border-left: 1px solid #ebebeb;
-`
-
 const PopoverContainer = styled(UncontrolledPopover)`
   border: 1px solid rgba(20,20,20,0.1) !important;
+  
+  && .popover {
+    z-index: 1;
+  }
 `
 
 const FileRow = styled.div`
@@ -92,7 +90,14 @@ const FileRow = styled.div`
   }
 `
 
-const AdministrationFileRowTable = ({name, type, firstname, lastname, ownerId, updated_at, size, id, openFolder, path, setFiles, history: {push}}) => {
+const AdministrationFileRowTable = ({name, type, firstname, lastname, ownerId, updated_at, size, id, openFolder, path, setFiles, history: {push}, sendImageSrc, toggle, sendInfoToDownload}) => {
+
+  const imageFormat = [
+    'jpg',
+    'jpeg',
+    'png',
+    'gif',
+  ]
 
   const cursor = type => {
     switch (type) {
@@ -102,6 +107,11 @@ const AdministrationFileRowTable = ({name, type, firstname, lastname, ownerId, u
         return 'default'
     }
   }
+
+  const TrashIconContainer = styled.div`
+    padding-left: ${type === 'dossier' ? 'none' : '5px'};
+    border-left: ${type === 'dossier' ? 'none' : '1px solid #ebebeb'};
+  `
 
   const FolderHover = styled(Col)`
     z-index: 2;
@@ -134,7 +144,7 @@ const AdministrationFileRowTable = ({name, type, firstname, lastname, ownerId, u
     }
   }
 
-  const downloadItem = async name => {
+  const getImageFile = async name => {
     const response = await axios.post(
       `${config.API_ROOT}/download_item`,
       qs.stringify({
@@ -146,7 +156,22 @@ const AdministrationFileRowTable = ({name, type, firstname, lastname, ownerId, u
         responseType: 'blob',
       },
     )
-    fileDownload(response.data, name)
+    if (response.data) {
+      if (!response.data.success) {
+        sendImageSrc(URL.createObjectURL(response.data))
+        toggle()
+      } else {
+        toast.error('Le(s) fichier(s) n\'a/ont pas pu être téléchargé(s) !', {
+          autoClose: 5000,
+          position: toast.POSITION.BOTTOM_RIGHT,
+        })
+      }
+    } else {
+      toast.error('Le(s) fichier(s) n\'a/ont pas pu être téléchargé(s) !', {
+        autoClose: 5000,
+        position: toast.POSITION.BOTTOM_RIGHT,
+      })
+    }
   }
 
   return (
@@ -181,14 +206,18 @@ const AdministrationFileRowTable = ({name, type, firstname, lastname, ownerId, u
           <PopoverContainer trigger="legacy" placement="top" target={`file${String(id)}`}>
             <PopoverContent>
               {type === 'dossier' ? ' ' : (
-                <IconContainer>
-                  <IconHover><OptionsButton icon={faEye} id="eye"/></IconHover>
-                </IconContainer>
+                <Fragment>
+                  {imageFormat.includes(type) ? (
+                    <IconContainer>
+                      <IconHover><OptionsButton icon={faEye} id="eye" onClick={() => getImageFile(name)}/></IconHover>
+                    </IconContainer>
+                  ) : ''}
+                  <IconContainer>
+                    <IconHover><OptionsButton icon={faDownload} id="download"
+                                              onClick={() => sendInfoToDownload(name)}/></IconHover>
+                  </IconContainer>
+                </Fragment>
               )}
-              <IconContainer>
-                <IconHover><OptionsButton icon={faDownload} id="download"
-                                          onClick={() => downloadItem(name)}/></IconHover>
-              </IconContainer>
               <TrashIconContainer>
                 <IconHover><TrashButton icon={faTrashAlt} id="trash" onClick={() => deleteItem(name)}/></IconHover>
               </TrashIconContainer>

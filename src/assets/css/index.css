@@ -1720,3 +1720,7 @@ span.comment-counter, span.fav-counter, .post-details .counter-container {
 ol.breadcrumb {
   background: #FFF !important;
 }
+
+.popover {
+  z-index: 0 !important;
+}

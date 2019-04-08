@@ -29,6 +29,8 @@ import AdministrationFileCreateFolderModal from './AdministrationFileCreateFolde
 import FormGroup from 'reactstrap/es/FormGroup'
 import FormFeedback from 'reactstrap/es/FormFeedback'
 import removeAccents from 'remove-accents'
+import AdministrationImgViewer from './AdministrationImgViewer'
+import AdministrationFileDownloadModal from './AdministrationFileDownloadModal'
 
 const ContentLabel = posed.label({
   up: {
@@ -147,6 +149,7 @@ const AdministrationManageFilesPage = () => {
   const [filesComponent, setFilesComponent] = useState([])
   const [fileModalState, setFileModalState] = useState(false)
   const [createFolderModalState, setCreateFolderModalState] = useState(false)
+  const [fileDownloadState, setFileDownloadState] = useState(false)
   const [loading, setLoading] = useState(false)
   const [path, setPath] = useState(null)
   const [breadcrumbItem, setBreadCrumbItem] = useState(null)
@@ -160,6 +163,10 @@ const AdministrationManageFilesPage = () => {
 
   const [searchValue, setSearchValue] = useState('')
   const [searchError, setSearchError] = useState(false)
+  const [imgSrc, setImgSrc] = useState(null)
+  const [imgViewerState, setImgViewerState] = useState(false)
+
+  const [fileName, setFileName] = useState(null)
 
   const BreadCrumbContainer = styled(Breadcrumb)`
     display: ${path ? 'block' : 'none'} !important;
@@ -171,6 +178,11 @@ const AdministrationManageFilesPage = () => {
       setPath(newPath)
       setBreadcrumb(newPath)
     }
+  }
+
+  const sendInfoToDownload = name => {
+    setFileName(name)
+    toggleModalFileDownloadState()
   }
 
   const setBreadcrumb = (newPath) => {
@@ -186,6 +198,10 @@ const AdministrationManageFilesPage = () => {
     breadcrumb.push(<BreadCrumbItem key={'breadcrumb-last'} active>{lastItem}</BreadCrumbItem>)
 
     setBreadCrumbItem(breadcrumb)
+  }
+
+  const sendImgSrc = blob => {
+    setImgSrc(blob)
   }
 
   const goTo = limit => {
@@ -214,6 +230,14 @@ const AdministrationManageFilesPage = () => {
 
   const toggleFolderModalState = () => {
     setCreateFolderModalState(!createFolderModalState)
+  }
+
+  const toggleModalViewerState = () => {
+    setImgViewerState(!imgViewerState)
+  }
+
+  const toggleModalFileDownloadState = () => {
+    setFileDownloadState(!fileDownloadState)
   }
 
   const getFiles = async () => {
@@ -245,7 +269,7 @@ const AdministrationManageFilesPage = () => {
             <AdministrationFileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
                                         type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname}
                                         ownerId={file.owner.id} updated_at={date} size={file.converted_size}
-                                        id={id} setFiles={setFiles}/>,
+                                        id={id} setFiles={setFiles} sendImageSrc={sendImgSrc} toggle={toggleModalViewerState} sendInfoToDownload={sendInfoToDownload}/>,
           )
         })
         setFilesComponent(files_result)
@@ -303,8 +327,8 @@ const AdministrationManageFilesPage = () => {
         toggleSortOwner()
 
         data.sort((a, b) => {
-          let currentFirstname = a.owner.firstname.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
-            nextFirstname = b.owner.firstname.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          let currentFirstname = removeAccents(a.owner.firstname.toLowerCase()),
+            nextFirstname = removeAccents(b.owner.firstname.toLowerCase())
 
           if (toggleOwner) return currentFirstname < nextFirstname ? -1 : (currentFirstname > nextFirstname ? 1 : 0)
           else return currentFirstname > nextFirstname ? -1 : (currentFirstname < nextFirstname ? 1 : 0)
@@ -314,8 +338,8 @@ const AdministrationManageFilesPage = () => {
         toggleSortNames()
 
         data.sort((a, b) => {
-          let currentName = a.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
-            nextName = b.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          let currentName = removeAccents(a.name.toLowerCase()),
+            nextName = removeAccents(b.name.toLowerCase())
 
           if (toggleNames) return currentName < nextName ? -1 : (currentName > nextName ? 1 : 0)
           else return currentName > nextName ? -1 : (currentName < nextName ? 1 : 0)
@@ -325,8 +349,8 @@ const AdministrationManageFilesPage = () => {
         toggleSortType()
 
         data.sort((a, b) => {
-          let currentType = a.type.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
-            nextType = b.type.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          let currentType = removeAccents(a.type.toLowerCase()),
+            nextType = removeAccents(b.type.toLowerCase())
 
           if (toggleType) return currentType < nextType ? -1 : (currentType > nextType ? 1 : 0)
           else return currentType > nextType ? -1 : (currentType < nextType ? 1 : 0)
@@ -352,7 +376,7 @@ const AdministrationManageFilesPage = () => {
         <AdministrationFileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
                                     type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname}
                                     ownerId={file.owner.id} updated_at={file.updated_at} size={file.converted_size}
-                                    id={id} setFiles={setFiles}/>,
+                                    id={id} setFiles={setFiles} sendImageSrc={sendImgSrc} toggle={toggleModalViewerState} sendInfoToDownload={sendInfoToDownload}/>,
       )
     })
 
@@ -390,10 +414,9 @@ const AdministrationManageFilesPage = () => {
           <AdministrationFileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
                                       type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname}
                                       ownerId={file.owner.id} updated_at={file.updated_at} size={file.converted_size}
-                                      id={id} setFiles={setFiles}/>,
+                                      id={id} setFiles={setFiles} sendImageSrc={sendImgSrc} toggle={toggleModalViewerState} sendInfoToDownload={sendInfoToDownload}/>,
         )
       })
-
       setFilesComponent(filesComponentSought)
     }
   }
@@ -416,7 +439,9 @@ const AdministrationManageFilesPage = () => {
 
   return (
     <div>
-      <AdministrationFileUploadModal isOpen={fileModalState} toggle={toggleModalState} setFiles={setFiles} path={path}/>
+      {fileModalState && <AdministrationFileUploadModal isOpen={fileModalState} toggle={toggleModalState} setFiles={setFiles} path={path}/>}
+      <AdministrationImgViewer isOpen={imgViewerState} toggle={toggleModalViewerState} imgSrc={imgSrc} />
+      <AdministrationFileDownloadModal isOpen={fileDownloadState} toggle={toggleModalFileDownloadState} fileName={fileName} path={path}/>
       <AdministrationFileCreateFolderModal isOpen={createFolderModalState} toggle={toggleFolderModalState} path={path}
                                            setFiles={setFiles}/>
       <Navbar/>
@@ -438,13 +463,16 @@ const AdministrationManageFilesPage = () => {
                     <h4>Fichiers</h4>
                   </ColContainer>
                   <ColContainer md="7">
-                    <FormGroup>
+                    <FormGroup style={{marginBottom: 0}}>
                       <InputGroup>
                         <AnimatedLabel
                           pose={toggelLabel || searchValue.length > 0 ? 'up' : 'down'}>Rechercher</AnimatedLabel>
                         <SearchInput
-                          onFocus={() => setToggleLabel(true)}
-                          onBlur={() => setToggleLabel(false)}
+                          onFocus={() => {
+                            setToggleLabel(true)
+                            setSearchError(false)
+                          }}
+                          onBlur={() =>  setToggleLabel(false)}
                           className={searchError ? 'is-invalid' : ''}
                           onChange={e => {
                             setSearchError(false)

@@ -46,6 +46,7 @@ const ProgressBar = styled(Progress)`
 
 const AdministrationFileUploadModal = ({isOpen, toggle, path, setFiles}) => {
 
+  const [forceCloseModal, setForceCloseModal] = useState(false)
   const [filesList, setFilesList] = useState(null)
   const [filesToUpload, setFilesToUpload] = useState([])
   const [isUploaded, setIsUploaded] = useState(false)
@@ -75,48 +76,55 @@ const AdministrationFileUploadModal = ({isOpen, toggle, path, setFiles}) => {
   }
 
   const onDrop = useCallback(acceptedFiles => {
-    acceptedFiles.forEach(file => readFile(file))
+    acceptedFiles.forEach(file => {
+      readFile(file)
+    })
     setFilesList(acceptedFiles.map((file, i) => <li key={i}>{file.name}</li>))
     setIsUploaded(true)
-
   }, [])
   const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
 
   const uploadFiles = async () => {
     setLoadingText('Envoi des fichiers...')
-    setTimeout(async () => {
-      const response = await axios.post(
-        `${config.API_ROOT}/upload_files`,
-        qs.stringify({
-          uniq_id: localStorage.getItem('id'),
-          token: localStorage.getItem('token'),
-          path: path || null,
-          files: filesToUpload,
-        }), {
-          onUploadProgress: progressEvent => {
-            setPercentCompleted(Math.round((progressEvent.loaded * 100) / progressEvent.total))
-          },
+
+    const response = await axios.post(
+` ${config.API_ROOT}/upload_files`,
+      qs.stringify({
+        uniq_id: localStorage.getItem('id'),
+        token: localStorage.getItem('token'),
+        path: path || null,
+        files: filesToUpload,
+      }), {
+        onUploadProgress: progressEvent => {
+          setPercentCompleted(Math.round((progressEvent.loaded * 100) / progressEvent.total))
         },
-      )
-      const {success} = response.data
-      if (success) {
-        setLoadingText(null)
-        setPercentCompleted(0)
-        setFiles()
-        setIsUploaded(false)
-        toggle()
-      } else {
-        toast.error('Le(s) fichier(s) n\'a/ont pas pu être uploadé(s) !', {
-          autoClose: 5000,
-          position: toast.POSITION.BOTTOM_RIGHT,
-        })
-      }
-    }, 1000)
+      },
+    )
+    const {success} = response.data
+
+    if (success) {
+      setFilesToUpload([])
+      setLoadingText(null)
+      setPercentCompleted(0)
+      setFiles()
+      setIsUploaded(false)
+      forceClose()
+    } else {
+      toast.error('Le(s) fichier(s) n\'a/ont pas pu être uploadé(s) !', {
+        autoClose: 5000,
+        position: toast.POSITION.BOTTOM_RIGHT,
+      })
+    }
+  }
+
+  const forceClose = () => {
+    setForceCloseModal(true)
+    setTimeout(() => toggle(), 1000)
   }
 
   return (
     <div>
-      <Modal isOpen={isOpen} toggle={toggle} className="user-modal">
+      <Modal isOpen={forceCloseModal ? false : isOpen} toggle={forceClose} className="user-modal">
         <ModalHeader toggle={toggle}>Uploader un fichier</ModalHeader>
         <ModalBody>
           <div {...getRootProps()}>
