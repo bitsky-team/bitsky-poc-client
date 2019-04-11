@@ -47,9 +47,7 @@ const Level = styled.span`
     border-radius: 50%;
 `
 
-const AdministrationLog = (props) => {
-
-    const {log} = props
+const AdministrationLog = ({log, history: {push}}) => {
 
     const [level, setLevel] = useState(null)
     const [time, setTime] = useState(null)
@@ -72,7 +70,7 @@ const AdministrationLog = (props) => {
       const {user} = response.data
 
       if(user) {
-        props.history.push(`/profile/${user.id}`)
+        push(`/profile/${user.id}`)
       } else {
         toast.error('L\'uniq_id de l\'utilisateur n\'existe plus ou a été modifié !', {
           autoClose: 5000,
