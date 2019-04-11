@@ -21,6 +21,7 @@ import AdministrationManageFilesPage from './components/administration/files/Adm
 // Services
 import AuthService from './services/AuthService'
 import {AdministrationSettingsPage} from './components/administration/AdministrationSettingsPage'
+import {NotificationsPage} from './components/notifications/NotificationsPage'
 
 const PrivateRoute = ({component: Component, authed, ...rest}) => {
   return (
@@ -112,6 +113,12 @@ class Router extends Component {
           authed={this.state.authenticated}
           path="/user_account"
           component={UserPreferencesAccountPage}
+        />
+        <PrivateRoute
+          exact
+          authed={this.state.authenticated}
+          path="/notifications"
+          component={NotificationsPage}
         />
         <PrivateRoute
           exact

@@ -9,7 +9,7 @@ import {
   FormFeedback,
   Form,
   Alert,
-  Button,
+  Button, ModalBody, ModalFooter, Modal,
 } from 'reactstrap'
 import Navbar from '../common/template/Navbar'
 import UserPreferencesSideMenu from './common/UserPreferencesSideMenu'
@@ -20,9 +20,13 @@ import {config} from '../../config'
 import qs from 'qs'
 import {toast} from 'react-toastify'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faPencilAlt} from '@fortawesome/free-solid-svg-icons'
+import {faPencilAlt, faSave, faTimes} from '@fortawesome/free-solid-svg-icons'
 import AuthService from '../../services/AuthService'
 import {withRouter} from 'react-router'
+import 'cropperjs/dist/cropper.css'
+import Cropper from 'react-cropper'
+import downscale from 'downscale'
+import avatar_default from '../../assets/img/avatar_default'
 
 const UserUpdateContainer = styled.div`
   &&& {
@@ -70,6 +74,9 @@ class UserPreferencesPage extends Component {
     relationshipstatusError: false,
     livingplace: null,
     livingplaceError: false,
+    cropModal: false,
+    avatarSrc: null,
+    cropResult: avatar_default
   }
 
   getBirthdate = () => {
@@ -109,6 +116,7 @@ class UserPreferencesPage extends Component {
           birthplace: user.birthplace,
           relationshipstatus: user.relationshipstatus,
           livingplace: user.livingplace,
+          cropResult: user.avatar
         })
       } else {
         toast.error('Erreur lors du chargement des informations du profil', {
@@ -243,13 +251,13 @@ class UserPreferencesPage extends Component {
         type: 'UPDATE',
         password: null,
         repeatPassword: null,
-        avatar: this.state.user.avatar,
+        avatar: this.state.cropResult,
       })
     )
 
     if (response.data.success) {
       AuthService.clearStorage()
-      window.location.href = '/login'
+      window.location.href = '/login?action=updated'
     } else {
       toast.error('Impossible de modifier vos informations !', {
         autoClose: 5000,
@@ -257,7 +265,54 @@ class UserPreferencesPage extends Component {
       })
     }
   }
-
+  
+  toggleCropModal = (e) => {
+    this.setState({
+      cropModal: !this.state.cropModal
+    })
+  }
+  
+  onAvatarChange = (e) => {
+    e.preventDefault()
+    let files
+    if (e.dataTransfer) {
+      files = e.dataTransfer.files
+    } else if (e.target) {
+      files = e.target.files
+    }
+    const reader = new FileReader()
+    reader.onload = () => {
+      let image = new Image()
+      image.onload = () => {
+        const width = (image.width / image.width) * 400
+        const height = (image.height / image.width) * 400
+        downscale(reader.result, width, height)
+          .then((dataURL) => {
+            fetch(dataURL)
+              .then((response) => {
+                return response.blob()
+              })
+              .then((blob) => {
+                const blobDataURI = window.URL.createObjectURL(blob)
+                this.setState({ avatarSrc:  blobDataURI})
+              })
+          })
+      }
+      image.src = reader.result
+    }
+    reader.readAsDataURL(files[0])
+  }
+  
+  cropImage = () => {
+    if (typeof this.cropper.getCroppedCanvas() === 'undefined') {
+      return
+    }
+    this.setState({
+      cropResult: this.cropper.getCroppedCanvas().toDataURL(),
+    })
+    this.toggleCropModal()
+  }
+  
   componentDidMount() {
     this.prepareUser()
   }
@@ -282,6 +337,26 @@ class UserPreferencesPage extends Component {
 
     return (
       <Fragment>
+        <Modal isOpen={this.state.cropModal} toggle={this.toggleCropModal}>
+          <ModalBody style={{background: 'white'}}>
+            <Label for="avatar">Veuillez sélectionner votre avatar</Label>
+            <Input type="file" name="avatar" id="avatar" onChange={this.onAvatarChange} />
+            <Cropper
+              style={{ height: 400, width: '100%' }}
+              aspectRatio={1 / 1}
+              preview=".img-preview"
+              guides={false}
+              src={this.state.avatarSrc}
+              ref={cropper => { this.cropper = cropper }}
+            />
+            <div className="img-preview" style={{ width: '100%' }} />
+          </ModalBody>
+          <ModalFooter  style={{background: 'white'}}>
+            <Button className="modal-choice" color="primary" onClick={this.cropImage}><FontAwesomeIcon icon={ faSave } /></Button>{' '}
+            <Button className="modal-choice" color="secondary" onClick={this.toggleCropModal}><FontAwesomeIcon icon={ faTimes }/></Button>
+          </ModalFooter>
+        </Modal>
+        
         <Navbar />
         <Container>
           <Row>
@@ -300,6 +375,12 @@ class UserPreferencesPage extends Component {
                               Modifier vos informations
                             </h4>
                             <Form>
+                              <div className='register-title'>
+                                <div className="register-confirmation-image">
+                                  <img src={this.state.cropResult} alt="avatar" height="128" />
+                                  <span onClick={this.toggleCropModal}>Modifier</span>
+                                </div>
+                              </div>
                               <Row>
                                 <Col md={6}>
                                   <FormGroup>
