@@ -48,6 +48,11 @@ const FileDownloadModal = ({isOpen, toggle, fileName, path, chosenDevice}) => {
     ).then(response => {
       if (response.data) {
         fileDownload(response.data, name)
+        toast.success(`Le fichier "${name}" a bien été enregistré !`, {
+          autoClose: 5000,
+          position: toast.POSITION.BOTTOM_RIGHT,
+          className: 'notification-success',
+        })
         setIsDownloading(false)
       } else {
         toast.error('Le(s) fichier(s) n\'a/ont pas pu être téléchargé(s) !', {
