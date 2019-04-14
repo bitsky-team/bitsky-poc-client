@@ -4,7 +4,7 @@ import {faEye, faTrashAlt, faEllipsisV, faDownload, faFolder} from '@fortawesome
 import styled from 'styled-components'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import axios from 'axios'
-import {config} from '../../../../config'
+import {config} from '../../../config'
 import qs from 'qs'
 import {toast} from 'react-toastify'
 import {withRouter} from 'react-router'
@@ -90,7 +90,7 @@ const FileRow = styled.div`
   }
 `
 
-const AdministrationFileRowTable = ({name, type, firstname, lastname, ownerId, updated_at, size, id, openFolder, path, setFiles, history: {push}, sendImageSrc, toggle, sendInfoToDownload}) => {
+const FileRowTable = ({name, type, firstname, lastname, ownerId, updated_at, size, id, openFolder, path, setFiles, history: {push}, sendImageSrc, toggle, sendInfoToDownload}) => {
 
   const imageFormat = [
     'jpg',
@@ -222,4 +222,4 @@ const AdministrationFileRowTable = ({name, type, firstname, lastname, ownerId, u
   )
 }
 
-export default withRouter(AdministrationFileRowTable)
+export default withRouter(FileRowTable)

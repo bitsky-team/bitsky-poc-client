@@ -19,6 +19,7 @@
     "qs": "^6.5.2",
     "react": "^16.8.0",
     "react-autosize-textarea": "^4.0.0",
+    "react-circular-progressbar": "^1.0.0",
     "react-copy-to-clipboard": "^5.0.1",
     "react-cropper": "^1.0.1",
     "react-dom": "^16.4.1",

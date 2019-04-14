@@ -35,7 +35,7 @@ const ImageFile = styled.img`
   max-height: 480px;
 `
 
-const AdministrationImgViewer = ({isOpen, toggle, imgSrc}) => {
+const ImgViewer = ({isOpen, toggle, imgSrc}) => {
 
   return (
     <div>
@@ -49,4 +49,4 @@ const AdministrationImgViewer = ({isOpen, toggle, imgSrc}) => {
   )
 }
 
-export default AdministrationImgViewer
+export default ImgViewer

@@ -19,6 +19,7 @@ import _ from 'lodash'
 import styled from 'styled-components'
 import AdministrationLogModal from './logs/AdministrationLogModal'
 import Loader from '../Loader'
+import {toast} from 'react-toastify'
 
 const SeeMoreButton = styled(Button)`
     background-color: rgb(131, 178, 224);
@@ -38,18 +39,8 @@ export default class AdministrationPage extends Component {
     session: (localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null),
     temperature: '?',
     cpuPercentage: '?',
-    diskStorage: {
-      disque1: 13.5,
-      disque2: 13.5,
-      disque3: 1.3,
-      disque4: 2.5,
-    },
-    diskTotalVolume: {
-      disque1: 30,
-      disque2: 30,
-      disque3: 3,
-      disque4: 3,
-    },
+    devices: [],
+    deviceLoading: false,
     logsLoading: true,
     logs: [],
     logsModalState: false,
@@ -83,6 +74,43 @@ export default class AdministrationPage extends Component {
     )
   }
 
+  getStorageMemory = async () => {
+    this.setState({devicesLoading: true})
+    const response = await axios.post(
+      `${config.API_ROOT}/get_devices_memory`,
+      qs.stringify({
+        token: localStorage.getItem('token'),
+        uniq_id: localStorage.getItem('id'),
+      }),
+    )
+
+    const {success, devices} = response.data
+
+    if(success) {
+      let devices_result = []
+
+      if(devices) {
+        devices.forEach((device, i) => {
+          devices_result.push(
+            <AdministrationUsedStorage key={i} name={device.name} usedVolume={device.usedMem}
+                                       totalVolume={device.totalMem} percent={device.percent}/>
+          )
+        })
+
+        this.setState({
+            devices: devices_result,
+            devicesLoading: false,
+          }
+        )
+      }
+    }else {
+      toast.error('L\'état des périphériques de stockage n\'a pas pu être récupéré !', {
+        autoClose: 5000,
+        position: toast.POSITION.BOTTOM_RIGHT,
+      })
+    }
+  }
+
   setLogs = () => {
     this.setState({logsLoading: true})
     this.getLogs()
@@ -113,6 +141,7 @@ export default class AdministrationPage extends Component {
     this.getTemp()
     this.getCpu()
     this.setLogs()
+    this.getStorageMemory()
 
     this.interval = setInterval(() => {
       this.getTemp()
@@ -172,30 +201,8 @@ export default class AdministrationPage extends Component {
                 <h4>Espace de stockage utilisé</h4>
                 <Container className="margin-top-10">
                   <Row>
-                    <Col md="3" className="no-padding-left no-padding-right">
-                      <Col md="12">
-                        <AdministrationUsedStorage diskNumber="Disque 1" usedVolume={this.state.diskStorage['disque1']}
-                                                   totalVolume={this.state.diskTotalVolume['disque1']}/>
-                      </Col>
-                    </Col>
-                    <Col md="3" className="no-padding-left no-padding-right">
-                      <Col md="12">
-                        <AdministrationUsedStorage diskNumber="Disque 2" usedVolume={this.state.diskStorage['disque2']}
-                                                   totalVolume={this.state.diskTotalVolume['disque2']}/>
-                      </Col>
-                    </Col>
-                    <Col md="3" className="no-padding-left no-padding-right">
-                      <Col md="12">
-                        <AdministrationUsedStorage diskNumber="Disque 3" usedVolume={this.state.diskStorage['disque3']}
-                                                   totalVolume={this.state.diskTotalVolume['disque3']}/>
-                      </Col>
-                    </Col>
-                    <Col md="3" className="no-padding-left no-padding-right">
-                      <Col md="12">
-                        <AdministrationUsedStorage diskNumber="Disque 4" usedVolume={this.state.diskStorage['disque4']}
-                                                   totalVolume={this.state.diskTotalVolume['disque4']} warning/>
-                      </Col>
-                    </Col>
+                    <Loader display={this.state.devicesLoading ? 1 : 0}/>
+                    {this.state.devices && this.state.devices.length > 0 ? this.state.devices : null}
                   </Row>
                 </Container>
               </div>
