@@ -104,6 +104,11 @@ const FileUploadModal = ({isOpen, toggle, path, setFiles, chosenDevice}) => {
     const {success} = response.data
 
     if (success) {
+      toast.success('Votre fichier a bien été uploadé !', {
+        autoClose: 5000,
+        position: toast.POSITION.BOTTOM_RIGHT,
+        className: 'notification-success',
+      })
       setFilesToUpload([])
       setLoadingText(null)
       setPercentCompleted(0)
