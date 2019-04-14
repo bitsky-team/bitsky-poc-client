@@ -90,7 +90,7 @@ const FileRow = styled.div`
   }
 `
 
-const FileRowTable = ({name, type, firstname, lastname, ownerId, updated_at, size, id, openFolder, path, setFiles, history: {push}, sendImageSrc, toggle, sendInfoToDownload}) => {
+const FileRowTable = ({name, type, firstname, lastname, ownerId, updated_at, size, id, openFolder, path, setFiles, history: {push}, sendImageSrc, toggle, sendInfoToDownload, chosenDevice}) => {
 
   const imageFormat = [
     'jpg',
@@ -131,9 +131,11 @@ const FileRowTable = ({name, type, firstname, lastname, ownerId, updated_at, siz
         token: localStorage.getItem('token'),
         path: path || null,
         name,
+        device: chosenDevice,
       }),
     )
     const {success} = response.data
+
     if (success) {
       setFiles()
     } else {
@@ -152,6 +154,7 @@ const FileRowTable = ({name, type, firstname, lastname, ownerId, updated_at, siz
         token: localStorage.getItem('token'),
         path: path || null,
         name,
+        device: chosenDevice,
       }), {
         responseType: 'blob',
       },

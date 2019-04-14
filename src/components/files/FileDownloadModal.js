@@ -21,7 +21,7 @@ const ProgressBar = styled(Progress)`
   }
 `
 
-const FileDownloadModal = ({isOpen, toggle, fileName, path}) => {
+const FileDownloadModal = ({isOpen, toggle, fileName, path, chosenDevice}) => {
 
   const [isDownloading, setIsDownloading] = useState(false)
   const [loadingText, setLoadingText] = useState('')
@@ -38,6 +38,7 @@ const FileDownloadModal = ({isOpen, toggle, fileName, path}) => {
         token: localStorage.getItem('token'),
         path: path || null,
         name: name,
+        device: chosenDevice,
       }), {
         responseType: 'blob',
         onUploadProgress: progressEvent => {

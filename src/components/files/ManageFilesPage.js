@@ -22,7 +22,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faSearch, faUpload, faSort, faFolderPlus, faHdd} from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components'
 import posed from 'react-pose'
-import AdministrationFileRowTable from './common/FileRowTable'
+import FileRowTable from './common/FileRowTable'
 import FileUploadModal from './FileUploadModal'
 import axios from 'axios'
 import {config} from '../../config'
@@ -189,7 +189,7 @@ const ManageFilesPage = () => {
   const [fileName, setFileName] = useState(null)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [devices, setDevices] = useState([])
-  const [chosenDevice, setChosenDevice] = useState('Par défaut')
+  const [chosenDevice, setChosenDevice] = useState('bitsky')
 
   const BreadCrumbContainer = styled(Breadcrumb)`
     display: ${path ? 'block' : 'none'} !important;
@@ -274,6 +274,7 @@ const ManageFilesPage = () => {
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
         path: path || null,
+        device: chosenDevice,
       }),
     )
   }
@@ -293,10 +294,10 @@ const ManageFilesPage = () => {
           let date = file.updated_at.split(' ').shift()
 
           files_result.push(
-            <AdministrationFileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
+            <FileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
                                         type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname}
                                         ownerId={file.owner.id} updated_at={date} size={file.converted_size}
-                                        id={id} setFiles={setFiles} sendImageSrc={sendImgSrc} toggle={toggleModalViewerState} sendInfoToDownload={sendInfoToDownload}/>,
+                                        id={id} setFiles={setFiles} sendImageSrc={sendImgSrc} toggle={toggleModalViewerState} sendInfoToDownload={sendInfoToDownload} chosenDevice={chosenDevice}/>,
           )
         })
         setFilesComponent(files_result)
@@ -400,10 +401,10 @@ const ManageFilesPage = () => {
 
     data.forEach((file, id) => {
       sortedComponents.push(
-        <AdministrationFileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
+        <FileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
                                     type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname}
                                     ownerId={file.owner.id} updated_at={file.updated_at} size={file.converted_size}
-                                    id={id} setFiles={setFiles} sendImageSrc={sendImgSrc} toggle={toggleModalViewerState} sendInfoToDownload={sendInfoToDownload}/>,
+                                    id={id} setFiles={setFiles} sendImageSrc={sendImgSrc} toggle={toggleModalViewerState} sendInfoToDownload={sendInfoToDownload} chosenDevice={chosenDevice}/>,
       )
     })
 
@@ -438,10 +439,10 @@ const ManageFilesPage = () => {
     } else {
       filteredFiles.forEach((file, id) => {
         filesComponentSought.push(
-          <AdministrationFileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
+          <FileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
                                       type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname}
                                       ownerId={file.owner.id} updated_at={file.updated_at} size={file.converted_size}
-                                      id={id} setFiles={setFiles} sendImageSrc={sendImgSrc} toggle={toggleModalViewerState} sendInfoToDownload={sendInfoToDownload}/>,
+                                      id={id} setFiles={setFiles} sendImageSrc={sendImgSrc} toggle={toggleModalViewerState} sendInfoToDownload={sendInfoToDownload} chosenDevice={chosenDevice}/>,
         )
       })
       setFilesComponent(filesComponentSought)
@@ -458,9 +459,9 @@ const ManageFilesPage = () => {
     }
   }
 
-  const chooseDevice = device => {
-    setChosenDevice(device)
-  }
+  useEffect(() => {
+    setFiles()
+  }, [chosenDevice])
 
   const getStorageDevices = async () => {
     const response = await axios.post(`${config.API_ROOT}/get_devices`,
@@ -473,10 +474,11 @@ const ManageFilesPage = () => {
 
     if(success) {
       if(devices && devices.length > 0) {
-        let devicesComponent = [<DropdownItem key='default' onClick={() => chooseDevice('Par défaut')}>Par défaut</DropdownItem>]
+        let devicesComponent = [<DropdownItem key='default' onClick={() => setChosenDevice('bitsky')}>bitsky</DropdownItem>]
         devices.forEach((device, i) => {
+          const deviceName = device.split('/')[2]
           devicesComponent.push(
-            <DropdownItem key={i} onClick={() => chooseDevice(device)}>{device.split('/')[2]}</DropdownItem>
+            <DropdownItem key={i} onClick={() => setChosenDevice(deviceName)}>{deviceName}</DropdownItem>
           )
         })
         setDevices(devicesComponent)
@@ -498,11 +500,11 @@ const ManageFilesPage = () => {
 
   return (
     <div>
-      {fileModalState && <FileUploadModal isOpen={fileModalState} toggle={toggleModalState} setFiles={setFiles} path={path}/>}
+      {fileModalState && <FileUploadModal isOpen={fileModalState} toggle={toggleModalState} setFiles={setFiles} path={path} chosenDevice={chosenDevice}/>}
       <ImgViewer isOpen={imgViewerState} toggle={toggleModalViewerState} imgSrc={imgSrc} />
-      <FileDownloadModal isOpen={fileDownloadState} toggle={toggleModalFileDownloadState} fileName={fileName} path={path}/>
+      <FileDownloadModal isOpen={fileDownloadState} toggle={toggleModalFileDownloadState} fileName={fileName} path={path} chosenDevice={chosenDevice}/>
       <FileCreateFolderModal isOpen={createFolderModalState} toggle={toggleFolderModalState} path={path}
-                             setFiles={setFiles}/>
+                             setFiles={setFiles} chosenDevice={chosenDevice}/>
       <Navbar/>
       <Container className="main-container">
         <Row>

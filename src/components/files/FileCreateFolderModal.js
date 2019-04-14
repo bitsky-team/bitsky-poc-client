@@ -19,7 +19,7 @@ import qs from 'qs'
 import axios from 'axios'
 import {toast} from 'react-toastify'
 
-const FileCreateFolderModal = ({isOpen, toggle, path, setFiles}) => {
+const FileCreateFolderModal = ({isOpen, toggle, path, setFiles, chosenDevice}) => {
 
   const [createError, setCreateError] = useState(false)
   const [name, setName] = useState('')
@@ -36,6 +36,7 @@ const FileCreateFolderModal = ({isOpen, toggle, path, setFiles}) => {
           token: localStorage.getItem('token'),
           path: path || null,
           name,
+          device: chosenDevice,
         }),
       )
       const {success} = response.data

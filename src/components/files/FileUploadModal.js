@@ -44,7 +44,7 @@ const ProgressBar = styled(Progress)`
   }
 `
 
-const FileUploadModal = ({isOpen, toggle, path, setFiles}) => {
+const FileUploadModal = ({isOpen, toggle, path, setFiles, chosenDevice}) => {
 
   const [forceCloseModal, setForceCloseModal] = useState(false)
   const [filesList, setFilesList] = useState(null)
@@ -94,6 +94,7 @@ const FileUploadModal = ({isOpen, toggle, path, setFiles}) => {
         token: localStorage.getItem('token'),
         path: path || null,
         files: filesToUpload,
+        device: chosenDevice,
       }), {
         onUploadProgress: progressEvent => {
           setPercentCompleted(Math.round((progressEvent.loaded * 100) / progressEvent.total))
