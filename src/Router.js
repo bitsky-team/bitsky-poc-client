@@ -22,7 +22,6 @@ import ManageFilesPage from './components/files/ManageFilesPage'
 import AuthService from './services/AuthService'
 import {AdministrationSettingsPage} from './components/administration/AdministrationSettingsPage'
 import {NotificationsPage} from './components/notifications/NotificationsPage'
-import {MessagingPage} from './components/messaging/MessagingPage'
 
 const PrivateRoute = ({component: Component, authed, ...rest}) => {
   return (
@@ -102,12 +101,6 @@ class Router extends Component {
           authed={this.state.authenticated}
           path="/user_preferences"
           component={UserPreferencesPage}
-        />
-        <PrivateRoute
-          exact
-          authed={this.state.authenticated}
-          path="/messaging"
-          component={MessagingPage}
         />
         <PrivateRoute
           exact

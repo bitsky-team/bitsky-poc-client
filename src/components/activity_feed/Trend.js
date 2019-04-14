@@ -3,7 +3,6 @@ import {Link, withRouter} from 'react-router-dom'
 import { Button } from 'reactstrap'
 import _ from 'lodash'
 import PostViewer from '../common/post/PostViewer'
-import {emojify} from 'react-emojione'
 
 class Trend extends Component {
     constructor(props) {
@@ -13,7 +12,7 @@ class Trend extends Component {
 
     getContent() {
         return {
-            __html: _.truncate(emojify(this.props.content, {output: 'unicode'}), {
+            __html: _.truncate(this.props.content, {
                 'length': 80,
                 'separator': /,? +/
             })
@@ -44,7 +43,7 @@ class Trend extends Component {
         return (
             <div>
                 <div className="trend-title">
-                    <p>{emojify(name, {output: 'unicode'})}</p>
+                    <p>{name}</p>
                     <div className="score">
                         <span>{ score }</span>
                     </div>

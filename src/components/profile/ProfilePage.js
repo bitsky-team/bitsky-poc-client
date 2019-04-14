@@ -27,7 +27,6 @@ import Post from '../common/post/Post'
 import {withRouter} from 'react-router'
 import Loader from '../Loader'
 import Fade from 'react-reveal/Fade';
-import {emojify} from 'react-emojione'
 
 export const CenteredRow = styled(Row)`
   display: flex;
@@ -296,7 +295,7 @@ const ProfilePage = props => {
                 })
               }
             >
-              {emojify(favoriteTrend.name, {output: 'unicode'})}
+              {favoriteTrend.name}
             </FavoriteTrend>
           )
         })

@@ -11,7 +11,6 @@ import {
   faClock,
 } from '@fortawesome/free-regular-svg-icons'
 import {withRouter} from 'react-router'
-import {emojify} from 'react-emojione'
 
 class Comment extends Component {
   _isMounted = false
@@ -45,7 +44,7 @@ class Comment extends Component {
   }
 
   getContent = () => {
-    return {__html: emojify(this.props.content, {output: 'unicode'})}
+    return {__html: this.props.content}
   }
 
   addFavorite = async () => {

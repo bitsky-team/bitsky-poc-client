@@ -19,6 +19,11 @@ export default class SideMenu extends Component {
               <FontAwesomeIcon icon={faArchive} /> Fichiers
             </Link>
           </li>
+          <li>
+            <Link to="/">
+              <FontAwesomeIcon icon={faStickyNote} /> Mémos
+            </Link>
+          </li>
         </ul>
       </div>
     );

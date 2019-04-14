@@ -38,7 +38,6 @@ import SideMenu from './SideMenu'
 import Trend from './Trend'
 import Loader from '../Loader'
 import Fade from 'react-reveal/Fade';
-import {emojify} from 'react-emojione'
 
 export default class ActivityFeedPage extends Component {
   _isMounted = false
@@ -276,6 +275,7 @@ export default class ActivityFeedPage extends Component {
   setPosts = async trend => {
     this.setState({postsLoading: true})
     const {data} = await this.getPosts(trend)
+    
     if(data.success) {
       this.pushPostsToState(data.posts)
     } else {
@@ -459,7 +459,7 @@ export default class ActivityFeedPage extends Component {
                     <FontAwesomeIcon icon={faArrowCircleLeft} />
                   </Button>{' '}
                   <p>
-                    Publications du sujet <span>{emojify(this.state.trend, {output: 'unicode'})}</span>
+                    Publications du sujet <span>{this.state.trend}</span>
                   </p>
                 </div>
               )}
@@ -481,6 +481,9 @@ export default class ActivityFeedPage extends Component {
                   className="icons"
                   ref={iconsBox => (this.iconsBox = iconsBox)}
                 >
+                  <span>
+                    <FontAwesomeIcon icon={faClipboardList} />
+                  </span>
                   <span onClick={this.handlePictureButtonClick}>
                     <FontAwesomeIcon icon={faCamera} />
                   </span>

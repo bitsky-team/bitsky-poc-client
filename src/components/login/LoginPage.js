@@ -104,7 +104,6 @@ export default class LoginPage extends Component {
           className: 'notification-success',
         })
         break;
-      default: break;
     }
   }
 

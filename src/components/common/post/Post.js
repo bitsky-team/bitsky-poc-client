@@ -1,7 +1,6 @@
 import React, {Component, Fragment} from 'react'
 import {config} from '../../../config'
 import DateService from '../../../services/DateService'
-import {emojify} from 'react-emojione'
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {
@@ -161,7 +160,7 @@ class Post extends Component {
   }
 
   getContent() {
-    return {__html: emojify(this.props.content, {output: 'unicode'})}
+    return {__html: this.props.content}
   }
 
   handleCommentCounterClick = () => {
@@ -235,7 +234,7 @@ class Post extends Component {
             <Row>
               <Col md="4" className="text-left">
                 <span className="tag">
-                  <FontAwesomeIcon icon={faTag} /> {emojify(this.props.tag, {output: 'unicode'})}
+                  <FontAwesomeIcon icon={faTag} /> {this.props.tag}
                 </span>
               </Col>
               <Col md="4" className="text-center counter-container">

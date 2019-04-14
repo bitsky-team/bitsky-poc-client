@@ -25,7 +25,6 @@ import {toast} from 'react-toastify'
 import Comment from './Comment'
 import Loader from '../../Loader'
 import Fade from 'react-reveal/Fade';
-import {emojify} from 'react-emojione'
 
 export default class PostViewer extends React.Component {
   _isMounted = false
@@ -60,7 +59,7 @@ export default class PostViewer extends React.Component {
   }
 
   getContent() {
-    return {__html: emojify(this.state.post.content, {output: 'unicode'})}
+    return {__html: this.state.post.content}
   }
 
   getPost = async () => {
@@ -256,8 +255,6 @@ export default class PostViewer extends React.Component {
       })
     )
     
-    console.log(response.data)
-    
     const {success, comment, message} = response.data
 
     if (success && this._isMounted) {
@@ -330,11 +327,15 @@ export default class PostViewer extends React.Component {
       })
 
       this.decreaseCommentCounter()
+      console.log('Before deletion state: ', this.state.comments)
+      console.log('With filter: ', this.state.comments.filter(
+        comment => comment.props.id !== id
+      ))
       this.setState({
         comments: this.state.comments.filter(
           comment => comment.props.id !== id
         ),
-      })
+      }, () => console.log('After deletion : ' + this.state.comments))
       this.setScore()
       if (this.props.refreshTrends) this.props.refreshTrends()
       this.props.refreshBestComments()
@@ -449,7 +450,7 @@ export default class PostViewer extends React.Component {
                     <Row>
                       <Col md="4" className="text-left">
                         <span className="tag">
-                          <FontAwesomeIcon icon={faTag} /> {emojify(this.state.post.tag, {output: 'unicode'})}
+                          <FontAwesomeIcon icon={faTag} /> {this.state.post.tag}
                         </span>
                       </Col>
                       <Col md="4" className="text-center counter-container">

@@ -120,7 +120,7 @@ const AddFolderButton = styled.span`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-left: 20px;
+  margin-left: 20px
   background: #FFF;
   border-radius: 5px;
   cursor: pointer;
@@ -451,8 +451,12 @@ const ManageFilesPage = () => {
 
   const checkForm = () => {
     let isOk = searchValue.length > 0
-  
-    searchName()
+
+    if (isOk) {
+      searchName()
+    } else {
+      setSearchError(true)
+    }
   }
 
   useEffect(() => {

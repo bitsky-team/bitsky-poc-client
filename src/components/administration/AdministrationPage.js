@@ -1,5 +1,10 @@
 import React, {Component} from 'react'
-import {Container, Row, Col, Button} from 'reactstrap'
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+} from 'reactstrap'
 import AdministrationSideMenu from './common/AdministrationSideMenu'
 import AdministrationUsedStorage from './common/AdministrationUsedStorage'
 import AdministrationInfos from './common/AdministrationInfos'
@@ -17,41 +22,21 @@ import Loader from '../Loader'
 import {toast} from 'react-toastify'
 
 const SeeMoreButton = styled(Button)`
-  background-color: rgb(131, 178, 224);
-  border-color: rgb(131, 178, 224);
-  padding: 3px 12px 3px 12px;
-  font-size: 14px;
-  margin-top: 10px;
-  margin-bottom: 30px;
-`
-
-const ConnectionState = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-weight: 200;
-  font-size: 20px;
-  height: 100px;
-  width: 100px;
-  border-radius: 50%;
-  background: ${({online}) =>
-    online === '?'
-      ? 'darkgrey'
-      : online === 'online'
-      ? 'linear-gradient(45deg, #84DE86 0, #68B06A 100%)'
-      : 'linear-gradient(45deg, #CF94CA 0, #E8B4E3 100%)'};
+    background-color: rgb(131, 178, 224);
+    border-color: rgb(131, 178, 224);
+    padding: 3px 12px 3px 12px;
+    font-size: 14px;
+    margin-top: 10px;
+    margin-bottom: 30px;
 `
 
 export default class AdministrationPage extends Component {
+
   _isMounted = false
   interval = null
 
   state = {
-    session: localStorage.getItem('token')
-      ? jwtDecode(localStorage.getItem('token'))
-      : null,
-    online: '?',
+    session: (localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null),
     temperature: '?',
     cpuPercentage: '?',
     devices: [],
@@ -61,38 +46,21 @@ export default class AdministrationPage extends Component {
     logsModalState: false,
   }
 
-  getOnline = async () => {
-    try {
-      await axios.get(`${config.API_ROOT}`)
-      this.setState({online: 'online'})
-    } catch (e) {
-      this.setState({online: 'offline'})
-    }
-  }
-
   getTemp = async () => {
-    const response = await axios.post(
-      `${config.API_ROOT}/get_temp`,
-      qs.stringify({
-        token: localStorage.getItem('token'),
-        uniq_id: localStorage.getItem('id'),
-      })
-    )
-    const temperature = response.data.success ? response.data.temperature : '?'
+    const response = await axios.post(`${config.API_ROOT}/get_temp`, qs.stringify({
+      token: localStorage.getItem('token'),
+      uniq_id: localStorage.getItem('id'),
+    }))
+    const temperature = (response.data.success) ? response.data.temperature : '?'
     if (this._isMounted) this.setState({temperature})
   }
 
   getCpu = async () => {
-    const response = await axios.post(
-      `${config.API_ROOT}/get_cpu`,
-      qs.stringify({
-        token: localStorage.getItem('token'),
-        uniq_id: localStorage.getItem('id'),
-      })
-    )
-    const cpuPercentage = response.data.success
-      ? Math.round(response.data.cpu_usage, 2)
-      : '?'
+    const response = await axios.post(`${config.API_ROOT}/get_cpu`, qs.stringify({
+      token: localStorage.getItem('token'),
+      uniq_id: localStorage.getItem('id'),
+    }))
+    const cpuPercentage = (response.data.success) ? Math.round(response.data.cpu_usage, 2) : '?'
     if (this._isMounted) this.setState({cpuPercentage})
   }
 
@@ -102,7 +70,7 @@ export default class AdministrationPage extends Component {
       qs.stringify({
         token: localStorage.getItem('token'),
         uniq_id: localStorage.getItem('id'),
-      })
+      }),
     )
   }
 
@@ -145,19 +113,22 @@ export default class AdministrationPage extends Component {
 
   setLogs = () => {
     this.setState({logsLoading: true})
-    this.getLogs().then(response => {
-      let logs_result = []
-      const {logs} = response.data
+    this.getLogs()
+      .then(response => {
+        let logs_result = []
+        const {logs} = response.data
 
-      if (logs) {
-        logs.forEach((log, i) => {
-          logs_result.push(<AdministrationLog key={i} log={log} />)
-        })
-      }
-
-      logs_result.reverse()
-      this.setState({logs: logs_result, logsLoading: false})
-    })
+        if(logs) {
+          logs.forEach((log, i) => {
+            logs_result.push(
+              <AdministrationLog key={i} log={log}/>,
+            )
+          })
+        }
+        
+        logs_result.reverse()
+        this.setState({logs: logs_result, logsLoading: false})
+      })
   }
 
   toggleLogsModalState = () => {
@@ -167,7 +138,6 @@ export default class AdministrationPage extends Component {
   componentDidMount() {
     this._isMounted = true
 
-    this.getOnline()
     this.getTemp()
     this.getCpu()
     this.setLogs()
@@ -187,28 +157,19 @@ export default class AdministrationPage extends Component {
   render() {
     return (
       <div>
-        <AdministrationLogModal
-          isOpen={this.state.logsModalState}
-          toggle={this.toggleLogsModalState}
-          logs={this.state.logs}
-        />
-        <Navbar />
+        <AdministrationLogModal isOpen={this.state.logsModalState} toggle={this.toggleLogsModalState}
+                                logs={this.state.logs}/>
+        <Navbar/>
         <Container className="main-container">
           <Row>
             <Col md="3" className="no-margin-left no-margin-right">
               <div className="user-container">
-                <img src={localStorage.getItem('avatar')} alt="Avatar" />
-                <h5>
-                  {this.state.session.firstname +
-                    ' ' +
-                    this.state.session.lastname}
-                </h5>
-                <p className="rank">
-                  <Rank id={this.state.session.rank} />
-                </p>
+                <img src={localStorage.getItem('avatar')} alt="Avatar"/>
+                <h5>{this.state.session.firstname + ' ' + this.state.session.lastname}</h5>
+                <p className="rank"><Rank id={this.state.session.rank}/></p>
               </div>
 
-              <AdministrationSideMenu />
+              <AdministrationSideMenu/>
             </Col>
             <Col md="9" className="no-margin-left no-margin-right">
               <div className="user-container no-center admin-dashboard">
@@ -217,35 +178,20 @@ export default class AdministrationPage extends Component {
                   <Row>
                     <Col md="3">
                       <Col md="12">
-                        <ConnectionState online={this.state.online}>
-                          {this.state.online === '?' && '?'}
-                          {this.state.online === 'online' && 'En ligne'}
-                          {this.state.online === 'offline' && 'Hors ligne'}
-                        </ConnectionState>
+                        <div className="connection-state">En ligne</div>
                       </Col>
                     </Col>
                     <Col md="4">
                       <Col md="12">
-                        <AdministrationInfos
-                          measureTitle="Température"
-                          measuredValue={this.state.temperature + '°C'}
-                          measuredValueState={
-                            this.state.temperature < 60 ? 'Optimale' : 'Élevée'
-                          }
-                        />
+                        <AdministrationInfos measureTitle="Température" measuredValue={this.state.temperature + '°C'}
+                                             measuredValueState={this.state.temperature < 60 ? 'Optimale' : 'Élevée'}/>
                       </Col>
                     </Col>
                     <Col md="4">
                       <Col md="12">
-                        <AdministrationInfos
-                          measureTitle="Utilisation du CPU"
-                          measuredValue={this.state.cpuPercentage + '%'}
-                          measuredValueState={
-                            this.state.cpuPercentage < 70
-                              ? 'Optimale'
-                              : 'Élevée'
-                          }
-                        />
+                        <AdministrationInfos measureTitle="Utilisation du CPU"
+                                             measuredValue={this.state.cpuPercentage + '%'}
+                                             measuredValueState={this.state.cpuPercentage < 70 ? 'Optimale' : 'Élevée'}/>
                       </Col>
                     </Col>
                   </Row>
@@ -263,19 +209,10 @@ export default class AdministrationPage extends Component {
               <div className="user-container no-center admin-dashboard">
                 <h4>Derniers logs</h4>
                 <div className="admin-logs-container margin-top-10">
-                  <Loader display={this.state.logsLoading ? 1 : 0} />
-                  {this.state.logs.length > 0
-                    ? _.take(this.state.logs, 5)
-                    : undefined}
+                  <Loader display={this.state.logsLoading ? 1 : 0}/>
+                  {this.state.logs.length > 0 ? _.take(this.state.logs, 5) : undefined}
                 </div>
-                {this.state.logs.length > 0 && (
-                  <SeeMoreButton
-                    color="info"
-                    onClick={this.toggleLogsModalState}
-                  >
-                    Voir plus
-                  </SeeMoreButton>
-                )}{' '}
+                {this.state.logs.length > 0 && <SeeMoreButton color="info" onClick={this.toggleLogsModalState}>Voir plus</SeeMoreButton>}{' '}
               </div>
             </Col>
           </Row>

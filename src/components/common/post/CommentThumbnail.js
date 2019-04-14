@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {withRouter} from 'react-router'
-import {emojify} from 'react-emojione'
 
 class CommentThumbnail extends Component {
   componentDidMount = () => {
@@ -30,7 +29,7 @@ class CommentThumbnail extends Component {
         <span className="author" ref={node => (this.authorBox = node)}>
           {this.props.author.firstname + ' ' + this.props.author.lastname}
         </span>
-        <p>{emojify(this.props.content, {output: 'unicode'})}</p>
+        <p>{this.props.content}</p>
       </div>
     )
   }
