@@ -47,7 +47,7 @@ const NotificationCount = styled.span`
   font-weight: bold;
 `
 
-const Navbar = (props, ref) => {
+const Navbar = (props) => {
   const [isOpen, setIsOpen] = useState(false)
   const [session] = useState(localStorage.getItem('token')
     ? jwtDecode(localStorage.getItem('token'))
@@ -112,7 +112,9 @@ const Navbar = (props, ref) => {
         <Nav className="ml-auto" navbar>
           <div className="nav-centered-icons">
             <NavItem className="nav-item-icon">
-              <NavLink href={null}>
+              <NavLink
+                onClick={() => props.history.push('/messaging')}
+              >
                 <FontAwesomeIcon icon={faInbox} />
               </NavLink>
             </NavItem>
