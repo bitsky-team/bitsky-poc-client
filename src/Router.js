@@ -15,8 +15,8 @@ import UserDocumentationPage from './components/docs/user/UserDocumentationPage'
 import UserPreferencesPage from './components/preferences/UserPreferencesPage'
 import UserPreferencesSecurityPage from './components/preferences/UserPreferencesSecurityPage'
 import UserPreferencesAccountPage from './components/preferences/UserPreferencesAccountPage'
-import AdministrationFilesPage from './components/administration/files/AdministrationFilesPage'
-import AdministrationManageFilesPage from './components/administration/files/AdministrationManageFilesPage'
+import AdministrationFilesPage from './components/files/FilesPage'
+import ManageFilesPage from './components/files/ManageFilesPage'
 
 // Services
 import AuthService from './services/AuthService'
@@ -140,7 +140,7 @@ class Router extends Component {
         />
         <PrivateRoute exact authed={this.state.authenticated} path={"/admin_manage_links"} component={AdministrationLinksPage}/>
         <PrivateRoute exact authed={this.state.authenticated} path={"/admin_files"} component={AdministrationFilesPage}/>
-        <PrivateRoute exact authed={this.state.authenticated} path={"/admin_manage_files"} component={AdministrationManageFilesPage}/>
+        <PrivateRoute exact authed={this.state.authenticated} path={"/admin_manage_files"} component={ManageFilesPage}/>
       </div>
     )
   }

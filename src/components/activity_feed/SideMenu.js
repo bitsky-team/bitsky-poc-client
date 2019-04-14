@@ -15,7 +15,7 @@ export default class SideMenu extends Component {
             </Link>
           </li>
           <li>
-            <Link to="/">
+            <Link to="/admin_files">
               <FontAwesomeIcon icon={faArchive} /> Fichiers
             </Link>
           </li>

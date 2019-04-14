@@ -14,12 +14,12 @@ import {
 } from 'reactstrap'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faTimes, faFolderPlus} from '@fortawesome/free-solid-svg-icons'
-import {config} from '../../../config'
+import {config} from '../../config'
 import qs from 'qs'
 import axios from 'axios'
 import {toast} from 'react-toastify'
 
-const AdministrationFileCreateFolderModal = ({isOpen, toggle, path, setFiles}) => {
+const FileCreateFolderModal = ({isOpen, toggle, path, setFiles, chosenDevice}) => {
 
   const [createError, setCreateError] = useState(false)
   const [name, setName] = useState('')
@@ -36,6 +36,7 @@ const AdministrationFileCreateFolderModal = ({isOpen, toggle, path, setFiles}) =
           token: localStorage.getItem('token'),
           path: path || null,
           name,
+          device: chosenDevice,
         }),
       )
       const {success} = response.data
@@ -94,4 +95,4 @@ const AdministrationFileCreateFolderModal = ({isOpen, toggle, path, setFiles}) =
   )
 }
 
-export default AdministrationFileCreateFolderModal
+export default FileCreateFolderModal

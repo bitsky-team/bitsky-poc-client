@@ -9,7 +9,7 @@ import {
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faTimes, faDownload} from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios'
-import {config} from '../../../config'
+import {config} from '../../config'
 import qs from 'qs'
 import fileDownload from 'js-file-download'
 import {toast} from 'react-toastify'
@@ -21,7 +21,7 @@ const ProgressBar = styled(Progress)`
   }
 `
 
-const AdministrationFileDownloadModal = ({isOpen, toggle, fileName, path}) => {
+const FileDownloadModal = ({isOpen, toggle, fileName, path, chosenDevice}) => {
 
   const [isDownloading, setIsDownloading] = useState(false)
   const [loadingText, setLoadingText] = useState('')
@@ -38,6 +38,7 @@ const AdministrationFileDownloadModal = ({isOpen, toggle, fileName, path}) => {
         token: localStorage.getItem('token'),
         path: path || null,
         name: name,
+        device: chosenDevice,
       }), {
         responseType: 'blob',
         onUploadProgress: progressEvent => {
@@ -85,4 +86,4 @@ const AdministrationFileDownloadModal = ({isOpen, toggle, fileName, path}) => {
   )
 }
 
-export default AdministrationFileDownloadModal
+export default FileDownloadModal

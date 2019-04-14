@@ -4,14 +4,15 @@ import {
   Row,
   Col,
 } from 'reactstrap'
-import AdministrationSideMenu from '../common/AdministrationSideMenu'
-import Navbar from '../../common/template/Navbar'
-import Rank from '../../common/Rank'
+import AdministrationSideMenu from '../administration/common/AdministrationSideMenu'
+import Navbar from '../common/template/Navbar'
+import Rank from '../common/Rank'
 import jwtDecode from 'jwt-decode'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import {withRouter} from 'react-router'
+import SideMenu from '../activity_feed/SideMenu'
 
 const SpanBitsky = styled.span`
   font-size: 25px;
@@ -53,7 +54,7 @@ const MyBistky = styled(Row)`
   }
 `
 
-const AdministrationFilesPage = props => {
+const FilesPage = props => {
 
   const [session] = useState(localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null)
 
@@ -68,7 +69,7 @@ const AdministrationFilesPage = props => {
                 <h5>{session.firstname + ' ' + session.lastname}</h5>
                 <p className="rank"><Rank id={session.rank}/></p>
               </div>
-              <AdministrationSideMenu/>
+              {session.rank === 2 ? <AdministrationSideMenu/> : <SideMenu/>}
             </Col>
             <Col md="9" className="no-margin-left no-margin-right">
               <div className="user-container no-center admin-dashboard">
@@ -87,4 +88,4 @@ const AdministrationFilesPage = props => {
     )
   }
 
-export default withRouter(AdministrationFilesPage)
+export default withRouter(FilesPage)

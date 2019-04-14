@@ -9,28 +9,33 @@ import {
   Button,
   Breadcrumb,
   BreadcrumbItem,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle
 } from 'reactstrap'
-import AdministrationSideMenu from '../common/AdministrationSideMenu'
-import Navbar from '../../common/template/Navbar'
-import Rank from '../../common/Rank'
+import AdministrationSideMenu from '../administration/common/AdministrationSideMenu'
+import Navbar from '../common/template/Navbar'
+import Rank from '../common/Rank'
 import jwtDecode from 'jwt-decode'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faSearch, faUpload, faSort, faFolderPlus} from '@fortawesome/free-solid-svg-icons'
+import {faSearch, faUpload, faSort, faFolderPlus, faHdd} from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components'
 import posed from 'react-pose'
-import AdministrationFileRowTable from './common/AdministrationFileRowTable'
-import AdministrationFileUploadModal from './AdministrationFileUploadModal'
+import FileRowTable from './common/FileRowTable'
+import FileUploadModal from './FileUploadModal'
 import axios from 'axios'
-import {config} from '../../../config'
+import {config} from '../../config'
 import qs from 'qs'
 import {toast} from 'react-toastify'
-import Loader from '../../Loader'
-import AdministrationFileCreateFolderModal from './AdministrationFileCreateFolderModal'
+import Loader from '../Loader'
+import FileCreateFolderModal from './FileCreateFolderModal'
 import FormGroup from 'reactstrap/es/FormGroup'
 import FormFeedback from 'reactstrap/es/FormFeedback'
 import removeAccents from 'remove-accents'
-import AdministrationImgViewer from './AdministrationImgViewer'
-import AdministrationFileDownloadModal from './AdministrationFileDownloadModal'
+import ImgViewer from './ImgViewer'
+import FileDownloadModal from './FileDownloadModal'
+import SideMenu from '../activity_feed/SideMenu'
 
 const ContentLabel = posed.label({
   up: {
@@ -142,7 +147,22 @@ const BreadCrumbItem = styled(BreadcrumbItem)`
   }
 `
 
-const AdministrationManageFilesPage = () => {
+const DevicesDropdown = styled(Dropdown)`
+  button:first-child {
+    background-color: rgb(131, 178, 224) !important;
+    border-color: rgb(131, 178, 224) !important;
+    padding: 3px 12px 3px 12px !important;
+    font-size: 14px !important;
+  }
+  
+  button:first-child:hover, button:first-child:active, button:first-child:focus {
+    background: #FFF !important;
+    border: 1px solid rgb(131, 178, 224) !important;
+    color: rgb(131, 178, 224) !important;
+  }
+`
+
+const ManageFilesPage = () => {
 
   const [session] = useState(localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null)
   const [toggelLabel, setToggleLabel] = useState(false)
@@ -167,6 +187,9 @@ const AdministrationManageFilesPage = () => {
   const [imgViewerState, setImgViewerState] = useState(false)
 
   const [fileName, setFileName] = useState(null)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [devices, setDevices] = useState([])
+  const [chosenDevice, setChosenDevice] = useState('bitsky')
 
   const BreadCrumbContainer = styled(Breadcrumb)`
     display: ${path ? 'block' : 'none'} !important;
@@ -240,6 +263,10 @@ const AdministrationManageFilesPage = () => {
     setFileDownloadState(!fileDownloadState)
   }
 
+  const toggleDropdownState = () => {
+    setDropdownOpen(!dropdownOpen)
+  }
+
   const getFiles = async () => {
     return axios.post(
       `${config.API_ROOT}/get_files`,
@@ -247,6 +274,7 @@ const AdministrationManageFilesPage = () => {
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
         path: path || null,
+        device: chosenDevice,
       }),
     )
   }
@@ -266,10 +294,10 @@ const AdministrationManageFilesPage = () => {
           let date = file.updated_at.split(' ').shift()
 
           files_result.push(
-            <AdministrationFileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
+            <FileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
                                         type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname}
                                         ownerId={file.owner.id} updated_at={date} size={file.converted_size}
-                                        id={id} setFiles={setFiles} sendImageSrc={sendImgSrc} toggle={toggleModalViewerState} sendInfoToDownload={sendInfoToDownload}/>,
+                                        id={id} setFiles={setFiles} sendImageSrc={sendImgSrc} toggle={toggleModalViewerState} sendInfoToDownload={sendInfoToDownload} chosenDevice={chosenDevice}/>,
           )
         })
         setFilesComponent(files_result)
@@ -373,10 +401,10 @@ const AdministrationManageFilesPage = () => {
 
     data.forEach((file, id) => {
       sortedComponents.push(
-        <AdministrationFileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
+        <FileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
                                     type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname}
                                     ownerId={file.owner.id} updated_at={file.updated_at} size={file.converted_size}
-                                    id={id} setFiles={setFiles} sendImageSrc={sendImgSrc} toggle={toggleModalViewerState} sendInfoToDownload={sendInfoToDownload}/>,
+                                    id={id} setFiles={setFiles} sendImageSrc={sendImgSrc} toggle={toggleModalViewerState} sendInfoToDownload={sendInfoToDownload} chosenDevice={chosenDevice}/>,
       )
     })
 
@@ -411,10 +439,10 @@ const AdministrationManageFilesPage = () => {
     } else {
       filteredFiles.forEach((file, id) => {
         filesComponentSought.push(
-          <AdministrationFileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
+          <FileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
                                       type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname}
                                       ownerId={file.owner.id} updated_at={file.updated_at} size={file.converted_size}
-                                      id={id} setFiles={setFiles} sendImageSrc={sendImgSrc} toggle={toggleModalViewerState} sendInfoToDownload={sendInfoToDownload}/>,
+                                      id={id} setFiles={setFiles} sendImageSrc={sendImgSrc} toggle={toggleModalViewerState} sendInfoToDownload={sendInfoToDownload} chosenDevice={chosenDevice}/>,
         )
       })
       setFilesComponent(filesComponentSought)
@@ -432,18 +460,51 @@ const AdministrationManageFilesPage = () => {
   }
 
   useEffect(() => {
+    setFiles()
+  }, [chosenDevice])
+
+  const getStorageDevices = async () => {
+    const response = await axios.post(`${config.API_ROOT}/get_devices`,
+      qs.stringify({
+        uniq_id: localStorage.getItem('id'),
+        token: localStorage.getItem('token'),
+      }),
+    )
+    const {success, devices} = response.data
+
+    if(success) {
+      if(devices && devices.length > 0) {
+        let devicesComponent = [<DropdownItem key='default' onClick={() => setChosenDevice('bitsky')}>bitsky</DropdownItem>]
+        devices.forEach((device, i) => {
+          const deviceName = device.split('/')[2]
+          devicesComponent.push(
+            <DropdownItem key={i} onClick={() => setChosenDevice(deviceName)}>{deviceName}</DropdownItem>
+          )
+        })
+        setDevices(devicesComponent)
+      }
+    }else {
+      toast.error('Erreur lors de la récupération des espaces de stockage !', {
+        autoClose: 5000,
+        position: toast.POSITION.BOTTOM_RIGHT,
+      })
+    }
+  }
+
+  useEffect(() => {
 
     setFiles()
+    getStorageDevices()
 
   }, [path])
 
   return (
     <div>
-      {fileModalState && <AdministrationFileUploadModal isOpen={fileModalState} toggle={toggleModalState} setFiles={setFiles} path={path}/>}
-      <AdministrationImgViewer isOpen={imgViewerState} toggle={toggleModalViewerState} imgSrc={imgSrc} />
-      <AdministrationFileDownloadModal isOpen={fileDownloadState} toggle={toggleModalFileDownloadState} fileName={fileName} path={path}/>
-      <AdministrationFileCreateFolderModal isOpen={createFolderModalState} toggle={toggleFolderModalState} path={path}
-                                           setFiles={setFiles}/>
+      {fileModalState && <FileUploadModal isOpen={fileModalState} toggle={toggleModalState} setFiles={setFiles} path={path} chosenDevice={chosenDevice}/>}
+      <ImgViewer isOpen={imgViewerState} toggle={toggleModalViewerState} imgSrc={imgSrc} />
+      <FileDownloadModal isOpen={fileDownloadState} toggle={toggleModalFileDownloadState} fileName={fileName} path={path} chosenDevice={chosenDevice}/>
+      <FileCreateFolderModal isOpen={createFolderModalState} toggle={toggleFolderModalState} path={path}
+                             setFiles={setFiles} chosenDevice={chosenDevice}/>
       <Navbar/>
       <Container className="main-container">
         <Row>
@@ -453,7 +514,7 @@ const AdministrationManageFilesPage = () => {
               <h5>{session.firstname + ' ' + session.lastname}</h5>
               <p className="rank"><Rank id={session.rank}/></p>
             </div>
-            <AdministrationSideMenu/>
+            {session.rank === 2 ? <AdministrationSideMenu/> : <SideMenu/>}
           </Col>
           <Col md="9" className="no-margin-left no-margin-right">
             <SearchContainer className="user-container">
@@ -462,7 +523,7 @@ const AdministrationManageFilesPage = () => {
                   <ColContainer md="2">
                     <h4>Fichiers</h4>
                   </ColContainer>
-                  <ColContainer md="7">
+                  <ColContainer md="6">
                     <FormGroup style={{marginBottom: 0}}>
                       <InputGroup>
                         <AnimatedLabel
@@ -488,9 +549,21 @@ const AdministrationManageFilesPage = () => {
                       <FormFeedback>{''}</FormFeedback>
                     </FormGroup>
                   </ColContainer>
-                  <ColContainer md="3">
+                  <ColContainer md="2">
                     <UploadButton color="info" onClick={toggleModalState}><FontAwesomeIcon
                       icon={faUpload}/> Uploader</UploadButton>
+                  </ColContainer>
+                  <ColContainer md="2">
+                    <DevicesDropdown direction="left" isOpen={dropdownOpen} toggle={toggleDropdownState}>
+                      <DropdownToggle caret>
+                        <FontAwesomeIcon icon={faHdd}/> {chosenDevice}
+                      </DropdownToggle>
+                      <DropdownMenu>
+                        <DropdownItem header>Périphérique de stockage</DropdownItem>
+                        <DropdownItem divider/>
+                        {devices && devices.length > 0 ? devices : <small>Aucun périphérique de stockage détecté</small>}
+                      </DropdownMenu>
+                    </DevicesDropdown>
                   </ColContainer>
                 </Row>
               </Container>
@@ -544,4 +617,4 @@ const AdministrationManageFilesPage = () => {
   )
 }
 
-export default AdministrationManageFilesPage
+export default ManageFilesPage

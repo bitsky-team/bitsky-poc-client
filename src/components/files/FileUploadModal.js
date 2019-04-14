@@ -4,7 +4,7 @@ import {useDropzone} from 'react-dropzone'
 import styled from 'styled-components'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faTimes, faUpload} from '@fortawesome/free-solid-svg-icons'
-import {config} from '../../../config'
+import {config} from '../../config'
 import qs from 'qs'
 import axios from 'axios'
 import {toast} from 'react-toastify'
@@ -44,7 +44,7 @@ const ProgressBar = styled(Progress)`
   }
 `
 
-const AdministrationFileUploadModal = ({isOpen, toggle, path, setFiles}) => {
+const FileUploadModal = ({isOpen, toggle, path, setFiles, chosenDevice}) => {
 
   const [forceCloseModal, setForceCloseModal] = useState(false)
   const [filesList, setFilesList] = useState(null)
@@ -94,6 +94,7 @@ const AdministrationFileUploadModal = ({isOpen, toggle, path, setFiles}) => {
         token: localStorage.getItem('token'),
         path: path || null,
         files: filesToUpload,
+        device: chosenDevice,
       }), {
         onUploadProgress: progressEvent => {
           setPercentCompleted(Math.round((progressEvent.loaded * 100) / progressEvent.total))
@@ -172,4 +173,4 @@ const AdministrationFileUploadModal = ({isOpen, toggle, path, setFiles}) => {
   )
 }
 
-export default AdministrationFileUploadModal
+export default FileUploadModal
