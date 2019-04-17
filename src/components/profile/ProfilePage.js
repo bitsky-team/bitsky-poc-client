@@ -17,6 +17,7 @@ import {
   faCommentAlt, faLink,
   faMapMarkerAlt,
   faPencilAlt,
+  faCrown,
 } from '@fortawesome/free-solid-svg-icons'
 import jwtDecode from 'jwt-decode'
 import axios from 'axios'
@@ -135,6 +136,21 @@ const LinkedLogo = styled.div`
   color: #b7b7b7;
   font-size: 18px;
 `
+
+const AdminCrown = styled.span`
+  color: #FFF;
+  background: #FFA630;
+  border-radius: 50%;
+  height: 30px;
+  width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  right: 83px;
+  top: 50px;
+`
+
 
 const ProfilePage = props => {
   const [session] = (localStorage.getItem('token')) ? useState(jwtDecode(localStorage.getItem('token'))) : useState(null)
@@ -382,7 +398,7 @@ const ProfilePage = props => {
                   <Col md="3">
                     <LeftColumnContainer>
                       <Avatar src={user.avatar} alt="Avatar" />
-                
+                      {session.rank === 2 ? <AdminCrown><FontAwesomeIcon icon={faCrown}/></AdminCrown>: null}
                       {user.id !== session.id ? (
                         <Button color="info" className="see-more-button">
                           <FontAwesomeIcon icon={faCommentAlt} /> Envoyer un
