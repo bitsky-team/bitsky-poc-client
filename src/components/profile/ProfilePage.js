@@ -147,8 +147,12 @@ const AdminCrown = styled.span`
   align-items: center;
   justify-content: center;
   position: absolute;
-  right: 83px;
+  right: 10px;
   top: 50px;
+`
+
+const AvatarContainer = styled.div`
+  position: relative;
 `
 
 
@@ -397,8 +401,10 @@ const ProfilePage = props => {
                 <Row>
                   <Col md="3">
                     <LeftColumnContainer>
-                      <Avatar src={user.avatar} alt="Avatar" />
-                      {session.rank === 2 ? <AdminCrown><FontAwesomeIcon icon={faCrown}/></AdminCrown>: null}
+                      <AvatarContainer>
+                        <Avatar src={user.avatar} alt="Avatar"/>
+                        {session.rank === 2 ? <AdminCrown><FontAwesomeIcon icon={faCrown}/></AdminCrown>: null}
+                      </AvatarContainer>
                       {user.id !== session.id ? (
                         <Button color="info" className="see-more-button">
                           <FontAwesomeIcon icon={faCommentAlt} /> Envoyer un

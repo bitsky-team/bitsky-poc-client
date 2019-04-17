@@ -294,7 +294,7 @@ const ManageFilesPage = () => {
           let date = file.updated_at.split(' ').shift()
 
           files_result.push(
-            <FileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
+            <FileRowTable key={id} openFolder={openFolder} name={file.name} path={path} ownerUniqId={file.owner.uniq_id}
                                         type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname}
                                         ownerId={file.owner.id} updated_at={date} size={file.converted_size}
                                         id={id} setFiles={setFiles} sendImageSrc={sendImgSrc} toggle={toggleModalViewerState} sendInfoToDownload={sendInfoToDownload} chosenDevice={chosenDevice}/>,
@@ -401,7 +401,7 @@ const ManageFilesPage = () => {
 
     data.forEach((file, id) => {
       sortedComponents.push(
-        <FileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
+        <FileRowTable key={id} openFolder={openFolder} name={file.name} path={path} ownerUniqId={file.owner.uniq_id}
                                     type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname}
                                     ownerId={file.owner.id} updated_at={file.updated_at} size={file.converted_size}
                                     id={id} setFiles={setFiles} sendImageSrc={sendImgSrc} toggle={toggleModalViewerState} sendInfoToDownload={sendInfoToDownload} chosenDevice={chosenDevice}/>,
@@ -439,7 +439,7 @@ const ManageFilesPage = () => {
     } else {
       filteredFiles.forEach((file, id) => {
         filesComponentSought.push(
-          <FileRowTable key={id} openFolder={openFolder} name={file.name} path={path}
+          <FileRowTable key={id} openFolder={openFolder} name={file.name} path={path} ownerUniqId={file.owner.uniq_id}
                                       type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname}
                                       ownerId={file.owner.id} updated_at={file.updated_at} size={file.converted_size}
                                       id={id} setFiles={setFiles} sendImageSrc={sendImgSrc} toggle={toggleModalViewerState} sendInfoToDownload={sendInfoToDownload} chosenDevice={chosenDevice}/>,

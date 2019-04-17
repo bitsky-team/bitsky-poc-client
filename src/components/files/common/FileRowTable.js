@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react'
+import React, {Fragment, useState} from 'react'
 import {Col, Container, Row, UncontrolledPopover, PopoverBody} from 'reactstrap'
 import {faEye, faTrashAlt, faEllipsisV, faDownload, faFolder} from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components'
@@ -8,13 +8,10 @@ import {config} from '../../../config'
 import qs from 'qs'
 import {toast} from 'react-toastify'
 import {withRouter} from 'react-router'
+import jwtDecode from 'jwt-decode'
 
 const OptionsButton = styled(FontAwesomeIcon)`
   color: rgb(131, 178, 224);
-`
-
-const TrashButton = styled(FontAwesomeIcon)`
-  color: rgb(238,117,117);
 `
 
 const Text = styled(Col)`
@@ -29,22 +26,6 @@ const OwnerHover = styled.span`
   :hover {
     text-decoration: underline;
     cursor: pointer;
-  }
-`
-
-const IconHover = styled(Text)`
-  cursor: pointer;
-  
-  :hover #eye {
-    color: rgb(94, 145 , 195);
-  }
-  
-  :hover #download {
-      color: rgb(94, 145 , 195);
-  }
-  
-  :hover #trash {
-    color: rgb(204, 70, 70);
   }
 `
 
@@ -90,7 +71,12 @@ const FileRow = styled.div`
   }
 `
 
-const FileRowTable = ({name, type, firstname, lastname, ownerId, updated_at, size, id, openFolder, path, setFiles, history: {push}, sendImageSrc, toggle, sendInfoToDownload, chosenDevice}) => {
+const FileRowTable = ({name, type, firstname, lastname, ownerUniqId, ownerId, updated_at, size, id, openFolder, path, setFiles, history: {push}, sendImageSrc, toggle, sendInfoToDownload, chosenDevice}) => {
+
+  const [currentUserUniqId] = useState(localStorage.getItem('id') ? localStorage.getItem('id') : null)
+  const [session] = useState(localStorage.getItem('token')
+    ? jwtDecode(localStorage.getItem('token'))
+    : null)
 
   const imageFormat = [
     'jpg',
@@ -123,23 +109,50 @@ const FileRowTable = ({name, type, firstname, lastname, ownerId, updated_at, siz
     }
   `
 
-  const deleteItem = async name => {
-    const response = await axios.post(
-      `${config.API_ROOT}/delete_item`,
-      qs.stringify({
-        uniq_id: localStorage.getItem('id'),
-        token: localStorage.getItem('token'),
-        path: path || null,
-        name,
-        device: chosenDevice,
-      }),
-    )
-    const {success} = response.data
+  const TrashButton = styled(FontAwesomeIcon)`
+    color: ${currentUserUniqId === ownerUniqId ||  session.rank === 2 ? 'rgb(238,117,117)' : 'rgb(150,150,150)'}
+  `
 
-    if (success) {
-      setFiles()
-    } else {
-      toast.error('L\'item n\'a pas pu être supprimé !', {
+  const IconHover = styled(Text)`
+    cursor: pointer;
+    
+    :hover #eye {
+      color: rgb(94, 145 , 195);
+    }
+    
+    :hover #download {
+        color: rgb(94, 145 , 195);
+    }
+    
+    :hover #trash {
+      color: ${currentUserUniqId === ownerUniqId ||  session.rank === 2 ? 'rgb(204, 70, 70)' : 'rgb(150,150,150)'};
+    }
+  `
+
+  const deleteItem = async name => {
+    if(currentUserUniqId === ownerUniqId ||  session.rank === 2) {
+      const response = await axios.post(
+        `${config.API_ROOT}/delete_item`,
+        qs.stringify({
+          uniq_id: localStorage.getItem('id'),
+          token: localStorage.getItem('token'),
+          path: path || null,
+          name,
+          device: chosenDevice,
+        }),
+      )
+      const {success} = response.data
+
+      if (success) {
+        setFiles()
+      } else {
+        toast.error('L\'item n\'a pas pu être supprimé !', {
+          autoClose: 5000,
+          position: toast.POSITION.BOTTOM_RIGHT,
+        })
+      }
+    }else {
+      toast.error('Vous n\'avez pas les droits pour supprimer cet item !', {
         autoClose: 5000,
         position: toast.POSITION.BOTTOM_RIGHT,
       })
@@ -214,9 +227,9 @@ const FileRowTable = ({name, type, firstname, lastname, ownerId, updated_at, siz
                   </IconContainer>
                 </Fragment>
               )}
-              <TrashIconContainer>
-                <IconHover><TrashButton icon={faTrashAlt} id="trash" onClick={() => deleteItem(name)}/></IconHover>
-              </TrashIconContainer>
+                <TrashIconContainer>
+                  <IconHover><TrashButton icon={faTrashAlt} id="trash" onClick={() => deleteItem(name)}/></IconHover>
+                </TrashIconContainer>
             </PopoverContent>
           </PopoverContainer>
         </Row>
