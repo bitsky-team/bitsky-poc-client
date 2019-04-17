@@ -26,7 +26,6 @@ import {
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 import {
-  faClipboardList,
   faCamera,
   faPencilAlt,
   faTimes,
