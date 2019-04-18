@@ -403,7 +403,7 @@ const ProfilePage = props => {
                     <LeftColumnContainer>
                       <AvatarContainer>
                         <Avatar src={user.avatar} alt="Avatar"/>
-                        {session.rank === 2 ? <AdminCrown><FontAwesomeIcon icon={faCrown}/></AdminCrown>: null}
+                        {user.rank === 2 ? <AdminCrown><FontAwesomeIcon icon={faCrown}/></AdminCrown>: null}
                       </AvatarContainer>
                       {user.id !== session.id ? (
                         <Button color="info" className="see-more-button">
