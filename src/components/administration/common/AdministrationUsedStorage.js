@@ -44,6 +44,7 @@ const AdministrationUsedStorage = ({name, usedVolume, totalVolume, percent}) => 
         <ProgressContainer>
           <StorageDeviceName>{name.split('/')[2]}</StorageDeviceName>
           <ProgressCircle
+            initialAnimation
             percentage={percent.substring(0, percent.length - 1)}
             styles={{
               path: {
