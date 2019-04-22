@@ -114,17 +114,19 @@ const FileRowTable = ({name, type, firstname, lastname, ownerUniqId, ownerId, up
   `
 
   const IconHover = styled(Text)`
-    cursor: pointer;
     
     :hover #eye {
+      cursor: pointer;
       color: rgb(94, 145 , 195);
     }
     
     :hover #download {
-        color: rgb(94, 145 , 195);
+      cursor: pointer;
+      color: rgb(94, 145 , 195);
     }
     
     :hover #trash {
+      cursor : ${currentUserUniqId === ownerUniqId ||  session.rank === 2 ? 'pointer' : 'default'};
       color: ${currentUserUniqId === ownerUniqId ||  session.rank === 2 ? 'rgb(204, 70, 70)' : 'rgb(150,150,150)'};
     }
   `
@@ -228,7 +230,7 @@ const FileRowTable = ({name, type, firstname, lastname, ownerUniqId, ownerId, up
                 </Fragment>
               )}
                 <TrashIconContainer>
-                  <IconHover><TrashButton icon={faTrashAlt} id="trash" onClick={() => deleteItem(name)}/></IconHover>
+                  <IconHover><TrashButton icon={faTrashAlt} id="trash" onClick={() => {if(currentUserUniqId === ownerUniqId ||  session.rank === 2) deleteItem(name)}}/></IconHover>
                 </TrashIconContainer>
             </PopoverContent>
           </PopoverContainer>
