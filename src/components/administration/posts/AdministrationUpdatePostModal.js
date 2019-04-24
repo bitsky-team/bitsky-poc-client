@@ -106,7 +106,7 @@ const AdministrationUpdatePostModal = ({isOpen, toggleUpdateModal, postContent, 
       <ModalBody>
           <div>
             <FormGroup>
-              <Label for="create">Contenu</Label>
+              <Label for="content">Contenu</Label>
               <Input
                 type="content"
                 name="content"
@@ -125,7 +125,7 @@ const AdministrationUpdatePostModal = ({isOpen, toggleUpdateModal, postContent, 
           </div>
       </ModalBody>
       <ModalFooter>
-        <Button className="modal-choice" color="primary" onClick={() => updatePost()}><FontAwesomeIcon
+        <Button className="modal-choice" color="primary" onClick={updatePost}><FontAwesomeIcon
           icon={faPencilAlt}/></Button>{' '}
         <Button className="modal-choice" color="secondary"
                 onClick={toggleUpdateModal}><FontAwesomeIcon icon={faTimes}/></Button>

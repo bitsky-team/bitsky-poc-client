@@ -95,8 +95,8 @@ const AdministrationPostsPage = () => {
     dispatch({
       type: ACTIONS.SET_CONTENT,
       payload: {
-        content: content,
-        post_id: post_id,
+        content,
+        post_id,
       },
     })
   }
