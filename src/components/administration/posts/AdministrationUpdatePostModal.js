@@ -1,4 +1,4 @@
-import React, {useReducer} from 'react'
+import React, {useReducer, useEffect} from 'react'
 import {
   Modal,
   ModalHeader,
@@ -59,6 +59,7 @@ const AdministrationUpdatePostModal = ({isOpen, toggleUpdateModal, postContent, 
     dispatch({type: ACTIONS.UNSET_ERROR_CONTENT})
 
     let isOk = state.content && state.content.length > 0
+
     if(isOk) {
       const response = await axios.post(
         `${config.API_ROOT}/update_post`,
@@ -89,6 +90,13 @@ const AdministrationUpdatePostModal = ({isOpen, toggleUpdateModal, postContent, 
       dispatch({type: ACTIONS.SET_ERROR_CONTENT})
     }
   }
+
+  useEffect(() => {
+    dispatch({
+      type: ACTIONS.SET_CONTENT,
+      payload: postContent,
+    })
+  }, [postContent])
 
   return (
     <Modal isOpen={isOpen} toggle={toggleUpdateModal} className="user-modal">

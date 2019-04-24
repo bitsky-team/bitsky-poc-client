@@ -238,9 +238,11 @@ const AdministrationPostsPage = () => {
                 <Loader display={state.loading ? 1 : 0}/>
                 <Fragment>
                   {state.postsComponents && state.postsComponents.length > 0 ? state.postsComponents : (
-                    <Alert id="posts-message" color="info">
-                      Il n'y a aucune publication pour le moment
-                    </Alert>
+                    !state.loading ? (
+                      <Alert id="posts-message" color="info">
+                        Il n'y a aucune publication pour le moment
+                      </Alert>
+                      ) : null
                   )}
                 </Fragment>
               </PostsContainer>

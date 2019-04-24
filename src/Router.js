@@ -17,7 +17,7 @@ import UserPreferencesSecurityPage from './components/preferences/UserPreference
 import UserPreferencesAccountPage from './components/preferences/UserPreferencesAccountPage'
 import AdministrationFilesPage from './components/files/FilesPage'
 import ManageFilesPage from './components/files/ManageFilesPage'
-import AdministrationPostsPage from './components/administration/posts/AdministrationsPostsPage'
+import AdministrationPostsPage from './components/administration/posts/AdministrationPostsPage'
 import {AdministrationSettingsPage} from './components/administration/AdministrationSettingsPage'
 import {NotificationsPage} from './components/notifications/NotificationsPage'
 import {MessagingPage} from './components/messaging/MessagingPage'
