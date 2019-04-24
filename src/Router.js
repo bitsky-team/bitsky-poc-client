@@ -17,12 +17,14 @@ import UserPreferencesSecurityPage from './components/preferences/UserPreference
 import UserPreferencesAccountPage from './components/preferences/UserPreferencesAccountPage'
 import AdministrationFilesPage from './components/files/FilesPage'
 import ManageFilesPage from './components/files/ManageFilesPage'
-
-// Services
-import AuthService from './services/AuthService'
+import AdministrationPostsPage from './components/administration/posts/AdministrationsPostsPage'
 import {AdministrationSettingsPage} from './components/administration/AdministrationSettingsPage'
 import {NotificationsPage} from './components/notifications/NotificationsPage'
 import {MessagingPage} from './components/messaging/MessagingPage'
+
+// Services
+import AuthService from './services/AuthService'
+
 
 const PrivateRoute = ({component: Component, authed, ...rest}) => {
   return (
@@ -148,6 +150,7 @@ class Router extends Component {
         <PrivateRoute exact authed={this.state.authenticated} path={"/admin_manage_links"} component={AdministrationLinksPage}/>
         <PrivateRoute exact authed={this.state.authenticated} path={"/admin_files"} component={AdministrationFilesPage}/>
         <PrivateRoute exact authed={this.state.authenticated} path={"/admin_manage_files"} component={ManageFilesPage}/>
+        <PrivateRoute exact authed={this.state.authenticated} path={"/admin_manage_posts"} component={AdministrationPostsPage}/>
       </div>
     )
   }

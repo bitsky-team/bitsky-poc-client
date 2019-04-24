@@ -9,6 +9,7 @@ import {
   faStar as faFullStar,
   faClock,
   faTimes, faLink,
+  faPencilAlt
 } from '@fortawesome/free-solid-svg-icons'
 import {
   faStar as faEmptyStar,
@@ -56,6 +57,14 @@ class Post extends Component {
           icon={faTimes}
           onClick={this.props.handleDeleteButtonClick}
         />
+      )
+    }
+  }
+  
+  isAdmin () {
+    if(this.props.admin) {
+      return (
+        <FontAwesomeIcon icon={faPencilAlt} className="update" onClick={() => this.props.handleUpdateButtonClick(this.props.content, this.props.id)}/>
       )
     }
   }
@@ -209,6 +218,7 @@ class Post extends Component {
       <div className="post-container">
         <div id={'post-' + this.props.id} className="post">
           {this.isOwner()}
+          {this.isAdmin()}
           <img
             src={this.props.ownerAvatar}
             alt="Avatar"

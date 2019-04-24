@@ -674,6 +674,21 @@ body
   transform: scale(1.1);
 }
 
+.post-container .post .update
+{
+    position: absolute;
+    top: 5px;
+    right: 40px;
+    color: #b7b7b7;
+    transition: 0.2s;
+}
+
+.post-container .post .update:hover
+{
+    cursor: pointer;
+    transform: scale(1.1);
+}
+
 .post-container .post .score
 {
   position: absolute;
