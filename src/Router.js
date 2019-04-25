@@ -21,6 +21,7 @@ import AdministrationPostsPage from './components/administration/posts/Administr
 import {AdministrationSettingsPage} from './components/administration/AdministrationSettingsPage'
 import {NotificationsPage} from './components/notifications/NotificationsPage'
 import {MessagingPage} from './components/messaging/MessagingPage'
+import AdministrationCommentsPage from './components/administration/comments/AdministrationCommentsPage'
 
 // Services
 import AuthService from './services/AuthService'
@@ -151,6 +152,7 @@ class Router extends Component {
         <PrivateRoute exact authed={this.state.authenticated} path={"/admin_files"} component={AdministrationFilesPage}/>
         <PrivateRoute exact authed={this.state.authenticated} path={"/admin_manage_files"} component={ManageFilesPage}/>
         <PrivateRoute exact authed={this.state.authenticated} path={"/admin_manage_posts"} component={AdministrationPostsPage}/>
+        <PrivateRoute exact authed={this.state.authenticated} path={"/admin_manage_comments"} component={AdministrationCommentsPage}/>
       </div>
     )
   }

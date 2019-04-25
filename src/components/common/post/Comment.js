@@ -5,7 +5,7 @@ import qs from 'qs'
 import jwtDecode from 'jwt-decode'
 import DateService from './../../../services/DateService'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faStar as faFullStar, faTimes} from '@fortawesome/free-solid-svg-icons'
+import {faPencilAlt, faStar as faFullStar, faTimes} from '@fortawesome/free-solid-svg-icons'
 import {
   faStar as faEmptyStar,
   faClock,
@@ -40,6 +40,16 @@ class Comment extends Component {
     }
   }
 
+  isAdmin = () => {
+    if(this.props.admin) {
+      return (
+        <span className="update">
+          <FontAwesomeIcon icon={faPencilAlt} onClick={() => this.props.update(this.props.content, this.props.id)} />
+        </span>
+      )
+    }
+  }
+
   remove = () => {
     this.props.remove(this.props.id)
   }
@@ -60,8 +70,10 @@ class Comment extends Component {
     )
 
     if (response.data.success) {
-      this.props.refreshBestComments()
-      this.props.refreshPostScore()
+      if(!this.props.admin) {
+        this.props.refreshBestComments()
+        this.props.refreshPostScore()
+      }
       this.setState({favorites: this.state.favorites + 1, favoriteFilled: true})
       if (this.props.refreshTrends) this.props.refreshTrends()
     } else {
@@ -81,8 +93,10 @@ class Comment extends Component {
     )
 
     if (response.data.success) {
-      this.props.refreshBestComments()
-      this.props.refreshPostScore()
+      if(!this.props.admin) {
+        this.props.refreshBestComments()
+        this.props.refreshPostScore()
+      }
       this.setState({
         favorites: this.state.favorites - 1,
         favoriteFilled: false,
@@ -180,6 +194,7 @@ class Comment extends Component {
         <div className="content">
           <p dangerouslySetInnerHTML={this.getContent()} />
           {this.isOwner()}
+          {this.isAdmin()}
         </div>
         <div className="comment-infos">
           <span className="favorites">
