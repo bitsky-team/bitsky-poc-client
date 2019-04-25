@@ -993,6 +993,20 @@ body
   display: block;
 }
 
+.postViewer .postComments .comment .content .update
+{
+  position: absolute;
+  right: 35px;
+  top: 10px;
+  display: none;
+  cursor: pointer;
+}
+
+.postViewer .postComments .comment .content:hover .update
+{
+  display: block;
+}
+
 .postViewer .postComments .comment .comment-infos
 {
   display: flex;

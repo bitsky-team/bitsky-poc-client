@@ -255,9 +255,7 @@ export default class PostViewer extends React.Component {
         bitsky_ip: this.props.fromStranger
       })
     )
-    
-    console.log(response.data)
-    
+
     const {success, comment, message} = response.data
 
     if (success && this._isMounted) {
