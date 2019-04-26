@@ -1,5 +1,7 @@
 import styled from 'styled-components'
-import React from 'react'
+import React, {useState, useEffect} from 'react'
+import DateService from '../../services/DateService'
+import LoopService from '../../services/LoopService'
 
 export const MessagePositions = {
   LEFT: 'left',
@@ -41,21 +43,30 @@ const MessageContent = styled.div`
     position === MessagePositions.LEFT ? '0 0 0 16px' : '0 16px 0 0'};
 `
 
-export const Message = ({position}) => {
+export const Message = ({position, content, user, date}) => {
+  const [dynamicDate, setDynamicDate] = useState(DateService.timeSince(date))
+
+  useEffect(() => {
+    const timeLoop = LoopService.loop(1000, () =>
+      setDynamicDate(DateService.timeSince(date))
+    )
+    return () => LoopService.stop(timeLoop)
+  }, [])
+
   return (
     <MessageContainer position={position}>
       <MessageAvatarAndContent>
         {position === MessagePositions.LEFT && (
-          <img src={localStorage.getItem('avatar')} alt="avatar" />
+          <img src={user.avatar} alt="avatar" />
         )}
 
-        <MessageContent position={position}>Super à bientôt !</MessageContent>
+        <MessageContent position={position}>{content}</MessageContent>
 
         {position === MessagePositions.RIGHT && (
           <img src={localStorage.getItem('avatar')} alt="avatar" />
         )}
       </MessageAvatarAndContent>
-      <span>10:00</span>
+      <span>Il y a {dynamicDate}</span>
     </MessageContainer>
   )
 }

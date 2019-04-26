@@ -12,14 +12,20 @@ import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
-  DropdownToggle
+  DropdownToggle,
 } from 'reactstrap'
 import AdministrationSideMenu from '../administration/common/AdministrationSideMenu'
 import Navbar from '../common/template/Navbar'
 import Rank from '../common/Rank'
 import jwtDecode from 'jwt-decode'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faSearch, faUpload, faSort, faFolderPlus, faHdd} from '@fortawesome/free-solid-svg-icons'
+import {
+  faSearch,
+  faUpload,
+  faSort,
+  faFolderPlus,
+  faHdd,
+} from '@fortawesome/free-solid-svg-icons'
 import styled from 'styled-components'
 import posed from 'react-pose'
 import FileRowTable from './common/FileRowTable'
@@ -62,10 +68,10 @@ const AnimatedLabel = styled(ContentLabel)`
   z-index: 5;
 `
 const UploadButton = styled(Button)`
-    background-color: rgb(131, 178, 224);
-    border-color: rgb(131, 178, 224);
-    padding: 3px 12px 3px 12px;
-    font-size: 14px;
+  background-color: rgb(131, 178, 224);
+  border-color: rgb(131, 178, 224);
+  padding: 3px 12px 3px 12px;
+  font-size: 14px;
 `
 
 const SearchContainer = styled.div`
@@ -77,14 +83,14 @@ const ColContainer = styled(Col)`
 `
 
 const SearchInput = styled(Input)`
-    border-radius: 5px 0px 0px 5px !important;
+  border-radius: 5px 0px 0px 5px !important;
 `
 
 const FileHeaderTableContainer = styled.div`
   margin-top: 5px !important;
   box-shadow: 0px 4px 34px -18px #222;
   font-weight: 500;
-  
+
   && {
     padding-top: 20px !important;
   }
@@ -121,13 +127,13 @@ const AddFolderButton = styled.span`
   justify-content: center;
   align-items: center;
   margin-left: 20px;
-  background: #FFF;
+  background: #fff;
   border-radius: 5px;
   cursor: pointer;
   color: rgb(131, 178, 224);
-  
+
   &&&&:hover {
-    box-shadow: 2px 3px 10px -3px rgba(100,100,100,0.6) !important;  
+    box-shadow: 2px 3px 10px -3px rgba(100, 100, 100, 0.6) !important;
   }
 `
 
@@ -141,9 +147,9 @@ const MainFilesContainer = styled(Col)`
 
 const BreadCrumbItem = styled(BreadcrumbItem)`
   cursor: pointer;
-  
+
   :hover {
-      text-decoration: underline;
+    text-decoration: underline;
   }
 `
 
@@ -154,17 +160,22 @@ const DevicesDropdown = styled(Dropdown)`
     padding: 3px 12px 3px 12px !important;
     font-size: 14px !important;
   }
-  
-  button:first-child:hover, button:first-child:active, button:first-child:focus {
-    background: #FFF !important;
+
+  button:first-child:hover,
+  button:first-child:active,
+  button:first-child:focus {
+    background: #fff !important;
     border: 1px solid rgb(131, 178, 224) !important;
     color: rgb(131, 178, 224) !important;
   }
 `
 
 const ManageFilesPage = () => {
-
-  const [session] = useState(localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null)
+  const [session] = useState(
+    localStorage.getItem('token')
+      ? jwtDecode(localStorage.getItem('token'))
+      : null
+  )
   const [toggelLabel, setToggleLabel] = useState(false)
   const [filesComponent, setFilesComponent] = useState([])
   const [fileModalState, setFileModalState] = useState(false)
@@ -208,17 +219,25 @@ const ManageFilesPage = () => {
     toggleModalFileDownloadState()
   }
 
-  const setBreadcrumb = (newPath) => {
+  const setBreadcrumb = newPath => {
     const splittedPath = newPath ? newPath.split('/') : ['']
     const lastItem = splittedPath.pop()
     const breadcrumb = []
 
     splittedPath.forEach((item, index) => {
       if (!item.trim()) item = 'Home'
-      breadcrumb.push(<BreadCrumbItem key={index} onClick={() => goTo(index)}>{item}</BreadCrumbItem>)
+      breadcrumb.push(
+        <BreadCrumbItem key={index} onClick={() => goTo(index)}>
+          {item}
+        </BreadCrumbItem>
+      )
     })
 
-    breadcrumb.push(<BreadCrumbItem key={'breadcrumb-last'} active>{lastItem}</BreadCrumbItem>)
+    breadcrumb.push(
+      <BreadCrumbItem key={'breadcrumb-last'} active>
+        {lastItem}
+      </BreadCrumbItem>
+    )
 
     setBreadCrumbItem(breadcrumb)
   }
@@ -275,7 +294,7 @@ const ManageFilesPage = () => {
         token: localStorage.getItem('token'),
         path: path || null,
         device: chosenDevice,
-      }),
+      })
     )
   }
 
@@ -294,10 +313,25 @@ const ManageFilesPage = () => {
           let date = file.updated_at.split(' ').shift()
 
           files_result.push(
-            <FileRowTable key={id} openFolder={openFolder} name={file.name} path={path} ownerUniqId={file.owner.uniq_id}
-                                        type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname}
-                                        ownerId={file.owner.id} updated_at={date} size={file.converted_size}
-                                        id={id} setFiles={setFiles} sendImageSrc={sendImgSrc} toggle={toggleModalViewerState} sendInfoToDownload={sendInfoToDownload} chosenDevice={chosenDevice}/>,
+            <FileRowTable
+              key={id}
+              openFolder={openFolder}
+              name={file.name}
+              path={path}
+              ownerUniqId={file.owner.uniq_id}
+              type={file.type}
+              firstname={file.owner.firstname}
+              lastname={file.owner.lastname}
+              ownerId={file.owner.id}
+              updated_at={date}
+              size={file.converted_size}
+              id={id}
+              setFiles={setFiles}
+              sendImageSrc={sendImgSrc}
+              toggle={toggleModalViewerState}
+              sendInfoToDownload={sendInfoToDownload}
+              chosenDevice={chosenDevice}
+            />
           )
         })
         setFilesComponent(files_result)
@@ -344,11 +378,17 @@ const ManageFilesPage = () => {
         toggleSortDates()
 
         data.sort((a, b) => {
-          let aa = a.updated_at.split('-').reverse().join(),
-            bb = b.updated_at.split('-').reverse().join()
+          let aa = a.updated_at
+              .split('-')
+              .reverse()
+              .join(),
+            bb = b.updated_at
+              .split('-')
+              .reverse()
+              .join()
 
-          if (toggleDates) return aa > bb ? -1 : (aa < bb ? 1 : 0)
-          else return aa < bb ? -1 : (aa > bb ? 1 : 0)
+          if (toggleDates) return aa > bb ? -1 : aa < bb ? 1 : 0
+          else return aa < bb ? -1 : aa > bb ? 1 : 0
         })
         break
       case 'owner':
@@ -358,8 +398,18 @@ const ManageFilesPage = () => {
           let currentFirstname = removeAccents(a.owner.firstname.toLowerCase()),
             nextFirstname = removeAccents(b.owner.firstname.toLowerCase())
 
-          if (toggleOwner) return currentFirstname < nextFirstname ? -1 : (currentFirstname > nextFirstname ? 1 : 0)
-          else return currentFirstname > nextFirstname ? -1 : (currentFirstname < nextFirstname ? 1 : 0)
+          if (toggleOwner)
+            return currentFirstname < nextFirstname
+              ? -1
+              : currentFirstname > nextFirstname
+              ? 1
+              : 0
+          else
+            return currentFirstname > nextFirstname
+              ? -1
+              : currentFirstname < nextFirstname
+              ? 1
+              : 0
         })
         break
       case 'name':
@@ -369,8 +419,10 @@ const ManageFilesPage = () => {
           let currentName = removeAccents(a.name.toLowerCase()),
             nextName = removeAccents(b.name.toLowerCase())
 
-          if (toggleNames) return currentName < nextName ? -1 : (currentName > nextName ? 1 : 0)
-          else return currentName > nextName ? -1 : (currentName < nextName ? 1 : 0)
+          if (toggleNames)
+            return currentName < nextName ? -1 : currentName > nextName ? 1 : 0
+          else
+            return currentName > nextName ? -1 : currentName < nextName ? 1 : 0
         })
         break
       case 'type':
@@ -380,8 +432,10 @@ const ManageFilesPage = () => {
           let currentType = removeAccents(a.type.toLowerCase()),
             nextType = removeAccents(b.type.toLowerCase())
 
-          if (toggleType) return currentType < nextType ? -1 : (currentType > nextType ? 1 : 0)
-          else return currentType > nextType ? -1 : (currentType < nextType ? 1 : 0)
+          if (toggleType)
+            return currentType < nextType ? -1 : currentType > nextType ? 1 : 0
+          else
+            return currentType > nextType ? -1 : currentType < nextType ? 1 : 0
         })
         break
       case 'size':
@@ -391,8 +445,8 @@ const ManageFilesPage = () => {
           let aa = a.size,
             bb = b.size
 
-          if (toggleSize) return aa > bb ? -1 : (aa < bb ? 1 : 0)
-          else return aa < bb ? -1 : (aa > bb ? 1 : 0)
+          if (toggleSize) return aa > bb ? -1 : aa < bb ? 1 : 0
+          else return aa < bb ? -1 : aa > bb ? 1 : 0
         })
         break
       default:
@@ -401,10 +455,25 @@ const ManageFilesPage = () => {
 
     data.forEach((file, id) => {
       sortedComponents.push(
-        <FileRowTable key={id} openFolder={openFolder} name={file.name} path={path} ownerUniqId={file.owner.uniq_id}
-                                    type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname}
-                                    ownerId={file.owner.id} updated_at={file.updated_at} size={file.converted_size}
-                                    id={id} setFiles={setFiles} sendImageSrc={sendImgSrc} toggle={toggleModalViewerState} sendInfoToDownload={sendInfoToDownload} chosenDevice={chosenDevice}/>,
+        <FileRowTable
+          key={id}
+          openFolder={openFolder}
+          name={file.name}
+          path={path}
+          ownerUniqId={file.owner.uniq_id}
+          type={file.type}
+          firstname={file.owner.firstname}
+          lastname={file.owner.lastname}
+          ownerId={file.owner.id}
+          updated_at={file.updated_at}
+          size={file.converted_size}
+          id={id}
+          setFiles={setFiles}
+          sendImageSrc={sendImgSrc}
+          toggle={toggleModalViewerState}
+          sendInfoToDownload={sendInfoToDownload}
+          chosenDevice={chosenDevice}
+        />
       )
     })
 
@@ -432,17 +501,32 @@ const ManageFilesPage = () => {
     })
 
     if (filteredFiles.length === 0) {
-      toast.error('Votre recherche n\'a donné aucun résultat !', {
+      toast.error("Votre recherche n'a donné aucun résultat !", {
         autoClose: 5000,
         position: toast.POSITION.BOTTOM_RIGHT,
       })
     } else {
       filteredFiles.forEach((file, id) => {
         filesComponentSought.push(
-          <FileRowTable key={id} openFolder={openFolder} name={file.name} path={path} ownerUniqId={file.owner.uniq_id}
-                                      type={file.type} firstname={file.owner.firstname} lastname={file.owner.lastname}
-                                      ownerId={file.owner.id} updated_at={file.updated_at} size={file.converted_size}
-                                      id={id} setFiles={setFiles} sendImageSrc={sendImgSrc} toggle={toggleModalViewerState} sendInfoToDownload={sendInfoToDownload} chosenDevice={chosenDevice}/>,
+          <FileRowTable
+            key={id}
+            openFolder={openFolder}
+            name={file.name}
+            path={path}
+            ownerUniqId={file.owner.uniq_id}
+            type={file.type}
+            firstname={file.owner.firstname}
+            lastname={file.owner.lastname}
+            ownerId={file.owner.id}
+            updated_at={file.updated_at}
+            size={file.converted_size}
+            id={id}
+            setFiles={setFiles}
+            sendImageSrc={sendImgSrc}
+            toggle={toggleModalViewerState}
+            sendInfoToDownload={sendInfoToDownload}
+            chosenDevice={chosenDevice}
+          />
         )
       })
       setFilesComponent(filesComponentSought)
@@ -450,8 +534,8 @@ const ManageFilesPage = () => {
   }
 
   const checkForm = () => {
-    let isOk = searchValue.length > 0
-  
+    //let isOk = searchValue.length > 0
+
     searchName()
   }
 
@@ -460,26 +544,33 @@ const ManageFilesPage = () => {
   }, [chosenDevice])
 
   const getStorageDevices = async () => {
-    const response = await axios.post(`${config.API_ROOT}/get_devices`,
+    const response = await axios.post(
+      `${config.API_ROOT}/get_devices`,
       qs.stringify({
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
-      }),
+      })
     )
     const {success, devices} = response.data
 
-    if(success) {
-      if(devices && devices.length > 0) {
-        let devicesComponent = [<DropdownItem key='default' onClick={() => setChosenDevice('bitsky')}>bitsky</DropdownItem>]
+    if (success) {
+      if (devices && devices.length > 0) {
+        let devicesComponent = [
+          <DropdownItem key="default" onClick={() => setChosenDevice('bitsky')}>
+            bitsky
+          </DropdownItem>,
+        ]
         devices.forEach((device, i) => {
           const deviceName = device.split('/')[2]
           devicesComponent.push(
-            <DropdownItem key={i} onClick={() => setChosenDevice(deviceName)}>{deviceName}</DropdownItem>
+            <DropdownItem key={i} onClick={() => setChosenDevice(deviceName)}>
+              {deviceName}
+            </DropdownItem>
           )
         })
         setDevices(devicesComponent)
       }
-    }else {
+    } else {
       toast.error('Erreur lors de la récupération des espaces de stockage !', {
         autoClose: 5000,
         position: toast.POSITION.BOTTOM_RIGHT,
@@ -488,29 +579,52 @@ const ManageFilesPage = () => {
   }
 
   useEffect(() => {
-
     setFiles()
     getStorageDevices()
-
   }, [path])
 
   return (
     <div>
-      {fileModalState && <FileUploadModal isOpen={fileModalState} toggle={toggleModalState} setFiles={setFiles} path={path} chosenDevice={chosenDevice}/>}
-      <ImgViewer isOpen={imgViewerState} toggle={toggleModalViewerState} imgSrc={imgSrc} />
-      <FileDownloadModal isOpen={fileDownloadState} toggle={toggleModalFileDownloadState} fileName={fileName} path={path} chosenDevice={chosenDevice}/>
-      <FileCreateFolderModal isOpen={createFolderModalState} toggle={toggleFolderModalState} path={path}
-                             setFiles={setFiles} chosenDevice={chosenDevice}/>
-      <Navbar/>
+      {fileModalState && (
+        <FileUploadModal
+          isOpen={fileModalState}
+          toggle={toggleModalState}
+          setFiles={setFiles}
+          path={path}
+          chosenDevice={chosenDevice}
+        />
+      )}
+      <ImgViewer
+        isOpen={imgViewerState}
+        toggle={toggleModalViewerState}
+        imgSrc={imgSrc}
+      />
+      <FileDownloadModal
+        isOpen={fileDownloadState}
+        toggle={toggleModalFileDownloadState}
+        fileName={fileName}
+        path={path}
+        chosenDevice={chosenDevice}
+      />
+      <FileCreateFolderModal
+        isOpen={createFolderModalState}
+        toggle={toggleFolderModalState}
+        path={path}
+        setFiles={setFiles}
+        chosenDevice={chosenDevice}
+      />
+      <Navbar />
       <Container className="main-container">
         <Row>
           <Col md="3" className="no-margin-left no-margin-right">
             <div className="user-container">
-              <img src={localStorage.getItem('avatar')} alt="Avatar"/>
+              <img src={localStorage.getItem('avatar')} alt="Avatar" />
               <h5>{session.firstname + ' ' + session.lastname}</h5>
-              <p className="rank"><Rank id={session.rank}/></p>
+              <p className="rank">
+                <Rank id={session.rank} />
+              </p>
             </div>
-            {session.rank === 2 ? <AdministrationSideMenu/> : <SideMenu/>}
+            {session.rank === 2 ? <AdministrationSideMenu /> : <SideMenu />}
           </Col>
           <Col md="9" className="no-margin-left no-margin-right">
             <SearchContainer className="user-container">
@@ -523,13 +637,20 @@ const ManageFilesPage = () => {
                     <FormGroup style={{marginBottom: 0}}>
                       <InputGroup>
                         <AnimatedLabel
-                          pose={toggelLabel || searchValue.length > 0 ? 'up' : 'down'}>Rechercher</AnimatedLabel>
+                          pose={
+                            toggelLabel || searchValue.length > 0
+                              ? 'up'
+                              : 'down'
+                          }
+                        >
+                          Rechercher
+                        </AnimatedLabel>
                         <SearchInput
                           onFocus={() => {
                             setToggleLabel(true)
                             setSearchError(false)
                           }}
-                          onBlur={() =>  setToggleLabel(false)}
+                          onBlur={() => setToggleLabel(false)}
                           className={searchError ? 'is-invalid' : ''}
                           onChange={e => {
                             setSearchError(false)
@@ -538,7 +659,7 @@ const ManageFilesPage = () => {
                         />
                         <InputGroupAddon addonType="append">
                           <Button color="info" onClick={checkForm}>
-                            <FontAwesomeIcon icon={faSearch}/>
+                            <FontAwesomeIcon icon={faSearch} />
                           </Button>
                         </InputGroupAddon>
                       </InputGroup>
@@ -546,18 +667,29 @@ const ManageFilesPage = () => {
                     </FormGroup>
                   </ColContainer>
                   <ColContainer md="2">
-                    <UploadButton color="info" onClick={toggleModalState}><FontAwesomeIcon
-                      icon={faUpload}/> Uploader</UploadButton>
+                    <UploadButton color="info" onClick={toggleModalState}>
+                      <FontAwesomeIcon icon={faUpload} /> Uploader
+                    </UploadButton>
                   </ColContainer>
                   <ColContainer md="2">
-                    <DevicesDropdown direction="left" isOpen={dropdownOpen} toggle={toggleDropdownState}>
+                    <DevicesDropdown
+                      direction="left"
+                      isOpen={dropdownOpen}
+                      toggle={toggleDropdownState}
+                    >
                       <DropdownToggle caret>
-                        <FontAwesomeIcon icon={faHdd}/> {chosenDevice}
+                        <FontAwesomeIcon icon={faHdd} /> {chosenDevice}
                       </DropdownToggle>
                       <DropdownMenu>
-                        <DropdownItem header>Périphérique de stockage</DropdownItem>
-                        <DropdownItem divider/>
-                        {devices && devices.length > 0 ? devices : <small>Aucun périphérique de stockage détecté</small>}
+                        <DropdownItem header>
+                          Périphérique de stockage
+                        </DropdownItem>
+                        <DropdownItem divider />
+                        {devices && devices.length > 0 ? (
+                          devices
+                        ) : (
+                          <small>Aucun périphérique de stockage détecté</small>
+                        )}
                       </DropdownMenu>
                     </DevicesDropdown>
                   </ColContainer>
@@ -574,8 +706,9 @@ const ManageFilesPage = () => {
                       </BreadCrumbContainer>
                     </div>
                     <ButtonsContainer>
-                      <AddFolderButton onClick={toggleFolderModalState}><FontAwesomeIcon
-                        icon={faFolderPlus}/></AddFolderButton>
+                      <AddFolderButton onClick={toggleFolderModalState}>
+                        <FontAwesomeIcon icon={faFolderPlus} />
+                      </AddFolderButton>
                     </ButtonsContainer>
                   </FilesContainer>
                   <FileHeaderTableContainer className="user-container admin-dashboard">
@@ -584,25 +717,41 @@ const ManageFilesPage = () => {
                         <Col md="10">
                           <Container>
                             <Row>
-                              <Text md="3"><TextHeader onClick={() => sortColumn('name')}><FontAwesomeIcon
-                                icon={faSort}/> Nom</TextHeader></Text>
-                              <Text md="2"><TextHeader onClick={() => sortColumn('type')}><FontAwesomeIcon
-                                icon={faSort}/> Type</TextHeader></Text>
-                              <Text md="3"><TextHeader onClick={() => sortColumn('owner')}><FontAwesomeIcon
-                                icon={faSort}/> Propriétaire</TextHeader></Text>
-                              <Text md="2"><TextHeader onClick={() => sortColumn('date')}><FontAwesomeIcon
-                                icon={faSort}/> Date</TextHeader></Text>
-                              <Text md="2"><TextHeader onClick={() => sortColumn('size')}><FontAwesomeIcon
-                                icon={faSort}/> Taille</TextHeader></Text>
+                              <Text md="3">
+                                <TextHeader onClick={() => sortColumn('name')}>
+                                  <FontAwesomeIcon icon={faSort} /> Nom
+                                </TextHeader>
+                              </Text>
+                              <Text md="2">
+                                <TextHeader onClick={() => sortColumn('type')}>
+                                  <FontAwesomeIcon icon={faSort} /> Type
+                                </TextHeader>
+                              </Text>
+                              <Text md="3">
+                                <TextHeader onClick={() => sortColumn('owner')}>
+                                  <FontAwesomeIcon icon={faSort} /> Propriétaire
+                                </TextHeader>
+                              </Text>
+                              <Text md="2">
+                                <TextHeader onClick={() => sortColumn('date')}>
+                                  <FontAwesomeIcon icon={faSort} /> Date
+                                </TextHeader>
+                              </Text>
+                              <Text md="2">
+                                <TextHeader onClick={() => sortColumn('size')}>
+                                  <FontAwesomeIcon icon={faSort} /> Taille
+                                </TextHeader>
+                              </Text>
                             </Row>
                           </Container>
                         </Col>
                       </Row>
                     </Container>
                   </FileHeaderTableContainer>
-                  <Loader display={loading ? 1 : 0}/>
-                  {filesComponent && filesComponent.length > 0 ? filesComponent :
-                    !loading && <NoFile>Il n'y a pas de fichier</NoFile>}
+                  <Loader display={loading ? 1 : 0} />
+                  {filesComponent && filesComponent.length > 0
+                    ? filesComponent
+                    : !loading && <NoFile>Il n'y a pas de fichier</NoFile>}
                 </MainFilesContainer>
               </Row>
             </Container>

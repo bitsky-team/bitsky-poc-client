@@ -326,6 +326,7 @@ const ProfilePage = props => {
       setFavoritesTrendsLoader(false)
     }
   }
+  
   const deletePost = async id => {
     const response = await axios.post(
       `${config.API_ROOT}/remove_post`,
@@ -337,6 +338,7 @@ const ProfilePage = props => {
     )
     return await response
   }
+  
   const handleDeleteButtonClick = async e => {
     let element = e.target.parentElement.parentElement
     let str_id = element.id
@@ -363,6 +365,28 @@ const ProfilePage = props => {
       }
     })
   }
+  
+  const createConversation = async () => {
+    const data = {
+      uniq_id: localStorage.getItem('id'),
+      token: localStorage.getItem('token'),
+      first_user_id: session.id,
+      second_user_id: user.id
+    }
+  
+    const {data: {success, conversation}} = await axios.post(
+      `${config.API_ROOT}/create_conversation`,
+      qs.stringify(data)
+    )
+    
+    if(success) {
+      props.history.push({
+        pathname: '/messaging',
+        state: { conversation }
+      })
+    }
+  }
+  
   const getDate = () => {
     const date = new Date(user.birthdate)
     return `${date.getDate()}/${
@@ -371,6 +395,7 @@ const ProfilePage = props => {
         : date.getMonth() + 1
     }/${date.getFullYear()}`
   }
+  
   const toggle = nextTab => {
     if (tab !== nextTab) {
       setTab(nextTab)
@@ -406,9 +431,8 @@ const ProfilePage = props => {
                         {user.rank === 2 ? <AdminCrown><FontAwesomeIcon icon={faCrown}/></AdminCrown>: null}
                       </AvatarContainer>
                       {user.id !== session.id ? (
-                        <Button color="info" className="see-more-button">
-                          <FontAwesomeIcon icon={faCommentAlt} /> Envoyer un
-                          message
+                        <Button color="info" className="see-more-button" onClick={createConversation}>
+                          <FontAwesomeIcon icon={faCommentAlt} /> Envoyer un message
                         </Button>
                       ) : (
                         <Button color="info" className="see-more-button" onClick={() => props.history.push('/user_preferences')}>
