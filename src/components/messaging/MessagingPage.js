@@ -229,8 +229,15 @@ const reducer = (state, action) => {
     case ACTIONS.APPEND_MESSAGE:
       return {
         ...state,
-        conversations: action.payload,
-        loading: {...state.loading, send_message: false}
+        conversations: action.payload.conversations,
+        selectedConversation: {
+          ...state.selectedConversation,
+          messages: [
+            ...state.selectedConversation.messages,
+            action.payload.message,
+          ],
+        },
+        loading: {...state.loading, send_message: false},
       }
     case ACTIONS.NO_CONVERSATIONS:
       return {
@@ -259,6 +266,8 @@ export const MessagingPage = () => {
         state.filteredConversations || state.conversations
       ),
     })
+
+    scrollEnd.current.scrollIntoView()
   }, [
     state.filteredConversations,
     state.conversations,
@@ -376,7 +385,7 @@ export const MessagingPage = () => {
     )
 
     if (success) {
-      if(conversations.length > 0) {
+      if (conversations.length > 0) {
         dispatch({type: ACTIONS.GET_CONVERSATIONS, payload: conversations})
         await selectConversation(
           path(['selectedConversation', 'id'], state) || conversations[0].id
@@ -404,6 +413,7 @@ export const MessagingPage = () => {
     )
 
     if (success) {
+      console.log(state.selectedConversation)
       const conversations = state.conversations.map(c => {
         message.conversation_id = Number(message.conversation_id)
 
@@ -413,7 +423,12 @@ export const MessagingPage = () => {
 
         return c
       })
-      dispatch({type: ACTIONS.APPEND_MESSAGE, payload: conversations})
+
+      dispatch({
+        type: ACTIONS.APPEND_MESSAGE,
+        payload: {conversations, message},
+      })
+
       e.current.textarea.value = ''
     }
   }
@@ -442,11 +457,14 @@ export const MessagingPage = () => {
               <Loader display={state.loading.conversations ? 1 : 0} />
               {state.renderedConversations}
               {state.emptyConversations && (
-                <Alert color='info'>
+                <Alert color="info">
                   <h3>Oops ! Il n'y a rien ici !</h3>
                   <p style={{margin: '10px 0 0 0'}}>
-                    Il semble que vous n'ayiez pas encore engagé de conversation.<br/>
-                    Rendez-vous sur le profil d'un utilisateur et cliquez sur "Envoyer un message" afin de démarrer une conversation.
+                    Il semble que vous n'ayiez pas encore engagé de
+                    conversation.
+                    <br />
+                    Rendez-vous sur le profil d'un utilisateur et cliquez sur
+                    "Envoyer un message" afin de démarrer une conversation.
                   </p>
                 </Alert>
               )}
@@ -460,7 +478,9 @@ export const MessagingPage = () => {
                     Conversation avec{' '}
                     <ReceiverLink to="/">{`${
                       state.selectedConversation.user.firstname
-                      } ${state.selectedConversation.user.lastname}`}</ReceiverLink>
+                    } ${
+                      state.selectedConversation.user.lastname
+                    }`}</ReceiverLink>
                   </Text>
                 )}
               </ColumnTitle>
@@ -468,12 +488,15 @@ export const MessagingPage = () => {
                 <MessagesContainer>
                   <Loader display={!state.selectedConversation ? 1 : 0} />
                   {state.selectedConversation &&
-                  renderMessages(state.selectedConversation)}
+                    renderMessages(state.selectedConversation)}
                 </MessagesContainer>
                 <div ref={scrollEnd} />
               </ScrollableContent>
               <Separator />
-              <MessageWriter onSubmit={onSubmit} loading={state.loading.send_message}/>
+              <MessageWriter
+                onSubmit={onSubmit}
+                loading={state.loading.send_message}
+              />
             </RightColumn>
           )}
         </ColumnContainer>
