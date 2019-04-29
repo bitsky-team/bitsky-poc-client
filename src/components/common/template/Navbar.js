@@ -30,6 +30,7 @@ import axios from 'axios'
 import {config} from '../../../config'
 import qs from 'qs'
 import styled from 'styled-components'
+import LoopService from '../../../services/LoopService'
 
 const NotificationCount = styled.span`
   display: flex;
@@ -53,8 +54,10 @@ const Navbar = (props) => {
     ? jwtDecode(localStorage.getItem('token'))
     : null)
   const [notificationsCount, setNotificationsCount] = useState(0)
+  const [messagesCount, setMessagesCount] = useState(0)
 
   let notificationsInterval = null
+  let messagesInterval = null
 
   const toggleNavbar = e => {
     setIsOpen(!isOpen)
@@ -88,18 +91,45 @@ const Navbar = (props) => {
     }
   }
   
+  const getMessagesCount = async () => {
+    const {data} = await axios.post(
+      `${config.API_ROOT}/count_unread_messages`,
+      qs.stringify({
+        uniq_id: localStorage.getItem('id'),
+        token: localStorage.getItem('token'),
+      })
+    )
+    
+    if (data.success) {
+      setMessagesCount(data.count)
+    }
+  }
+  
   useEffect(() => {
     getNotificationsCount().catch(err =>
       console.log('Cant get first notifications count: ', err)
     )
   
-    notificationsInterval = setInterval(() => {
-        getNotificationsCount().catch(err =>
-          console.log('Cant get notifications count: ', err)
-        )
-    }, 5000)
+    getMessagesCount().catch(err =>
+      console.log('Cant get first messages count: ', err)
+    )
+  
+    notificationsInterval = LoopService.loop(5000, () => {
+      getNotificationsCount().catch(err =>
+        console.log('Cant get notifications count: ', err)
+      )
+    })
+  
+    messagesInterval = LoopService.loop(5000, () => {
+      getMessagesCount().catch(err =>
+        console.log('Cant get messages count: ', err)
+      )
+    })
     
-    return () => clearInterval(notificationsInterval)
+    return () => {
+      LoopService.stop(messagesInterval)
+      LoopService.stop(notificationsInterval)
+    }
   }, [])
 
   return (
@@ -111,12 +141,13 @@ const Navbar = (props) => {
       <Collapse isOpen={isOpen} navbar>
         <Nav className="ml-auto" navbar>
           <div className="nav-centered-icons">
-            <NavItem className="nav-item-icon">
+            <NavItem className="nav-item-icon" style={{position: 'relative'}}>
               <NavLink
                 onClick={() => props.history.push('/messaging')}
               >
                 <FontAwesomeIcon icon={faInbox} />
               </NavLink>
+              {(messagesCount > 0 && !props.hideMessagesCount) && <NotificationCount>{messagesCount}</NotificationCount>}
             </NavItem>
             <NavItem className="nav-item-icon" style={{position: 'relative'}}>
               <NavLink

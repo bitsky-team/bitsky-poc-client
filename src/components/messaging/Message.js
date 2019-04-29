@@ -23,7 +23,9 @@ const MessageContainer = styled.div`
 const MessageAvatarAndContent = styled.div`
   display: flex;
   align-items: center;
-
+  width: 100%;
+  justify-content: ${({position}) =>
+  position === MessagePositions.RIGHT ? 'flex-end' : 'initial'};
   img {
     height: 48px;
     width: 48px;
@@ -32,6 +34,9 @@ const MessageAvatarAndContent = styled.div`
 `
 
 const MessageContent = styled.div`
+  max-width: 45%;
+  white-space: pre-wrap;
+  word-wrap: break-word;
   background-color: ${({position}) =>
     position === MessagePositions.LEFT ? '#fbfbfb' : 'rgb(131, 178, 224)'};
   color: ${({position}) =>
@@ -55,7 +60,7 @@ export const Message = ({position, content, user, date}) => {
 
   return (
     <MessageContainer position={position}>
-      <MessageAvatarAndContent>
+      <MessageAvatarAndContent position={position}>
         {position === MessagePositions.LEFT && (
           <img src={user.avatar} alt="avatar" />
         )}
