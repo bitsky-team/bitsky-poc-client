@@ -17,6 +17,7 @@
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.11",
     "qs": "^6.5.2",
+    "ramda": "^0.26.1",
     "react": "^16.8.0",
     "react-autosize-textarea": "^4.0.0",
     "react-circular-progressbar": "^1.0.0",

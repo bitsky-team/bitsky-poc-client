@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { withRouter, Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCommentAlt, faComments, faUsers, faServer, faArchive, faUserAlt, faArrowAltCircleLeft, faTh, faLink } from '@fortawesome/free-solid-svg-icons'
+import { faCommentAlt, faComments, faServer, faArchive, faUserAlt, faArrowAltCircleLeft, faTh, faLink } from '@fortawesome/free-solid-svg-icons'
 
 class AdministrationSideMenu extends Component {
 
@@ -14,7 +14,6 @@ class AdministrationSideMenu extends Component {
             <li><Link to='/admin_files'><FontAwesomeIcon icon={faArchive} /> Fichiers</Link></li>
             <li><Link to='/admin_manage_posts'><FontAwesomeIcon icon={faCommentAlt} /> Publications</Link></li>
             <li><Link to='/admin_manage_comments'><FontAwesomeIcon icon={faComments} /> Commentaires</Link></li>
-            <li><Link to='/admin_manage_groups'><FontAwesomeIcon icon={faUsers} /> Groupes</Link></li>
             <li><Link to='/admin_manage_settings'><FontAwesomeIcon icon={faServer} /> Modules</Link></li>
             <li><Link to='/admin_manage_links'><FontAwesomeIcon icon={faLink} /> Liaisons</Link></li>
             <li><Link to='/activity_feed'><FontAwesomeIcon icon={faArrowAltCircleLeft} /> Retourner à l'accueil</Link></li>
