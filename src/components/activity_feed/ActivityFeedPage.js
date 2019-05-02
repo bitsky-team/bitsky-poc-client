@@ -38,6 +38,7 @@ import Trend from './Trend'
 import Loader from '../Loader'
 import Fade from 'react-reveal/Fade';
 import {emojify} from 'react-emojione'
+import {path} from 'ramda'
 
 export default class ActivityFeedPage extends Component {
   _isMounted = false
@@ -65,6 +66,7 @@ export default class ActivityFeedPage extends Component {
     )
     return await response
   }
+  
   getPosts = async trend => {
     return await axios.post(
       `${config.API_ROOT}/get_allposts`,
@@ -358,13 +360,46 @@ export default class ActivityFeedPage extends Component {
   updateFilter = trend => {
     this.setState({posts: [], trend})
     this.setPosts(trend)
+    this.props.history.push('/activity_feed')
   }
-
-  componentDidMount = () => {
+  
+  getPost = async (id, fromStranger) => {
+    return axios.post(
+      `${config.API_ROOT}/get_post`,
+      qs.stringify({
+        uniq_id: localStorage.getItem('id'),
+        token: localStorage.getItem('token'),
+        post_id: id,
+        bitsky_ip: fromStranger
+      })
+    )
+  }
+  
+  componentDidMount = async () => {
     this._isMounted = true
 
-    if (this.props.location.state && this.props.location.state.trend) {
-      this.setState({trend: this.props.location.state.trend})
+    const { location } = this.props
+    
+    if (location.state) {
+      if(location.state.trend) {
+        this.setState({trend: location.state.trend})
+      }
+      
+      if(location.state.post) {
+        const {data} = await this.getPost(location.state.post.id, location.state.post.fromStranger)
+
+        if(data.success) {
+          this.setState({posts: []}, () => {
+            this.pushPostsToState([data.post])
+          })
+        } else {
+          toast.error(`Impossible de charger la publication !`, {
+            autoClose: 5000,
+            position: toast.POSITION.BOTTOM_RIGHT,
+          })
+        }
+        
+      }
     }
 
     // Checking first time
@@ -376,7 +411,9 @@ export default class ActivityFeedPage extends Component {
         if (firstTime) this.props.history.push('/register_confirmation')
         else {
           // Retrieving posts & trends
-          this.setPosts(this.state.trend)
+          if(!path(['state', 'post'], location)) {
+            this.setPosts(this.state.trend)
+          }
           this.setTrends()
         }
       }
@@ -388,6 +425,8 @@ export default class ActivityFeedPage extends Component {
   }
 
   render() {
+    const { location } = this.props
+  
     return (
       <div>
         <Modal
@@ -445,7 +484,7 @@ export default class ActivityFeedPage extends Component {
               <SideMenu />
             </Col>
             <Col md="5" className="no-margin-left no-margin-right">
-              {this.state.trend && (
+              {(this.state.trend || path(['state', 'post'], location)) && (
                 <div
                   className="activity-feed-trend-title"
                   style={{marginBottom: '15px'}}
@@ -457,9 +496,14 @@ export default class ActivityFeedPage extends Component {
                   >
                     <FontAwesomeIcon icon={faArrowCircleLeft} />
                   </Button>{' '}
-                  <p>
-                    Publications du sujet <span>{emojify(this.state.trend, {output: 'unicode'})}</span>
-                  </p>
+                  
+                  {this.state.trend && (
+                    <p>Publications du sujet <span>{emojify(this.state.trend, {output: 'unicode'})}</span></p>
+                  )}
+  
+                  {path(['state', 'post'], location) && (
+                    <p>Publication concernée</p>
+                  )}
                 </div>
               )}
               <div className="publish-container" ref="publishContainer">

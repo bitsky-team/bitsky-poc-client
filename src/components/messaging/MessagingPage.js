@@ -23,7 +23,7 @@ const Container = styled.div`
   min-height: calc(100vh - 71px); // 71 => 66 = navbar's height + 5 = margin top
   background-color: #f5f5f5;
   margin-top: 5px;
-  padding: 24px 32px;
+  padding: 24px 32px 0 32px;
 `
 
 const ColumnContainer = styled.div`
@@ -293,7 +293,7 @@ export const MessagingPage = ({location}) => {
     return () => LoopService.stop(messagesLoader)
   }, [messagesLoader])
 
-  const selectConversation = async id => {
+  const selectConversation = async (id, conversations = undefined) => {
     const {
       data: {success, conversation},
     } = await axios.post(
@@ -308,7 +308,7 @@ export const MessagingPage = ({location}) => {
     if (success) {
       dispatch({type: ACTIONS.SELECT_CONVERSATION, payload: {
           conversation,
-          conversations: state.conversations
+          conversations: conversations || state.conversations
       }})
       messagesLength = conversation.messages.length
 
@@ -349,7 +349,7 @@ export const MessagingPage = ({location}) => {
                     conversations: state.conversations
                   },
                 })
-  
+                
                 dispatch({
                   type: ACTIONS.GET_CONVERSATIONS,
                   payload: conversationsList,
@@ -375,8 +375,12 @@ export const MessagingPage = ({location}) => {
       return <Fragment />
     }
 
-    return conversations.map((conversation, index) => (
-      <Conversation
+    return conversations.map((conversation, index) => {
+      if(conversation.lastMessage) {
+        conversation.lastMessage.content = emojify(conversation.lastMessage.content, {output: 'unicode'})
+      }
+      
+      return <Conversation
         key={index}
         active={
           state.selectedConversation &&
@@ -387,26 +391,21 @@ export const MessagingPage = ({location}) => {
         bold={conversation.unread}
         onClick={() => selectConversation(conversation.id)}
       >
-        <ConversationAvatar src={conversation.user.avatar} alt="avatar" />
+        <ConversationAvatar src={conversation.user.avatar} alt="avatar"/>
         <ConversationDescription>
           <ConversationName>{`${conversation.user.firstname} ${
             conversation.user.lastname
-          }`}</ConversationName>
+            }`}</ConversationName>
           <ConversationLastMessage>
             {conversation.lastMessage
-              ? emojify(
-                  conversation.lastMessage.content.length > 30
-                    ? conversation.lastMessage.content.substring(0, 30) + '...'
-                    : conversation.lastMessage.content,
-                  {
-                    output: 'unicode',
-                  }
-                )
+              ? conversation.lastMessage.content.length > 30
+                ? conversation.lastMessage.content.substring(0, 30) + '...'
+                : conversation.lastMessage.content
               : 'Aucun message'}
           </ConversationLastMessage>
         </ConversationDescription>
       </Conversation>
-    ))
+    })
   }
 
   const filterConversations = e => {
@@ -465,13 +464,14 @@ export const MessagingPage = ({location}) => {
         token: localStorage.getItem('token'),
       })
     )
-
+    
     if (success) {
       if (conversations.length > 0) {
         dispatch({type: ACTIONS.GET_CONVERSATIONS, payload: conversations})
         if (path(['state', 'conversation', 'id'], location)) {
           await selectConversation(
-            path(['state', 'conversation', 'id'], location)
+            path(['state', 'conversation', 'id'], location),
+            conversations
           )
         } else {
           dispatch({type: ACTIONS.NO_SELECTION})
@@ -499,6 +499,8 @@ export const MessagingPage = ({location}) => {
     )
 
     if (success) {
+      message.content = emojify(message.content, {output: 'unicode'})
+      
       const conversations = state.conversations.map(c => {
         message.conversation_id = Number(message.conversation_id)
 
@@ -508,7 +510,7 @@ export const MessagingPage = ({location}) => {
 
         return c
       })
-
+      
       dispatch({
         type: ACTIONS.APPEND_MESSAGE,
         payload: {conversations, message},
