@@ -130,7 +130,7 @@ export const NotificationsPage = ({history}) => {
   
   const fetch = async () => {
     const {data} = await getNotifications()
-    
+
     if (data.success) {
       dispatch({
         type: ACTIONS.SET_NOTIFICATIONS,
@@ -161,6 +161,28 @@ export const NotificationsPage = ({history}) => {
     )
     
     dispatch({type: ACTIONS.RESET})
+  }
+  
+  const redirectToElement = (e, notification) => {
+    e.preventDefault()
+    
+    switch(notification.element_type) {
+      case 'post':
+        history.push({
+          pathname: '/activity_feed',
+          state: {
+            post: {
+              id: notification.element_id,
+              fromStranger: null,
+            }
+          }
+        })
+        break
+      case 'comment':
+        break
+      default:
+        throw Error('Notification element type not recognized')
+    }
   }
   
   return (
@@ -202,8 +224,8 @@ export const NotificationsPage = ({history}) => {
                                   
                                   {` ${notification.message} `}
                                   
-                                  <NotificationLink to="/">
-                                    {`${notification.elementMessage}`}
+                                  <NotificationLink to="/" onClick={e => redirectToElement(e, notification)}>
+                                    {`${notification.element_message}`}
                                   </NotificationLink>
                                   .
                                 </div>
@@ -246,9 +268,9 @@ export const NotificationsPage = ({history}) => {
                                   </NotificationLink>{' '}
       
                                   {` ${notification.message} `}
-      
-                                  <NotificationLink to="/">
-                                    {`${notification.elementMessage}`}
+  
+                                  <NotificationLink to="/" onClick={e => redirectToElement(e, notification)}>
+                                    {`${notification.element_message}`}
                                   </NotificationLink>
                                   .
                                 </div>

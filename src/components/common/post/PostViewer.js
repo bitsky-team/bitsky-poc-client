@@ -282,6 +282,7 @@ export default class PostViewer extends React.Component {
           refreshBestComments={this.props.refreshBestComments}
           refreshTrends={this.props.refreshTrends}
           refreshPostScore={this.setScore}
+          strangerPost={this.props.fromStranger}
         />
       )
 
