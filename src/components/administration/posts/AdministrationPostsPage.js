@@ -14,6 +14,7 @@ import Loader from '../../Loader'
 import styled from 'styled-components'
 import {toast} from 'react-toastify'
 import AdministrationUpdatePostModal from './AdministrationUpdatePostModal'
+import ImgViewer from '../../files/ImgViewer'
 
 const PostContainer = styled.div`
     margin-bottom: 30px;
@@ -43,6 +44,8 @@ const initialState = {
   open: false,
   content: null,
   post_id: null,
+  pictureModalState: false,
+  pictureViewer: null,
 }
 
 const ACTIONS = {
@@ -51,6 +54,8 @@ const ACTIONS = {
   REMOVE_POST: 'REMOVE_POST',
   TOGGLE_MODAL: 'TOGGLE_MODAL',
   SET_CONTENT: 'SET_CONTENT',
+  TOGGLE_PICTURE_MODAL: 'TOGGLE_PICTURE_MODAL',
+  SET_PICTURE: 'SET_PICTURE',
 }
 
 const reducer = (state, action) => {
@@ -82,6 +87,16 @@ const reducer = (state, action) => {
         content: action.payload.content,
         post_id: action.payload.post_id,
       }
+    case ACTIONS.TOGGLE_PICTURE_MODAL:
+      return {
+        ...state,
+        pictureModalState: !state.pictureModalState,
+      }
+    case ACTIONS.SET_PICTURE:
+      return {
+        ...state,
+        pictureViewer: action.payload,
+      }
     default:
       throw new Error('Action type not found')
   }
@@ -98,6 +113,16 @@ const AdministrationPostsPage = () => {
         content,
         post_id,
       },
+    })
+  }
+
+  const togglePictureModal = picture => {
+    dispatch({
+      type: ACTIONS.TOGGLE_PICTURE_MODAL
+    })
+    dispatch({
+      type: ACTIONS.SET_PICTURE,
+      payload: picture,
     })
   }
 
@@ -195,6 +220,8 @@ const AdministrationPostsPage = () => {
               handleDeleteButtonClick={handleDeleteButtonClick}
               handleUpdateButtonClick={toggleUpdateModal}
               admin={true}
+              picture={post.picture}
+              togglePictureModal={togglePictureModal}
             />
           </Fade>
         </PostContainer>,
@@ -213,6 +240,7 @@ const AdministrationPostsPage = () => {
 
   return (
     <Fragment>
+      <ImgViewer isOpen={state.pictureModalState} toggle={togglePictureModal} imgSrc={state.pictureViewer}/>
       <AdministrationUpdatePostModal isOpen={state.open} toggleUpdateModal={toggleUpdateModal} postContent={state.content} postId={state.post_id} getPosts={getPosts}/>
       <Navbar/>
       <Container className="main-container">

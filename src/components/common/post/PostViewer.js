@@ -26,6 +26,8 @@ import Comment from './Comment'
 import Loader from '../../Loader'
 import Fade from 'react-reveal/Fade';
 import {emojify} from 'react-emojione'
+import Image from 'react-bootstrap/Image'
+import {ContentContainer} from './Post'
 
 export default class PostViewer extends React.Component {
   _isMounted = false
@@ -444,6 +446,11 @@ export default class PostViewer extends React.Component {
                     className="post-content"
                     dangerouslySetInnerHTML={this.getContent()}
                   />
+                  {this.state.post.picture ? (
+                    <ContentContainer>
+                      <Image src={this.state.post.picture} alt="Post picture" thumbnail fluid rounded/>
+                    </ContentContainer>
+                  ) : null}
                   <Container className="post-details">
                     <Row>
                       <Col md="4" className="text-left">

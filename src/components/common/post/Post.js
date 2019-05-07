@@ -2,6 +2,7 @@ import React, {Component, Fragment} from 'react'
 import {config} from '../../../config'
 import DateService from '../../../services/DateService'
 import {emojify} from 'react-emojione'
+import Image from 'react-bootstrap/Image'
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {
@@ -9,7 +10,7 @@ import {
   faStar as faFullStar,
   faClock,
   faTimes, faLink,
-  faPencilAlt
+  faPencilAlt,
 } from '@fortawesome/free-solid-svg-icons'
 import {
   faStar as faEmptyStar,
@@ -24,6 +25,21 @@ import BestComments from './BestComments'
 import {withRouter} from 'react-router'
 import styled from 'styled-components'
 import Loader from '../../Loader'
+
+export const ContentContainer = styled.div`
+  background-color: #F5F7F8;
+  padding: 10px;
+  margin-bottom: 10px;
+  
+  img {
+    background: none;
+    cursor: pointer !important;
+    position: unset !important;
+    height: 250px !important;
+    object-fit: contain;
+    width: 100%;
+  }
+`
 
 const LinkedLogo = styled.div`
   position: absolute;
@@ -60,11 +76,12 @@ class Post extends Component {
       )
     }
   }
-  
-  isAdmin () {
-    if(this.props.admin) {
+
+  isAdmin() {
+    if (this.props.admin) {
       return (
-        <FontAwesomeIcon icon={faPencilAlt} className="update" onClick={() => this.props.handleUpdateButtonClick(this.props.content, this.props.id)}/>
+        <FontAwesomeIcon icon={faPencilAlt} className="update"
+                         onClick={() => this.props.handleUpdateButtonClick(this.props.content, this.props.id)}/>
       )
     }
   }
@@ -95,7 +112,7 @@ class Post extends Component {
         token: localStorage.getItem('token'),
         post_id: this.props.id,
         bitsky_ip: this.props.fromStranger,
-      })
+      }),
     )
   }
 
@@ -107,7 +124,7 @@ class Post extends Component {
         token: localStorage.getItem('token'),
         post_id: this.props.id,
         bitsky_ip: this.props.fromStranger,
-      })
+      }),
     )
   }
 
@@ -129,7 +146,7 @@ class Post extends Component {
         token: localStorage.getItem('token'),
         post_id: this.props.id,
         bitsky_ip: this.props.fromStranger,
-      })
+      }),
     )
     const {success, favorite} = response.data
 
@@ -153,8 +170,8 @@ class Post extends Component {
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
         post_id: this.props.id,
-        bitsky_ip: this.props.fromStranger
-      })
+        bitsky_ip: this.props.fromStranger,
+      }),
     )
     return await response
   }
@@ -202,6 +219,10 @@ class Post extends Component {
     }, 1000)
   }
 
+  togglePictureModal = () => {
+    this.props.togglePictureModal(this.props.picture)
+  }
+
   componentDidMount = () => {
     this._isMounted = true
     this.getDate()
@@ -223,7 +244,7 @@ class Post extends Component {
             src={this.props.ownerAvatar}
             alt="Avatar"
             onClick={() => {
-              if(this.props.fromStranger) {
+              if (this.props.fromStranger) {
                 this.props.history.push(`/profile/${this.props.ownerId}/${this.props.fromStranger}`)
               } else {
                 this.props.history.push(`/profile/${this.props.ownerId}`)
@@ -233,19 +254,24 @@ class Post extends Component {
           <div className="title">
             <h4>{this.props.ownerName}</h4>
             <small>
-              <Rank id={this.props.ownerRank} />
+              <Rank id={this.props.ownerRank}/>
             </small>
-            <Fragment>{this.props.fromStranger && <LinkedLogo><FontAwesomeIcon icon={faLink} /></LinkedLogo>}</Fragment>
+            <Fragment>{this.props.fromStranger && <LinkedLogo><FontAwesomeIcon icon={faLink}/></LinkedLogo>}</Fragment>
           </div>
           <p
             className="post-content"
             dangerouslySetInnerHTML={this.getContent()}
           />
+          {this.props.picture ? (
+            <ContentContainer>
+              <Image src={this.props.picture} alt="Post picture" onClick={this.togglePictureModal} thumbnail fluid rounded/>
+            </ContentContainer>
+          ) : null}
           <Container className="post-details">
             <Row>
               <Col md="4" className="text-left">
                 <span className="tag">
-                  <FontAwesomeIcon icon={faTag} /> {emojify(this.props.tag, {output: 'unicode'})}
+                  <FontAwesomeIcon icon={faTag}/> {emojify(this.props.tag, {output: 'unicode'})}
                 </span>
               </Col>
               <Col md="4" className="text-center counter-container">
@@ -264,13 +290,13 @@ class Post extends Component {
                   className="comment-counter"
                   onClick={this.handleCommentCounterClick}
                 >
-                  <FontAwesomeIcon icon={faComments} />{' '}
-                  {this.state.commentsLoading ? <Loader display={1} row={1} /> : this.state.comments}
+                  <FontAwesomeIcon icon={faComments}/>{' '}
+                  {this.state.commentsLoading ? <Loader display={1} row={1}/> : this.state.comments}
                 </span>
               </Col>
               <Col md="4" className="text-right">
                 <span className="date">
-                  <FontAwesomeIcon icon={faClock} /> {this.state.displayedDate}
+                  <FontAwesomeIcon icon={faClock}/> {this.state.displayedDate}
                 </span>
               </Col>
             </Row>

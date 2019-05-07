@@ -29,6 +29,7 @@ import {withRouter} from 'react-router'
 import Loader from '../Loader'
 import Fade from 'react-reveal/Fade';
 import {emojify} from 'react-emojione'
+import ImgViewer from '../files/ImgViewer'
 
 export const CenteredRow = styled(Row)`
   display: flex;
@@ -163,6 +164,8 @@ const ProfilePage = props => {
   const [favoritesTrendsLoader, setFavoritesTrendsLoader] = useState(true)
   const [favoritesTrends, setFavoritesTrends] = useState(null)
   const [tab, setTab] = useState(1)
+  const [pictureModalState, setPictureModalState] = useState(false)
+  const [pictureViewer, setPictureViewer] = useState(null)
 
   useEffect(() => {
     Promise.all([getUser(), getPosts()]).then(
@@ -236,6 +239,11 @@ const ProfilePage = props => {
       )
     }
   }
+
+  const togglePictureModal = picture => {
+    setPictureModalState(!pictureModalState)
+    setPictureViewer(picture)
+  }
   
   const convertPosts = posts => {
     let statePosts = []
@@ -260,6 +268,8 @@ const ProfilePage = props => {
               session.firstname + ' ' + session.lastname || session.rank === 2
           }
           handleDeleteButtonClick={handleDeleteButtonClick}
+          picture={post.picture}
+          togglePictureModal={togglePictureModal}
         />
       )
     })
@@ -416,6 +426,7 @@ const ProfilePage = props => {
 
   return (
     <div>
+      <ImgViewer isOpen={pictureModalState} toggle={togglePictureModal} imgSrc={pictureViewer}/>
       <Navbar />
 
       <Fade>
