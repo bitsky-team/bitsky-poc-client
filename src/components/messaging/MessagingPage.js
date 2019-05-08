@@ -333,10 +333,14 @@ export const MessagingPage = ({location}) => {
                 const conversationsListItem = conversation
                 conversationsListItem.lastMessage = conversationsListItem.messages[conversationsListItem.messages.length - 1]
 
-                const conversationsList = [
-                  ...state.conversations.filter(c => c.id !== conversation.id),
-                  conversationsListItem
-                ]
+                let conversationsList = [conversationsListItem]
+                
+                if(state.conversations) {
+                  conversationsList = [
+                    ...state.conversations.filter(c => c.id !== conversation.id),
+                    conversationsListItem
+                  ]
+                }
                
                 conversationsList.sort((a, b) => {
                   return a.id - b.id

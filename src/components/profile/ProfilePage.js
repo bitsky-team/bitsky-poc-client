@@ -430,7 +430,7 @@ const ProfilePage = props => {
                         <Avatar src={user.avatar} alt="Avatar"/>
                         {user.rank === 2 ? <AdminCrown><FontAwesomeIcon icon={faCrown}/></AdminCrown>: null}
                       </AvatarContainer>
-                      {user.id !== session.id ? (
+                      {(user.id !== session.id || props.match.params.fromStranger)  ? (
                         <Button color="info" className="see-more-button" onClick={createConversation}>
                           <FontAwesomeIcon icon={faCommentAlt} /> Envoyer un message
                         </Button>
