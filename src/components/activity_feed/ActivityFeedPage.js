@@ -9,6 +9,8 @@ import Navbar from '../common/template/Navbar'
 import axios from 'axios'
 import qs from 'qs'
 import Rank from '../common/Rank'
+import Image from 'react-bootstrap/Image'
+import ImgViewer from '../files/ImgViewer'
 
 import {
   Container,
@@ -20,7 +22,7 @@ import {
   ModalFooter,
   Label,
   Input,
-  Alert,
+  Alert
 } from 'reactstrap'
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -39,9 +41,44 @@ import Loader from '../Loader'
 import Fade from 'react-reveal/Fade';
 import {emojify} from 'react-emojione'
 import {path} from 'ramda'
+import styled from 'styled-components'
+
+const ImageToPost = styled(Image)`
+  margin-top: 20px;
+  padding: 20px !important;
+  width: 100%;
+  max-height: 270px;
+  object-fit: contain;
+`
+
+const PicToPostContainer = styled.div`
+  position: relative;
+`
+
+const ClosePicToPostContainer = styled.span`
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  
+  :hover {
+    color: rgb(162,162,162);
+  }
+`
+
+const ClosePicToPost = styled(FontAwesomeIcon)`
+  position: absolute;
+  right: 6px;
+  top: 24px;
+`
 
 export default class ActivityFeedPage extends Component {
   _isMounted = false
+
+  picturesFormat = [
+    'image/jpg',
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+  ]
 
   state = {
     session: localStorage.getItem('token')
@@ -54,6 +91,9 @@ export default class ActivityFeedPage extends Component {
     trendsLoading: true,
     trends: [],
     trend: null,
+    picture: null,
+    pictureModalState: false,
+    pictureViewer: null,
   }
 
   getFirstTime = async () => {
@@ -95,6 +135,7 @@ export default class ActivityFeedPage extends Component {
         token: localStorage.getItem('token'),
         owner_uniq_id: localStorage.getItem('id'),
         content: content.value,
+        picture: this.state.picture ? this.state.picture : undefined,
         tag: this.state.trend ? this.state.trend : this.state.tagValue,
       })
     )
@@ -135,7 +176,6 @@ export default class ActivityFeedPage extends Component {
   adjustPublishContainer = () => {
     let postContent = this.postContent.textarea
     let postContentValue = postContent.value
-
     if (!postContentValue) {
       postContent.style.height = '24px'
       this.refs.publishButton.style.display = 'none'
@@ -191,11 +231,13 @@ export default class ActivityFeedPage extends Component {
               isOwner={true}
               handleDeleteButtonClick={this.handleDeleteButtonClick}
               refreshTrends={this.setTrends}
+              picture={this.state.picture}
+              togglePictureModal={this.togglePictureModal}
             />
           )
 
           posts.unshift(newPost)
-          this.setState({posts: posts, tagValue: null})
+          this.setState({posts: posts, tagValue: null, picture: null})
           this.setTrends()
           this.closeTextArea()
           this.adjustPublishContainer()
@@ -253,6 +295,12 @@ export default class ActivityFeedPage extends Component {
     !this.state.trend ? this.togglePostModal() : this.handlePublishButtonClick()
   }
 
+  togglePictureModal = picture => {
+    this.setState({
+      pictureModalState: !this.state.pictureModalState,
+      pictureViewer: picture,
+    })
+  }
   checkEmpty = () => {
     setTimeout(() => {
       if (this.postsContainer && this.trendsContainer) {
@@ -318,6 +366,8 @@ export default class ActivityFeedPage extends Component {
             handleDeleteButtonClick={this.handleDeleteButtonClick}
             refreshTrends={this.setTrends}
             fromStranger={post.from_stranger}
+            picture={post.picture}
+            togglePictureModal={this.togglePictureModal}
           />
         </Fade>
       )
@@ -422,6 +472,32 @@ export default class ActivityFeedPage extends Component {
     })
   }
 
+  postPicture = () => {
+    const fileType = this.refs.fileUploader.files[0].type
+    const file = this.refs.fileUploader.files[0]
+
+    if(this.picturesFormat.includes(fileType)) {
+      const reader  = new FileReader()
+
+      reader.onload = e => {
+        this.setState({picture: e.target.result}, () => {
+          this.adjustPublishContainer()
+        })
+      }
+
+      reader.readAsDataURL(file)
+    }else {
+      toast.error('Veuillez importer une image (jpg, jpeg, png, gif) !', {
+        autoClose: 5000,
+        position: toast.POSITION.BOTTOM_RIGHT,
+      })
+    }
+  }
+
+  cancelPostPicture = () => {
+    this.setState({picture: null})
+  }
+
   componentWillUnmount = () => {
     this._isMounted = false
   }
@@ -431,6 +507,7 @@ export default class ActivityFeedPage extends Component {
   
     return (
       <div>
+        <ImgViewer isOpen={this.state.pictureModalState} toggle={this.togglePictureModal} imgSrc={this.state.pictureViewer} />
         <Modal
           isOpen={this.state.postModal}
           toggle={this.togglePostModal}
@@ -513,6 +590,7 @@ export default class ActivityFeedPage extends Component {
                   type="file"
                   id="file"
                   ref="fileUploader"
+                  onChange={this.postPicture}
                   style={{display: 'none'}}
                 />
                 <TextareaAutosize
@@ -549,6 +627,16 @@ export default class ActivityFeedPage extends Component {
                   <FontAwesomeIcon icon={faPaperPlane} />
                 </span>
               </div>
+              {this.state.picture && (
+                <Fade>
+                  <PicToPostContainer>
+                    <ClosePicToPostContainer>
+                      <ClosePicToPost icon={faTimes} onClick={this.cancelPostPicture}/>
+                    </ClosePicToPostContainer>
+                    <ImageToPost src={this.state.picture} alt="Picture to post" thumbnail fluid rounded/>
+                  </PicToPostContainer>
+                </Fade>
+              )}
               <div
                 className="posts-container"
               >
