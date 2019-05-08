@@ -68,7 +68,7 @@ export default class ActivityFeedPage extends Component {
   }
   
   getPosts = async trend => {
-    return await axios.post(
+    return axios.post(
       `${config.API_ROOT}/get_allposts`,
       qs.stringify({
         uniq_id: localStorage.getItem('id'),
@@ -280,10 +280,12 @@ export default class ActivityFeedPage extends Component {
     if(data.success) {
       this.pushPostsToState(data.posts)
     } else {
-      toast.error('Impossible de charger les posts !', {
-        autoClose: 5000,
-        position: toast.POSITION.BOTTOM_RIGHT,
-      })
+      if(data) {
+        toast.error('Impossible de charger les posts !', {
+          autoClose: 5000,
+          position: toast.POSITION.BOTTOM_RIGHT,
+        })
+      }
     }
   }
   
