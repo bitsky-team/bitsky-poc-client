@@ -27,9 +27,12 @@ import styled from 'styled-components'
 import Loader from '../../Loader'
 
 export const ContentContainer = styled.div`
+  display: flex;
+  justify-content: center;
   background-color: #F5F7F8;
   padding: 10px;
   margin-bottom: 10px;
+  margin-top: -20px;
   
   img {
     background: none;
@@ -37,7 +40,14 @@ export const ContentContainer = styled.div`
     position: unset !important;
     height: 250px !important;
     object-fit: contain;
-    width: 100%;
+    margin-top: -10px;
+    border: 1px solid transparent !important;
+    border-radius: 20px !important;
+    transition: 0.2s;
+    
+    :hover {
+      transform: scale(1.01);
+    }
   }
 `
 

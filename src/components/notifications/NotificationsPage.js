@@ -215,10 +215,10 @@ export const NotificationsPage = ({history}) => {
                                 <NotificationImage
                                   src={notification.sender.avatar}
                                   alt="avatar"
-                                  onClick={() => {history.push(`/profile/${notification.sender.id}`)}}
+                                  onClick={() => history.push(`/profile/${notification.sender.id}/${notification.stranger}`)}
                                 />
                                 <div>
-                                  <NotificationLink to={`/profile/${notification.sender.id}`}>
+                                  <NotificationLink to={`/profile/${notification.sender.id}/${notification.stranger}`}>
                                     {`${notification.sender.firstname} ${notification.sender.lastname}`}
                                   </NotificationLink>{' '}
                                   
@@ -260,10 +260,10 @@ export const NotificationsPage = ({history}) => {
                                 <NotificationImage
                                   src={notification.sender.avatar}
                                   alt="avatar"
-                                  onClick={() => {history.push(`/profile/${notification.sender.id}`)}}
+                                  onClick={() => history.push(`/profile/${notification.sender.id}/${notification.stranger}`)}
                                 />
                                 <div>
-                                  <NotificationLink to={`/profile/${notification.sender.id}`}>
+                                  <NotificationLink to={`/profile/${notification.sender.id}/${notification.stranger}`}>
                                     {`${notification.sender.firstname} ${notification.sender.lastname}`}
                                   </NotificationLink>{' '}
       
