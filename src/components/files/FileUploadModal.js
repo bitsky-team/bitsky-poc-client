@@ -95,6 +95,7 @@ const FileUploadModal = ({isOpen, toggle, path, setFiles, chosenDevice}) => {
         path: path || null,
         files: filesToUpload,
         device: chosenDevice,
+        bitsky_ip: localStorage.getItem('selected_device') || undefined
       }), {
         onUploadProgress: progressEvent => {
           setPercentCompleted(Math.round((progressEvent.loaded * 100) / progressEvent.total))

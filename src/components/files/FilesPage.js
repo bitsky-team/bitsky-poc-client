@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {
   Container,
   Row,
@@ -13,6 +13,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import {withRouter} from 'react-router'
 import SideMenu from '../activity_feed/SideMenu'
+import axios from 'axios'
+import {config} from '../../config'
+import qs from 'qs'
+import Loader from '../Loader'
 
 const SpanBitsky = styled.span`
   font-size: 25px;
@@ -21,7 +25,7 @@ const SpanBitsky = styled.span`
 const Icon = styled.span`
   position: absolute;
   right: 50px;
-  background: #CF94CA;
+  background: #75a1cc;
   color: #FFF;
   border-radius: 50%;
   width: 30px;
@@ -32,14 +36,15 @@ const Icon = styled.span`
   transition: 0.3s ease-in-out;
 `
 
-const MyBistky = styled(Row)`
-  border: 2px solid #CF94CA;  
+const Bitsky = styled(Row)`
+  border: 2px solid #75a1cc;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
   cursor: pointer;
   transition: 0.3s ease-in-out;
+  border-radius: 5px;
 
   &&& {
     padding: 15px 30px 15px 30px;
@@ -50,14 +55,48 @@ const MyBistky = styled(Row)`
   }
   
   &&:hover {
-    background-color: rgba(207, 148, 202, 0.2);
+    background-color: rgba(141,187,232,0.2);
+  }
+  
+  :not(:first-child) {
+    margin-top: 15px;
   }
 `
 
 const FilesPage = props => {
-
   const [session] = useState(localStorage.getItem('token') ? jwtDecode(localStorage.getItem('token')) : null)
-
+  const [loading, setLoading] = useState(false)
+  const [devices, setDevices] = useState([])
+  
+  const getDevices = async () => {
+    return axios.post(
+      `${config.API_ROOT}/get_active_devices`,
+      qs.stringify({
+        uniq_id: localStorage.getItem('id'),
+        token: localStorage.getItem('token'),
+      })
+    )
+  }
+  
+  useEffect(() => {
+    setLoading(true)
+  
+    getDevices()
+      .then(({data}) => {
+        if(data.success) {
+          setDevices(data.links)
+        } else {
+          console.log('Cannot load devices data: ', data.error, data.message)
+        }
+        
+        setLoading(false)
+      })
+      .catch(e => {
+        console.log('Cannot load devices data: ', e)
+        setLoading(false)
+      })
+  }, [])
+  
   return (
       <div>
         <Navbar/>
@@ -75,10 +114,28 @@ const FilesPage = props => {
               <div className="user-container no-center admin-dashboard">
                 <h4>Choix du Bitsky</h4>
                 <Container className="margin-top-10">
-                  <MyBistky className="user-container" onClick={() => props.history.push('/admin_manage_files')}>
-                    <SpanBitsky>Bitsky actuel</SpanBitsky>
+                  <Bitsky key='local' onClick={() => {
+                    localStorage.removeItem('selected_device')
+                    props.history.push('/admin_manage_files')
+                  }}>
+                    <SpanBitsky>Votre Bitsky</SpanBitsky>
                     <Icon id="icon"><FontAwesomeIcon icon={faArrowRight}/></Icon>
-                  </MyBistky>
+                  </Bitsky>
+                  
+                  {!loading
+                    ? (
+                      <>
+                      {devices.map((device) => (
+                        <Bitsky key={device.id} onClick={() => {
+                          localStorage.setItem('selected_device', device.ip)
+                          props.history.push('/admin_manage_files')}
+                        }>
+                          <SpanBitsky>{device.name}</SpanBitsky>
+                          <Icon id="icon"><FontAwesomeIcon icon={faArrowRight}/></Icon>
+                        </Bitsky>
+                      ))}
+                    </>
+                  ) : <Loader display={1} /> }
                 </Container>
               </div>
             </Col>
