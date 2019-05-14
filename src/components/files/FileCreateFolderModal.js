@@ -37,6 +37,7 @@ const FileCreateFolderModal = ({isOpen, toggle, path, setFiles, chosenDevice}) =
           path: path || null,
           name,
           device: chosenDevice,
+          bitsky_ip: localStorage.getItem('selected_device') || undefined
         }),
       )
       const {success} = response.data

@@ -133,7 +133,7 @@ export const AdministrationLinksPage = () => {
     )
   }
 
-  const getLinks = async key => {
+  const getLinks = async () => {
     return axios.post(
       `${config.API_ROOT}/get_active_links`,
       qs.stringify({

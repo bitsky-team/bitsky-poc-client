@@ -39,6 +39,7 @@ const FileDownloadModal = ({isOpen, toggle, fileName, path, chosenDevice}) => {
         path: path || null,
         name: name,
         device: chosenDevice,
+        bitsky_ip: localStorage.getItem('selected_device') || undefined,
       }), {
         responseType: 'blob',
         onUploadProgress: progressEvent => {

@@ -294,6 +294,7 @@ const ManageFilesPage = () => {
         token: localStorage.getItem('token'),
         path: path || null,
         device: chosenDevice,
+        bitsky_ip: localStorage.getItem('selected_device') || undefined
       })
     )
   }
@@ -549,6 +550,7 @@ const ManageFilesPage = () => {
       qs.stringify({
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
+        bitsky_ip: localStorage.getItem('selected_device') || undefined
       })
     )
     const {success, devices} = response.data
