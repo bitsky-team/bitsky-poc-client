@@ -381,7 +381,8 @@ const ProfilePage = props => {
       uniq_id: localStorage.getItem('id'),
       token: localStorage.getItem('token'),
       first_user_id: session.id,
-      second_user_id: user.id
+      second_user_id: user.id,
+      bitsky_ip: (props.match && props.match.params) ? props.match.params.fromStranger : undefined
     }
   
     const {data: {success, conversation}} = await axios.post(
