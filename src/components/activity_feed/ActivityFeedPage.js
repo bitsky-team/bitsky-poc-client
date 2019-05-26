@@ -473,24 +473,26 @@ export default class ActivityFeedPage extends Component {
   }
 
   postPicture = () => {
-    const fileType = this.refs.fileUploader.files[0].type
-    const file = this.refs.fileUploader.files[0]
+    if(this.refs.fileUploader.files[0]) {
+      const fileType = this.refs.fileUploader.files[0].type
+      const file = this.refs.fileUploader.files[0]
 
-    if(this.picturesFormat.includes(fileType)) {
-      const reader  = new FileReader()
+      if(this.picturesFormat.includes(fileType)) {
+        const reader  = new FileReader()
 
-      reader.onload = e => {
-        this.setState({picture: e.target.result}, () => {
-          this.adjustPublishContainer()
+        reader.onload = e => {
+          this.setState({picture: e.target.result}, () => {
+            this.adjustPublishContainer()
+          })
+        }
+
+        reader.readAsDataURL(file)
+      }else {
+        toast.error('Veuillez importer une image (jpg, jpeg, png, gif) !', {
+          autoClose: 5000,
+          position: toast.POSITION.BOTTOM_RIGHT,
         })
       }
-
-      reader.readAsDataURL(file)
-    }else {
-      toast.error('Veuillez importer une image (jpg, jpeg, png, gif) !', {
-        autoClose: 5000,
-        position: toast.POSITION.BOTTOM_RIGHT,
-      })
     }
   }
 
@@ -587,9 +589,10 @@ export default class ActivityFeedPage extends Component {
               )}
               <div className="publish-container" ref="publishContainer">
                 <input
+                  ref="fileUploader"
                   type="file"
                   id="file"
-                  ref="fileUploader"
+                  onClick={() => this.refs.fileUploader.value = null}
                   onChange={this.postPicture}
                   style={{display: 'none'}}
                 />
