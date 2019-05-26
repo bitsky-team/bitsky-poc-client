@@ -6,11 +6,30 @@ import SingleFormRightContainer from '../common/single-form/RightContainer'
 
 import axios from 'axios'
 import qs from 'qs'
+import {withRouter} from 'react-router'
 
-export default class RegisterPage extends Component {
+class RegisterPage extends Component {
   state = {
     errorModal: false,
     confirmModal: false
+  }
+  
+  componentDidMount() {
+    this.getRegistrationState()
+  }
+  
+  getRegistrationState = async () => {
+    const response = await axios.get(
+      `${config.API_ROOT}/get_registration_module_state`
+    )
+    
+    const {success, state} = response.data
+    
+    if (success) {
+      if(!state) {
+        this.props.history.push('/login')
+      }
+    }
   }
 
   toggleError = (e) => {
@@ -49,7 +68,7 @@ export default class RegisterPage extends Component {
       if(success) {
         localStorage.setItem('id', uniq_id)
         localStorage.setItem('token', message)
-        this.props.history.push('/register_confirmation')
+        window.location.href = '/register_confirmation'
       }else {
         this.toggleError()
         this.errorMessage.innerHTML = message
@@ -66,7 +85,6 @@ export default class RegisterPage extends Component {
       }else {
         setTimeout(() => {
           if(this.errorMessage && this.errorsList) {
-            console.log(this.errorsList)
             this.errorMessage.innerHTML = 'Veuillez vérifier les points suivants:'
             if(!emailCheck) this.errorsList.innerHTML += '<li>Votre adresse email est incorrecte</li>'
             if(!passwordCheckLength || !repeatPasswordCheckLength) this.errorsList.innerHTML += '<li>Les mots de passe doivent comporter au moins 8 caractères</li>'
@@ -131,3 +149,5 @@ export default class RegisterPage extends Component {
     )
   }
 }
+
+export default withRouter(RegisterPage)
