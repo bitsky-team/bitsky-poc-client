@@ -268,11 +268,11 @@ export const MessagingPage = ({location}) => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const [messagesLoader, setMessageLoader] = useState(null)
   let messagesLength = 0
-
+  
   useEffect(() => {
     getConversations()
   }, [])
-
+  
   useEffect(() => {
     dispatch({
       type: ACTIONS.RENDER_CONVERSATIONS,
@@ -280,7 +280,7 @@ export const MessagingPage = ({location}) => {
         state.filteredConversations || state.conversations
       ),
     })
-
+    
     scrollEnd.current.scrollIntoView()
   }, [
     state.filteredConversations,
@@ -288,12 +288,13 @@ export const MessagingPage = ({location}) => {
     state.conversation,
     state.selectedConversation,
   ])
-
+  
   useEffect(() => {
     return () => LoopService.stop(messagesLoader)
   }, [messagesLoader])
-
-  const selectConversation = async (id, conversations = undefined) => {
+  
+  const selectConversation = async (id, conversations = undefined, linkID = null) => {
+    
     const {
       data: {success, conversation},
     } = await axios.post(
@@ -302,16 +303,17 @@ export const MessagingPage = ({location}) => {
         uniq_id: localStorage.getItem('id'),
         token: localStorage.getItem('token'),
         conversation_id: id,
+        link_id: linkID
       })
     )
-
+    
     if (success) {
       dispatch({type: ACTIONS.SELECT_CONVERSATION, payload: {
           conversation,
           conversations: conversations || state.conversations
-      }})
+        }})
       messagesLength = conversation.messages.length
-
+      
       // Loop who will load new received messages
       const interval = LoopService.loop(5000, () => {
         axios
@@ -321,18 +323,19 @@ export const MessagingPage = ({location}) => {
               uniq_id: localStorage.getItem('id'),
               token: localStorage.getItem('token'),
               conversation_id: id,
+              link_id: linkID
             })
           )
           .then(response => {
             const {success, conversation} = response.data
-
+            
             if (success) {
               
               if (conversation.messages.length !== messagesLength) {
                 // Preparing new conversations list item for updating the last message
                 const conversationsListItem = conversation
                 conversationsListItem.lastMessage = conversationsListItem.messages[conversationsListItem.messages.length - 1]
-
+                
                 let conversationsList = [conversationsListItem]
                 
                 if(state.conversations) {
@@ -341,7 +344,7 @@ export const MessagingPage = ({location}) => {
                     conversationsListItem
                   ]
                 }
-               
+                
                 conversationsList.sort((a, b) => {
                   return a.id - b.id
                 })
@@ -364,7 +367,7 @@ export const MessagingPage = ({location}) => {
             }
           })
       })
-
+      
       setMessageLoader(interval)
     } else {
       toast.error(`Impossible de charger cette conversation`, {
@@ -373,12 +376,12 @@ export const MessagingPage = ({location}) => {
       })
     }
   }
-
+  
   const renderConversations = conversations => {
     if (!conversations) {
       return <Fragment />
     }
-
+    
     return conversations.map((conversation, index) => {
       if(conversation.lastMessage) {
         conversation.lastMessage.content = emojify(conversation.lastMessage.content, {output: 'unicode'})
@@ -393,7 +396,8 @@ export const MessagingPage = ({location}) => {
             : 0
         }
         bold={conversation.unread}
-        onClick={() => selectConversation(conversation.id)}
+        onClick={() => selectConversation(conversation.id, undefined, conversation.link_id)}
+        stranger={conversation.link_id}
       >
         <ConversationAvatar src={conversation.user.avatar} alt="avatar"/>
         <ConversationDescription>
@@ -411,21 +415,21 @@ export const MessagingPage = ({location}) => {
       </Conversation>
     })
   }
-
+  
   const filterConversations = e => {
-    const name = e.target.value
+    const name = e.target.value.toString().toLowerCase()
     const conversations = state.conversations.filter(
       conversation =>
-        conversation.user.firstname.includes(name) ||
-        conversation.user.lastname.includes(name)
+        conversation.user.firstname.toLowerCase().includes(name) ||
+        conversation.user.lastname.toLowerCase().includes(name)
     )
-
+    
     dispatch({
       type: ACTIONS.SET_FILTERED_CONVERSATIONS,
       payload: name ? conversations : state.conversations,
     })
   }
-
+  
   const renderMessages = conversation => {
     return conversation.messages.length > 0 ? (
       conversation.messages.map((message, index) => (
@@ -452,13 +456,13 @@ export const MessagingPage = ({location}) => {
       </NoMessage>
     )
   }
-
+  
   const getConversations = async () => {
     dispatch({
       type: ACTIONS.START_ACTION,
       payload: {conversations: true, conversation: true},
     })
-
+    
     const {
       data: {success, conversations},
     } = await axios.post(
@@ -475,7 +479,8 @@ export const MessagingPage = ({location}) => {
         if (path(['state', 'conversation', 'id'], location)) {
           await selectConversation(
             path(['state', 'conversation', 'id'], location),
-            conversations
+            conversations,
+            path(['state', 'conversation', 'link_id'], location)
           )
         } else {
           dispatch({type: ACTIONS.NO_SELECTION})
@@ -485,10 +490,10 @@ export const MessagingPage = ({location}) => {
       }
     }
   }
-
+  
   const onSubmit = async (e, content) => {
     dispatch({type: ACTIONS.START_ACTION, payload: {send_message: true}})
-
+    
     const {
       data: {success, message},
     } = await axios.post(
@@ -498,20 +503,21 @@ export const MessagingPage = ({location}) => {
         token: localStorage.getItem('token'),
         conversation_id: state.selectedConversation.id,
         receiver_uniq_id: state.selectedConversation.user.uniq_id,
+        conversation_link_id: state.selectedConversation.link_id,
         content,
       })
     )
-
+    
     if (success) {
       message.content = emojify(message.content, {output: 'unicode'})
       
       const conversations = state.conversations.map(c => {
         message.conversation_id = Number(message.conversation_id)
-
+        
         if (c.id === message.conversation_id) {
           c.lastMessage = message
         }
-
+        
         return c
       })
       
@@ -519,11 +525,11 @@ export const MessagingPage = ({location}) => {
         type: ACTIONS.APPEND_MESSAGE,
         payload: {conversations, message},
       })
-
+      
       e.current.textarea.value = ''
     }
   }
-
+  
   return (
     <Fragment>
       <Navbar hideMessagesCount />
@@ -542,7 +548,7 @@ export const MessagingPage = ({location}) => {
                 </SearchContainer>
               </ColumnTitle>
             )}
-
+            
             <ConversationList>
               <Loader display={state.loading.conversations ? 1 : 0} />
               {state.renderedConversations}
@@ -570,7 +576,7 @@ export const MessagingPage = ({location}) => {
                       to={`/profile/${state.selectedConversation.user.id}`}
                     >{`${state.selectedConversation.user.firstname} ${
                       state.selectedConversation.user.lastname
-                    }`}</ReceiverLink>
+                      }`}</ReceiverLink>
                   </Text>
                 )}
               </ColumnTitle>
@@ -578,7 +584,7 @@ export const MessagingPage = ({location}) => {
                 <MessagesContainer>
                   <Loader display={state.loading.conversation ? 1 : 0} />
                   {state.selectedConversation &&
-                    renderMessages(state.selectedConversation)}
+                  renderMessages(state.selectedConversation)}
                   {state.noSelection && !state.loading.conversation && (
                     <Alert color="info" style={{margin: '15px 0 0 0'}}>
                       <h3>Sélectionnez une conversation</h3>
