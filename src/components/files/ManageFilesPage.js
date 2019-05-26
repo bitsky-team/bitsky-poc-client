@@ -65,7 +65,7 @@ const ContentLabel = posed.label({
 const AnimatedLabel = styled(ContentLabel)`
   position: absolute;
   font-size: 15px;
-  z-index: 5;
+  z-index: 1;
 `
 const UploadButton = styled(Button)`
   background-color: rgb(131, 178, 224);
@@ -84,6 +84,8 @@ const ColContainer = styled(Col)`
 
 const SearchInput = styled(Input)`
   border-radius: 5px 0px 0px 5px !important;
+  z-index: 3;
+  background: transparent !important;
 `
 
 const FileHeaderTableContainer = styled.div`
